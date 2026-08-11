@@ -1,6 +1,21 @@
 /* ============ إعدادات ============ */
-const WHATSAPP_NUMBER = "9647511429970"; // رقم واتساب المتجر (العراق)
+const WHATSAPP_NUMBERS = {
+  iq: "9647511429970", // خدمات في كردستان/العراق
+  sy: "963984959066",  // خدمات في سوريا — تأكد من الرقم الكامل بصيغة دولية (كود سوريا 963)
+};
 const CURRENCY = "$";
+const ORDERS_ENABLED = false; // غيّرها إلى true لتفعيل إرسال الطلبات عبر واتساب من جديد
+
+let selectedCountry = "iq";
+function selectCountry(code) {
+  selectedCountry = code;
+  document.querySelectorAll(".country-opt").forEach(b => {
+    b.classList.toggle("active", b.dataset.country === code);
+  });
+}
+document.querySelectorAll(".country-opt").forEach(btn => {
+  btn.onclick = () => selectCountry(btn.dataset.country);
+});
 
 /* ============ نظام اللغات (عربي / إنكليزي / كرمانجي) ============ */
 const translations = {
@@ -32,6 +47,9 @@ const translations = {
     remove_btn: "إزالة", no_results: "😕 ما في نتائج مطابقة للبحث", edit_btn_title: "تعديل الأسعار",
     pwd_prompt: "أدخل كلمة سر تعديل الأسعار:", pwd_wrong: "كلمة السر غير صحيحة", saved_msg: "تم حفظ الأسعار الجديدة ✅",
     search_placeholder: "🔍 بحث برقم المنتج أو الاسم",
+    service_off_title: "🚧 الخدمة متوقفة مؤقتاً", service_off_msg: "هذه صفحة تجريبية، وقريباً رح تتوفر جميع الخدمات.", service_off_ok: "تم",
+    country_iq: "العراق", country_sy: "سوريا",
+    footer_owner: "المالك:", footer_admin: "المسؤول  :",
   },
   en: {
     marq1: "🚚 Free shipping on your first order", marq2: "🔥 Discounts up to 40%", marq3: "🆕 New pieces weekly", marq4: "💬 Order directly via WhatsApp",
@@ -61,6 +79,9 @@ const translations = {
     remove_btn: "Remove", no_results: "😕 No matching results", edit_btn_title: "Edit Prices",
     pwd_prompt: "Enter the price-edit password:", pwd_wrong: "Incorrect password", saved_msg: "New prices saved ✅",
     search_placeholder: "🔍 Search by product number or name",
+    service_off_title: "🚧 Service Temporarily Unavailable", service_off_msg: "This is a demo page. All services will be available soon.", service_off_ok: "OK",
+    country_iq: "Iraq", country_sy: "Syria",
+    footer_owner: "Owner:", footer_admin: "Page Admin:",
   },
   ku: {
     marq1: "🚚 Barkirina belaş bo siparîşa yekem", marq2: "🔥 Daşandin heta 40%", marq3: "🆕 Perçeyên nû hefteyane", marq4: "💬 Rasterast bi WhatsApp siparîş bike",
@@ -90,6 +111,9 @@ const translations = {
     remove_btn: "Rake", no_results: "😕 Encamek li gorî lêgerînê nehat dîtin", edit_btn_title: "Bihayan Biguherîne",
     pwd_prompt: "Şîfreya guherandina biha binivîse:", pwd_wrong: "Şîfre şaş e", saved_msg: "rexneyên nû hatin tomarkirin ✅",
     search_placeholder: "🔍 Li gorî hejmar an navê hilberê bigere",
+    service_off_title: "🚧 Xizmet Demildî Sekinî ye", service_off_msg: "Ev rûpelek ceribandinê ye. Bi zûtirîn dem hemû xizmet berdest dibin.", service_off_ok: "Baş e",
+    country_iq: "Iraq", country_sy: "Sûriye",
+    footer_owner: "Xwedan:", footer_admin: "Rêvebirê Rûpelê:",
   }
 };
 
@@ -436,9 +460,37 @@ function closeCart() {
   document.getElementById("overlay").classList.remove("show");
 }
 
+/* ============ فتح / إغلاق قائمة الموبايل ============ */
+function openNav() {
+  document.getElementById("nav").classList.add("open");
+  document.getElementById("overlay").classList.add("show");
+}
+function closeNav() {
+  document.getElementById("nav").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+function toggleNav() {
+  const nav = document.getElementById("nav");
+  nav.classList.contains("open") ? closeNav() : openNav();
+}
+function closeAllPanels() {
+  closeCart();
+  closeNav();
+}
+document.querySelectorAll("#nav a").forEach(a => a.addEventListener("click", closeNav));
+
+/* ============ نافذة "الخدمة متوقفة مؤقتاً" ============ */
+function openServiceModal() {
+  document.getElementById("serviceModal").classList.add("show");
+}
+function closeServiceModal() {
+  document.getElementById("serviceModal").classList.remove("show");
+}
+
 /* ============ إرسال الطلب عبر واتساب ============ */
 function sendWhatsAppOrder() {
   if (cart.length === 0) return;
+  if (!ORDERS_ENABLED) { openServiceModal(); return; }
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
   cart.forEach(c => {
@@ -454,7 +506,7 @@ function sendWhatsAppOrder() {
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
 
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const url = `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 }
 
