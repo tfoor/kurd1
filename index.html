@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ستايل روج | تسوّق أزياءك المفضلة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span data-i18n="marq1">🚚 شحن مجاني لأول طلب</span><span data-i18n="marq2">🔥 خصومات تصل ٤٠٪</span><span data-i18n="marq3">🆕 قطع جديدة أسبوعياً</span><span data-i18n="marq4">💬 اطلب مباشرة عبر واتساب</span>
+    <span data-i18n="marq1">🚚 شحن مجاني لأول طلب</span><span data-i18n="marq2">🔥 خصومات تصل ٤٠٪</span><span data-i18n="marq3">🆕 قطع جديدة أسبوعياً</span><span data-i18n="marq4">💬 اطلب مباشرة عبر واتساب</span>
+  </div>
+</div>
+
+<header>
+  <div class="logo-image">
+  <img src="logo/style-rouge.png">
+</div>
+  <nav id="nav">
+    <ul>
+      <li><a href="#gallery" data-i18n="nav_shop">تسوّق</a></li>
+      <li><a href="#deals" data-i18n="nav_deals">عروض</a></li>
+      <li><a href="#about" data-i18n="nav_about">من نحن</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">تواصل معنا</a></li>
+    </ul>
+  </nav>
+  <div class="header-actions">
+    <div class="lang-switch" id="langSwitch">
+      <button class="lang-btn" data-lang="ar">AR</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ku">KU</button>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
+    <button class="cart-btn" onclick="openCart()">🛍️<span class="cart-count" id="cartCount">0</span></button>
+    <button class="burger" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <a href="#gallery" class="top-banner">
+    <img src="logo/style-rouge1.png" class="logo-img">
+  </a>
+  <div class="hero-text">
+    <div class="hero-eyebrow" data-i18n="hero_eyebrow">تشكيلة ٢٠٢٦</div>
+    <h1 class="display" data-i18n="hero_title">ستايلك يبدأ<br>من هون</h1>
+    <p data-i18n="hero_desc">مئات القطع المختارة بعناية بأسعار تناسبك، وطلب سهل عبر واتساب بضغطة واحدة.</p>
+    <div class="hero-cta">
+      <a href="#gallery" class="btn-accent" data-i18n="hero_cta1">تسوّق الآن</a>
+      <a href="#deals" class="btn-ghost" data-i18n="hero_cta2">شاهد العروض</a>
+    </div>
+  </div>
+  <div class="hero-media">
+    <img src="female/13.png"class="female-image" alt="فستان سهرة نبيتي بترتر ودانتيل" onerror="this.src='https://placehold.co/560x680/ffe1ea/d63d6e?font=raleway&text=New+Collection'" onclick="openLightbox(this.src, this.alt)">
+    <div class="hero-tag" data-i18n="hero_tag">الأكثر طلباً 🔥</div>
+  </div>
+</section>
+
+<div class="cat-strip">
+  <button class="cat-tile" data-cat="رجالي">
+    <img src="images/Men's/product1.jpg" onerror="this.src='https://placehold.co/160x160/f1eef5/241e2e?text=رجالي'" alt="رجالي">
+    <span data-i18n="cat_men">رجالي</span>
+  </button>
+  <button class="cat-tile" data-cat="حريمي">
+    <img src="images/female/product1.jpg" onerror="this.src='https://placehold.co/160x160/ffe1ea/d63d6e?text=حريمي'" alt="حريمي">
+    <span data-i18n="cat_women">حريمي</span>
+  </button>
+  <button class="cat-tile" data-cat="أطفال">
+    <img src="images/children/product-romper.webp" onerror="this.src='https://placehold.co/160x160/eafaf1/1fae7a?text=أطفال'" alt="أطفال">
+    <span data-i18n="cat_kids">أطفال</span>
+  </button>
+  <button class="cat-tile" data-cat="أحذية">
+    <img src="shoes/1.png" onerror="this.src='https://placehold.co/160x160/fff3e0/d68b3d?text=أحذية'" alt="أحذية">
+    <span data-i18n="cat_shoes">أحذية</span>
+  </button>
+  <button class="cat-tile" data-cat="إكسسوارات">
+    <img src="images/female/product2.jpg" onerror="this.src='https://placehold.co/160x160/eaf7f1/1fae7a?text=إكسسوارات'" alt="إكسسوارات">
+    <span data-i18n="cat_acc">إكسسوارات</span>
+  </button>
+</div>
+
+<div class="promo-strip" id="deals">
+  <div class="promo-card"><b data-i18n="promo1_t">خصم يصل إلى ٤٠٪</b><span data-i18n="promo1_d">على القطع المختارة هذا الأسبوع</span></div>
+  <div class="promo-card"><b data-i18n="promo2_t">اشترِ ٢ واحصل على الثالثة هدية</b><span data-i18n="promo2_d">على تشكيلة الإكسسوارات</span></div>
+  <div class="promo-card"><b data-i18n="promo3_t">توصيل مجاني</b><span data-i18n="promo3_d">للطلبات فوق ٥٠$</span></div>
+</div>
+
+<section class="section" id="gallery">
+  <div class="section-head">
+    <div class="eyebrow" data-i18n="gal_eyebrow">المعرض</div>
+    <h2 class="display" data-i18n="gal_title">اكتشف تشكيلتنا</h2>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters" id="filters"></div>
+    <div class="toolbar-right">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 بحث برقم المنتج أو الاسم" data-i18n-placeholder="search_placeholder" oninput="renderGallery()">
+      <select class="sort-select" id="sortSelect" onchange="renderGallery()">
+        <option value="default" data-i18n="sort_default">الترتيب: افتراضي</option>
+        <option value="price-asc" data-i18n="sort_asc">السعر: من الأقل للأعلى</option>
+        <option value="price-desc" data-i18n="sort_desc">السعر: من الأعلى للأقل</option>
+      </select>
+    </div>
+  </div>
+  <div class="subfilters" id="subfilters"></div>
+
+  <div class="gallery" id="gallery-grid"></div>
+</section>
+
+<section class="signature" id="about">
+  <h2 class="display" data-i18n="sig_title">ستايلك، قرارك</h2>
+  <p data-i18n="sig_desc">في ستايل روج منختار كل قطعة بعين تهتم بالتفاصيل، ونوصلها لباب بيتك بأسهل طريقة. جودة تستمر، وأسعار تناسب الكل.</p>
+</section>
+
+<footer id="contact">
+  <div class="footer-grid">
+    <div>
+      <h4 data-i18n="footer_brand">ستايل روج</h4>
+      <p data-i18n="footer_brand_desc">تسوّق أزياء رجالي، حريمي، وبناتي بأسلوب عصري وخدمة طلب مباشرة عبر واتساب.</p>
+    </div>
+    <div>
+      <h4 data-i18n="footer_links">روابط سريعة</h4>
+      <a href="#gallery" data-i18n="nav_shop">تسوّق</a><br>
+      <a href="#deals" data-i18n="nav_deals">عروض</a><br>
+      <a href="#about" data-i18n="nav_about">من نحن</a>
+    </div>
+    <div>
+      <h4 data-i18n="footer_contact">تواصل معنا</h4>
+      <p><span data-i18n="footer_wa">واتساب:</span> 964 751 142 9970+</p>
+      <p data-i18n="footer_country">العراق</p>
+      <p data-i18n="footer_country2">سوريا</p>
+    </div>
+  </div>
+  <div class="footer-bottom" data-i18n="footer_bottom">© 2026 ستايل روج – جميع الحقوق محفوظة</div>
+</footer>
+
+<div class="img-lightbox" id="imgLightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3 data-i18n="cart_title">سلة المشتريات</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total-row"><span data-i18n="cart_total">الإجمالي</span><span id="cartTotal">0$</span></div>
+    <button class="wa-btn" id="waBtn" onclick="sendWhatsAppOrder()">
+      <span>📲</span><span data-i18n="cart_wa_btn">إرسال الطلب عبر واتساب</span>
+    </button>
+    <div class="cart-note" data-i18n="cart_note">سيتم فتح واتساب مع تفاصيل الفاتورة وروابط صور القطع المختارة لتأكيد الطلب.</div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
