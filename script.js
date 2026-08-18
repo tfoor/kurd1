@@ -4,7 +4,7 @@ const WHATSAPP_NUMBERS = {
   sy: "963984959066",  // خدمات في سوريا — تأكد من الرقم الكامل بصيغة دولية (كود سوريا 963)
 };
 const CURRENCY = "$";
-const ORDERS_ENABLED = false; // غيّرها إلى true لتفعيل إرسال الطلبات عبر واتساب من جديد
+const ORDERS_ENABLED = true; // غيّرها إلى false.true لتفعيل إرسال الطلبات عبر واتساب من جديد
 
 let selectedCountry = "iq";
 function selectCountry(code) {
@@ -27,11 +27,13 @@ const translations = {
     hero_desc: "مئات القطع المختارة بعناية بأسعار تناسبك، وطلب سهل عبر واتساب بضغطة واحدة.",
     hero_cta1: "تسوّق الآن", hero_cta2: "شاهد العروض", hero_tag: "الأكثر طلباً 🔥",
     cat_men: "رجالي", cat_women: "حريمي", cat_girls: "بناتي", cat_acc: "إكسسوارات", cat_all: "الكل",
-    cat_kids: "أطفال", cat_shoes: "أحذية",
+    cat_kids: "أطفال", cat_shoes: "أحذية", cat_makeup: "مكياج", cat_home: "أدوات منزلية",
     sub_top: "ملابس علوية", sub_sets: "أطقم منسقة", sub_bottom: "ملابس سفلية", sub_denim: "ملابس دينيم",
     sub_dresses: "فساتين", sub_skirts: "تنانير", sub_girls: "بناتي", sub_boys: "أولادي",
-    sub_sandals: "صنادل", sub_heels: "كعوب", sub_classic: "كلاسيك",
+    sub_sandals: "صنادل", sub_heels: "كعوب", sub_classic: "كلاسيك", sub_kidshoes: "أطفال",
     sub_hair: "شعر مستعار", sub_bags: "جنط", sub_jewelry: "مجوهرات",
+    sub_makeup: "مكياج", sub_nailcare: "عناية بالأظافر", sub_beautytools: "أدوات تجميل", sub_skincare: "عناية بالبشرة",
+    sub_phoneacc: "إكسسوارات موبايل", sub_sunglasses: "نظارات", sub_watches: "ساعات", sub_socks: "جوارب", sub_hairacc: "إكسسوارات شعر",
     promo1_t: "خصم يصل إلى ٤٠٪", promo1_d: "على القطع المختارة هذا الأسبوع",
     promo2_t: "اشترِ ٢ واحصل على الثالثة هدية", promo2_d: "على تشكيلة الإكسسوارات",
     promo3_t: "توصيل مجاني", promo3_d: "للطلبات فوق ٥٠$",
@@ -59,11 +61,13 @@ const translations = {
     hero_desc: "Hundreds of carefully picked pieces at prices that suit you, with easy ordering via WhatsApp in one tap.",
     hero_cta1: "Shop Now", hero_cta2: "View Deals", hero_tag: "Best Seller 🔥",
     cat_men: "Men", cat_women: "Women", cat_girls: "Girls", cat_acc: "Accessories", cat_all: "All",
-    cat_kids: "Kids", cat_shoes: "Shoes",
+    cat_kids: "Kids", cat_shoes: "Shoes", cat_makeup: "Makeup", cat_home: "Home & Tools",
     sub_top: "Tops", sub_sets: "Matching Sets", sub_bottom: "Bottoms", sub_denim: "Denim",
     sub_dresses: "Dresses", sub_skirts: "Skirts", sub_girls: "Girls", sub_boys: "Boys",
-    sub_sandals: "Sandals", sub_heels: "Heels", sub_classic: "Classic",
+    sub_sandals: "Sandals", sub_heels: "Heels", sub_classic: "Classic", sub_kidshoes: "Kids",
     sub_hair: "Wigs & Hair", sub_bags: "Bags", sub_jewelry: "Jewelry",
+    sub_makeup: "Makeup", sub_nailcare: "Nail Care", sub_beautytools: "Beauty Tools", sub_skincare: "Skincare",
+    sub_phoneacc: "Phone Accessories", sub_sunglasses: "Sunglasses", sub_watches: "Watches", sub_socks: "Socks", sub_hairacc: "Hair Accessories",
     promo1_t: "Up to 40% off", promo1_d: "On selected pieces this week",
     promo2_t: "Buy 2 get the 3rd free", promo2_d: "On the accessories collection",
     promo3_t: "Free delivery", promo3_d: "On orders over $50",
@@ -91,11 +95,13 @@ const translations = {
     hero_desc: "Bi sedan perçeyên bi baldarî hilbijartî bi rexneyên li gorî te, û siparîşkirin bi hêsanî bi rêya WhatsApp bi yek pêl.",
     hero_cta1: "Niha Bikire", hero_cta2: "Pêşkêşiyan Bibîne", hero_tag: "Herî Zêde Tê Xwestin 🔥",
     cat_men: "Mêr", cat_women: "Jin", cat_girls: "Keç", cat_acc: "Aksesûar", cat_all: "Hemû",
-    cat_kids: "Zarok", cat_shoes: "Sol",
+    cat_kids: "Zarok", cat_shoes: "Sol", cat_makeup: "Make-up", cat_home: "Malzemeyên Malê",
     sub_top: "Kincên Jorîn", sub_sets: "Setên Hevgirtî", sub_bottom: "Kincên Jêrîn", sub_denim: "Cins",
     sub_dresses: "Fistan", sub_skirts: "Îtek", sub_girls: "Keç", sub_boys: "Kur",
-    sub_sandals: "Sandal", sub_heels: "Sole Bilind", sub_classic: "Klasîk",
+    sub_sandals: "Sandal", sub_heels: "Sole Bilind", sub_classic: "Klasîk", sub_kidshoes: "Zarok",
     sub_hair: "Porê Çêkirî", sub_bags: "Çente", sub_jewelry: "Zêr û Zîv",
+    sub_makeup: "Make-up", sub_nailcare: "Lênêrîna Neynûkan", sub_beautytools: "Amûrên Ciwanîyê", sub_skincare: "Lênêrîna Çermê",
+    sub_phoneacc: "Aksesûarên Mobîlê", sub_sunglasses: "Berçavk", sub_watches: "Seet", sub_socks: "Gore", sub_hairacc: "Aksesûarên Porê",
     promo1_t: "Daşandin heta 40%", promo1_d: "Li ser perçeyên vê heftê hilbijartî",
     promo2_t: "2 Bikire, ya 3an belaş", promo2_d: "Li ser koleksiyona aksesûaran",
     promo3_t: "Gihandina belaş", promo3_d: "Bo siparîşên ji 50$ zêdetir",
@@ -114,6 +120,40 @@ const translations = {
     service_off_title: "🚧 Xizmet Demildî Sekinî ye", service_off_msg: "Ev rûpelek ceribandinê ye. Bi zûtirîn dem hemû xizmet berdest dibin.", service_off_ok: "Baş e",
     country_iq: "Iraq", country_sy: "Sûriye",
     footer_owner: "Xwedan:", footer_admin: "Rêvebirê Rûpelê:",
+  },
+  tr: {
+    marq1: "🚚 İlk siparişte ücretsiz kargo", marq2: "🔥 %40'a varan indirim", marq3: "🆕 Her hafta yeni parçalar", marq4: "💬 WhatsApp'tan doğrudan sipariş ver",
+    nav_shop: "Alışveriş", nav_deals: "Fırsatlar", nav_about: "Hakkımızda", nav_contact: "İletişim",
+    editbar_text: "🔓 Fiyat düzenleme modu açık — fiyatı kart üzerinde doğrudan düzenleyin", editbar_save: "Değişiklikleri Kaydet", editbar_cancel: "İptal",
+    hero_eyebrow: "2026 Koleksiyonu", hero_title: "Tarzın burada<br>başlıyor",
+    hero_desc: "Sana uygun fiyatlarla özenle seçilmiş yüzlerce parça, tek dokunuşla WhatsApp üzerinden kolay sipariş.",
+    hero_cta1: "Şimdi Alışveriş Yap", hero_cta2: "Fırsatları Gör", hero_tag: "En Çok Satan 🔥",
+    cat_men: "Erkek", cat_women: "Kadın", cat_girls: "Kız Çocuk", cat_acc: "Aksesuar", cat_all: "Tümü",
+    cat_kids: "Çocuk", cat_shoes: "Ayakkabı", cat_makeup: "Makyaj", cat_home: "Ev & Aletler",
+    sub_top: "Üst Giyim", sub_sets: "Takımlar", sub_bottom: "Alt Giyim", sub_denim: "Kot",
+    sub_dresses: "Elbiseler", sub_skirts: "Etekler", sub_girls: "Kız Çocuk", sub_boys: "Erkek Çocuk",
+    sub_sandals: "Sandalet", sub_heels: "Topuklu", sub_classic: "Klasik", sub_kidshoes: "Çocuk",
+    sub_hair: "Peruk & Saç", sub_bags: "Çantalar", sub_jewelry: "Takı",
+    sub_makeup: "Makyaj", sub_nailcare: "Tırnak Bakımı", sub_beautytools: "Güzellik Aletleri", sub_skincare: "Cilt Bakımı",
+    sub_phoneacc: "Telefon Aksesuarları", sub_sunglasses: "Güneş Gözlüğü", sub_watches: "Saatler", sub_socks: "Çoraplar", sub_hairacc: "Saç Aksesuarları",
+    promo1_t: "%40'a varan indirim", promo1_d: "Bu hafta seçili parçalarda",
+    promo2_t: "2 Al 3.sü Bedava", promo2_d: "Aksesuar koleksiyonunda",
+    promo3_t: "Ücretsiz kargo", promo3_d: "50$ üzeri siparişlerde",
+    gal_eyebrow: "Galeri", gal_title: "Koleksiyonumuzu Keşfedin",
+    sort_default: "Sıralama: Varsayılan", sort_asc: "Fiyat: Düşükten Yükseğe", sort_desc: "Fiyat: Yüksekten Düşüğe",
+    sig_title: "Tarzın, Seçimin", sig_desc: "Style Güneş'te her parçayı özenle seçiyor, en kolay şekilde kapına kadar getiriyoruz. Kalıcı kalite, herkese uygun fiyatlar.",
+    footer_brand: "Style Güneş", footer_brand_desc: "Modern bir tarzla erkek, kadın ve kız çocuk modası alışverişi, WhatsApp üzerinden doğrudan sipariş.",
+    footer_links: "Hızlı Bağlantılar", footer_contact: "Bize Ulaşın", footer_wa: "WhatsApp:", footer_country: "Irak", footer_country2: "Suriye",
+    footer_bottom: "© 2026 Style Güneş – Tüm hakları saklıdır",
+    cart_title: "Alışveriş Sepeti", cart_total: "Toplam", cart_wa_btn: "Siparişi WhatsApp'tan Gönder",
+    cart_note: "Siparişi onaylamak için fatura detayları ve seçilen parçaların fotoğraf bağlantılarıyla WhatsApp açılacaktır.",
+    cart_empty: "Sepetiniz boş<br>Favori parçanızı eklemeye başlayın", add_btn: "🛍️ Sepete Ekle", added_btn: "Eklendi ✓",
+    remove_btn: "Kaldır", no_results: "😕 Eşleşen sonuç yok", edit_btn_title: "Fiyatları Düzenle",
+    pwd_prompt: "Fiyat düzenleme şifresini girin:", pwd_wrong: "Yanlış şifre", saved_msg: "Yeni fiyatlar kaydedildi ✅",
+    search_placeholder: "🔍 Ürün numarasına veya adına göre ara",
+    service_off_title: "🚧 Hizmet Geçici Olarak Kullanılamıyor", service_off_msg: "Bu bir deneme sayfasıdır. Tüm hizmetler yakında kullanıma sunulacaktır.", service_off_ok: "Tamam",
+    country_iq: "Irak", country_sy: "Suriye",
+    footer_owner: "Sahibi:", footer_admin: "Sayfa Yöneticisi:",
   }
 };
 
@@ -173,7 +213,10 @@ const products = [
   // { id: 7, name: "طقم رومبير وردي بدانتيل", cat: "أطفال", sub: "بناتي", price: 38, img: "images/children/product-romper.webp", badge: "جديد" },
   // { id: 10, name: "فستان قميصي وردي بحزام", cat: "أطفال", sub: "بناتي", price: 42, img: "images/children/product-dress.jpg" },
   // { id: 11, name: "طقم بنطلون وقميص أزرق", cat: "أطفال", sub: "أولادي", price: 40, oldPrice: 52, img: "images/children/product-set.webp", badge: "خصم 20%", sale: true },
-
+{ id: 214, name: "طقم تيشيرت وبنطلون كاروهات للأطفال", cat: "أطفال", sub: "بناتي", price: 17.34, img: "kids/1.png" },
+  { id: 215, name: "طقم تيشيرت وردي وشورت جينز Mommy is my Bestie", cat: "أطفال", sub: "بناتي", price: 7.47, img: "kids/2.png" },
+  { id: 217, name: "مجموعة بنطلون وبلوزة كاجوال للبنات", cat: "أطفال", sub: "بناتي", price: 11.89, img: "kids/4.png" },
+  
   // رجالي 
   { id: 1, name: "طقم رجالي أبيض قميص بأزرار وبنطال مريح", cat: "رجالي", sub: "أطقم منسقة", price: 19, color: "أبيض", img: "men's/1.png", badge: "" },
   { id: 2, name: "طقم بولو رجالي 3 قطع بألوان كلاسيكية", cat: "رجالي", sub: "ملابس علوية", price: 25.23, color: "", img: "men's/2.png", badge: "" },
@@ -220,6 +263,65 @@ const products = [
   { id: 33, name: "فستان سهرة أخضر فستقي بياقة مرصعة", cat: "حريمي", sub: "فساتين", price: 26, color: "أخضر فستقي", img: "female/17.png" },
   { id: 34, name: "طقم كروب توب أسود وتنورة تاي داي", cat: "حريمي", sub: "أطقم منسقة", price: 21, color: "أسود وبرتقالي", img: "female/18.png" },
 
+  // حريمي (دفعة جديدة)
+  { id: 158, name: "طقم بلوزة وبنطلون مطبوع أبيض وأسود", cat: "حريمي", sub: "أطقم منسقة", price: 16.52, img: "female/19.png" },
+  { id: 159, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 13.52, img: "female/20.png" },
+  { id: 160, name: "طقم بيج كارديجان وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 19.79, img: "female/21.png" },
+  { id: 161, name: "كارديجان بيج", cat: "حريمي", sub: "ملابس علوية", price: 9.98, img: "female/22.png" },
+  { id: 162, name: "طقم بيج بنطلون وبلوزة", cat: "حريمي", sub: "أطقم منسقة", price: 15.70, img: "female/23.png" },
+  { id: 163, name: "طقم بيج توب وبنطلون مع شنطة", cat: "حريمي", sub: "أطقم منسقة", price: 15.70, img: "female/24.png" },
+  { id: 164, name: "تنورة سوداء طويلة", cat: "حريمي", sub: "تنانير", price: 16.25, img: "female/25.png" },
+  { id: 165, name: "طقم بني بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 18.15, img: "female/26.png" },
+  { id: 166, name: "فستان أبيض بأزرار", cat: "حريمي", sub: "فساتين", price: 15.43, img: "female/27.png" },
+  { id: 167, name: "طقم بلوزات أسود وليوبارد وبني", cat: "حريمي", sub: "ملابس علوية", price: 12.98, img: "female/28.png" },
+  { id: 168, name: "طقم بيج سترة وبنطلون وتوب", cat: "حريمي", sub: "أطقم منسقة", price: 16.25, img: "female/29.png" },
+  { id: 169, name: "طقم بيج توب وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 14.61, img: "female/30.png" },
+  { id: 170, name: "طقم بلوزة وبنطلون زيتي", cat: "حريمي", sub: "أطقم منسقة", price: 15.97, img: "female/31.png" },
+  { id: 171, name: "طقم جاكيت جلد أسود وبنطلون وتنورة", cat: "حريمي", sub: "أطقم منسقة", price: 29.04, img: "female/32.png" },
+  { id: 172, name: "طقم تيشيرتات مخططة", cat: "حريمي", sub: "ملابس علوية", price: 6.72, img: "female/33.png" },
+  { id: 173, name: "جمبسوت بيج", cat: "حريمي", sub: "أطقم منسقة", price: 18.15, img: "female/34.png" },
+  { id: 174, name: "طقم بناطيل واسعة بألوان متعددة", cat: "حريمي", sub: "ملابس سفلية", price: 14.88, img: "female/35.png" },
+  { id: 175, name: "طقم بيجامة وردية منقطة", cat: "حريمي", sub: "أطقم منسقة", price: 14.89, img: "female/36.png" },
+  { id: 176, name: "طقم فستان مطبوع وكارديجان بنفسجي", cat: "حريمي", sub: "أطقم منسقة", price: 18.70, img: "female/37.png" },
+  { id: 177, name: "طقم رياضي كحلي هودي وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 26.32, img: "female/38.png" },
+  { id: 178, name: "بنطلون جينز واسع نسائي", cat: "حريمي", sub: "ملابس سفلية", price: 23.87, img: "female/39.png" },
+  { id: 179, name: "جمبسوت أبيض", cat: "حريمي", sub: "أطقم منسقة", price: 25.77, img: "female/40.png" },
+  { id: 180, name: "بلوزة مخططة أبيض وأسود", cat: "حريمي", sub: "ملابس علوية", price: 6.99, img: "female/41.png" },
+  { id: 181, name: "طقم كارديجان بني وقميص", cat: "حريمي", sub: "أطقم منسقة", price: 13.52, img: "female/42.png" },
+  { id: 182, name: "معطف نسائي بني طويل", cat: "حريمي", sub: "ملابس علوية", price: 16.79, img: "female/43.png" },
+  { id: 183, name: "فستان أصفر طويل", cat: "حريمي", sub: "فساتين", price: 17.33, img: "female/44.png" },
+  { id: 184, name: "بلوزة مطرزة بيج وأزرق", cat: "حريمي", sub: "ملابس علوية", price: 8.09, img: "female/45.png" },
+  { id: 185, name: "جاكيت بليزر أسود", cat: "حريمي", sub: "ملابس علوية", price: 9.44, img: "female/46.png" },
+  { id: 186, name: "تنورة كاروهات بنية طويلة", cat: "حريمي", sub: "تنانير", price: 14.88, img: "female/47.png" },
+  { id: 187, name: "طقم بلوزات أساسية أبيض وأسود", cat: "حريمي", sub: "ملابس علوية", price: 12.98, img: "female/48.png" },
+  { id: 188, name: "طقم أبيض بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 18.70, img: "female/49.png" },
+  { id: 189, name: "بنطلون بني واسع", cat: "حريمي", sub: "ملابس سفلية", price: 13.91, img: "female/50.png" },
+  { id: 190, name: "جاكيت جلد بني", cat: "حريمي", sub: "ملابس علوية", price: 23.87, img: "female/51.png" },
+  { id: 191, name: "طقم تنانير كحلي وعنابي وبيج", cat: "حريمي", sub: "تنانير", price: 22.78, img: "female/52.png" },
+  { id: 192, name: "طقم ملابس منزلية أزرق مطبوع", cat: "حريمي", sub: "أطقم منسقة", price: 8.62, img: "female/53.png" },
+  { id: 193, name: "بنطلون جلد بني", cat: "حريمي", sub: "ملابس سفلية", price: 15.43, img: "female/54.png" },
+  { id: 194, name: "طقم توب وتنورة جينز بني", cat: "حريمي", sub: "أطقم منسقة", price: 6.44, img: "female/55.png" },
+  { id: 195, name: "بلوزة بولو بيضاء", cat: "حريمي", sub: "ملابس علوية", price: 15.43, img: "female/56.png" },
+  { id: 196, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 14.61, img: "female/57.png" },
+  { id: 197, name: "هودي أزرق NYC", cat: "حريمي", sub: "ملابس علوية", price: 16.52, img: "female/58.png" },
+  { id: 198, name: "بلوزة زرقاء بأكمام مطرزة", cat: "حريمي", sub: "ملابس علوية", price: 6.99, img: "female/59.png" },
+  { id: 199, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 14.61, img: "female/60.png" },
+  { id: 200, name: "تنورة سوداء طويلة", cat: "حريمي", sub: "تنانير", price: 17.06, img: "female/61.png" },
+  { id: 201, name: "بلوزة بيضاء واسعة", cat: "حريمي", sub: "ملابس علوية", price: 11.89, img: "female/62.png" },
+
+  // حريمي (دفعة جديدة 63-74)
+  { id: 218, name: "قميص أزرق مخطط فضفاض", cat: "حريمي", sub: "ملابس علوية", price: 11.35, img: "female/63.png" },
+  { id: 219, name: "تيشيرت أبيض بطبعة كرز", cat: "حريمي", sub: "ملابس علوية", price: 6.44, img: "female/64.png" },
+  { id: 220, name: "طقم رمادي توب وبنطلون واسع", cat: "حريمي", sub: "أطقم منسقة", price: 15.16, img: "female/65.png" },
+  { id: 221, name: "بنطلون أبيض واسع بحزام", cat: "حريمي", sub: "ملابس سفلية", price: 18.15, img: "female/66.png" },
+  { id: 222, name: "سترة بولو كحلية بياقة بيضاء", cat: "حريمي", sub: "ملابس علوية", price: 13.80, img: "female/67.png" },
+  { id: 223, name: "طقم بيج توب وبنطلون واسع", cat: "حريمي", sub: "أطقم منسقة", price: 14.89, img: "female/68.png" },
+  { id: 224, name: "طقم بيجامة وردية مخططة ستان", cat: "حريمي", sub: "أطقم منسقة", price: 15.43, img: "female/69.png" },
+  { id: 225, name: "طقم أزرق فاتح قميص وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 20.60, img: "female/70.png" },
+  { id: 226, name: "فستان أصفر مزهر", cat: "حريمي", sub: "فساتين", price: 25.78, img: "female/71.png" },
+  { id: 227, name: "جاكيت دانتيل كريمي", cat: "حريمي", sub: "ملابس علوية", price: 16.25, img: "female/72.png" },
+  { id: 228, name: "فستان أخضر مزهر", cat: "حريمي", sub: "فساتين", price: 25.23, img: "female/73.png" },
+  { id: 229, name: "طقم عنابي بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 26.86, img: "female/74.png" },
   // أحذية
   { id: 8, name: "حذاء كلاسيك جلديشعر صناعي أحمر عنابي طويل", cat: "أحذية", sub: "كلاسيك", price: 9, img: "shoes/1.png" },
   { id: 21, name: "صندل كعب نبيتي بفيونكة ساتان", cat: "أحذية", sub: "صنادل", price: 17, color: "نبيتي", img: "shoes/2.png" },
@@ -229,26 +331,136 @@ const products = [
 
   // إكسسوارات (مثال جاهز - فعّل السطر لما توصل الصور)
   { id: 40, name: "     لشعر مستعار نبيتي", cat: "إكسسوارات", sub: "شعر مستعار", price: 9, color: "لون خمري", img: "accessories/1.png" },
-  // { id: 41, name: "جنطة كتف جلد أسود", cat: "إكسسوارات", sub: "جنط", price: 30, color: "أسود", img: "accessories/bag1.png" },
-  // { id: 42, name: "طقم مجوهرات فضي مرصّع", cat: "إكسسوارات", sub: "مجوهرات", price: 15, color: "فضي", img: "accessories/jewelry1.png" },
+  { id: 41, name: "شنطة يد سوداء كبيرة", cat: "إكسسوارات", sub: "جنط", price: 7.53, img: "accessories/13.png" },
+  { id: 42, name: "طقم مجوهرات وساعة في علبة هدية", cat: "إكسسوارات", sub: "مجوهرات", price: 2.91, img: "accessories/34.png" },
+
+  // إكسسوارات (دفعة جديدة)
+  { id: 63, name: "ساعة يد نسائية كلاسيك بسوار ذهبي", cat: "إكسسوارات", sub: "ساعات", price: 4.54, img: "accessories/2.png" },
+  { id: 64, name: "كفر آيفون أبيض بنقشة ورد", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 2.91, img: "accessories/3.png" },
+  { id: 65, name: "شنطة يد بيضاء بتفاصيل مطرزة", cat: "إكسسوارات", sub: "جنط", price: 14.7, img: "accessories/4.png" },
+  { id: 72, name: "كفر آيفون وردي مع حبل حمل", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 5.8, img: "accessories/5.png" },
+  { id: 73, name: "كفر آيفون فوشيا", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 5.8, img: "accessories/6.png" },
+  { id: 76, name: "طقم مجوهرات فاخر مع صندوق عرض", cat: "إكسسوارات", sub: "مجوهرات", price: 0.00, img: "accessories/7.png" ,badge: "منتهي" },
+  { id: 77, name: "طقم جوارب رمادي وأسود", cat: "إكسسوارات", sub: "جوارب", price: 2.91, img: "accessories/8.png" },
+  { id: 78, name: "طقم ساعة فضي وذهبي", cat: "إكسسوارات", sub: "ساعات", price: 19.24, img: "accessories/9.png" },
+  { id: 79, name: "طقم أساور ذهبية معلقة", cat: "إكسسوارات", sub: "مجوهرات", price: 2.63, img: "accessories/10.png" },
+  { id: 81, name: "شنطة يد سوداء بتفصيل وشاح", cat: "إكسسوارات", sub: "جنط", price: 7.26, img: "accessories/11.png" },
+  { id: 83, name: "سوار انفينتي ذهبي", cat: "إكسسوارات", sub: "مجوهرات", price: 2.63, img: "accessories/12.png" },
+  { id: 93, name: "شنطة قش بيضاء بزهرة", cat: "إكسسوارات", sub: "جنط", price: 8.71, img: "accessories/14.png" },
+  { id: 94, name: "مشابك شعر خشبية متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/15.png" },
+  { id: 98, name: "شنطة كتف سوداء بفيونكة", cat: "إكسسوارات", sub: "جنط", price: 15.16, img: "accessories/16.png" },
+  { id: 99, name: "جوارب متوسطة الطول للأطفال/البنات 20", cat: "إكسسوارات", sub: " جوارب", price: 5.36, img: "accessories/17.png" },
+  { id: 100, name: "طقم أساور ذهبية 10 قطع", cat: "إكسسوارات", sub: "مجوهرات", price: 3.45, img: "accessories/18.png" },
+  { id: 101, name: "طقم نظارات شمسية 6 أزواج", cat: "إكسسوارات", sub: "نظارات", price: 8.35, img: "accessories/19.png" },
+  { id: 107, name: "طقم شنط قش قطعتين", cat: "إكسسوارات", sub: "جنط", price: 8.8, img: "accessories/20.png" },
+  { id: 108, name: "كفر آيفون أسود بقلب وسلسلة", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 3.18, img: "accessories/21.png" },
+  { id: 230, name: "كفر آيفون أزرق بنقشة فراشات", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 4.27, img: "accessories/42.png" },
+  { id: 231, name: "شنطة يد بيج بحزام أسود", cat: "إكسسوارات", sub: "جنط", price: 7.26, img: "accessories/43.png" },
+  { id: 232, name: "مجموعة ربطات شعر متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 3.18, img: "accessories/44.png" },
+  { id: 112, name: "شنطة يد جلد بني", cat: "إكسسوارات", sub: "جنط", price: 8.36, img: "accessories/22.png" },
+  { id: 119, name: "بونيه ساتان للشعر", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/23.png" },
+  { id: 120, name: "ساعة يد ذهبية", cat: "إكسسوارات", sub: "ساعات", price: 5.36, img: "accessories/24.png" },
+  { id: 122, name: "طقم نظارتين شمسيتين", cat: "إكسسوارات", sub: "نظارات", price: 1.82, img: "accessories/25.png" },
+  { id: 126, name: "طقم خرز DIY لصناعة الإكسسوارات", cat: "إكسسوارات", sub: "مجوهرات", price: 1.84, img: "accessories/26.png" },
+  { id: 134, name: "قطعة حامل هاتف سيليكون بكوب شفط", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 2.36, img: "accessories/27.png" },
+  { id: 135, name: "حامل هاتف بتصميم أرنب", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 2.9, img: "accessories/28.png" },
+  { id: 139, name: "طقم جوارب قصيرة 5 إلى 10 أزواج", cat: "إكسسوارات", sub: "جوارب", price: 4.81, img: "accessories/29.png" },
+  { id: 140, name: "طقم جوارب نسائية متنوعة", cat: "إكسسوارات", sub: "جوارب", price: 5.36, img: "accessories/30.png" },
+  { id: 141, name: "طقم جوارب بيضاء بتفاصيل دانتيل", cat: "إكسسوارات", sub: "جوارب", price: 2.63, img: "accessories/31.png" },
+  { id: 142, name: "طقم جوارب أسود وأبيض 30 زوج", cat: "إكسسوارات", sub: "جوارب", price: 2.36, img: "accessories/32.png" },
+  { id: 144, name: "سوار خرز ملون", cat: "إكسسوارات", sub: "مجوهرات", price: 2.91, img: "accessories/33.png" },
+  { id: 145, name: "طقم جوارب أطفال 5 إلى 10 أزواج", cat: "إكسسوارات", sub: "جوارب", price: 7.53, img: "accessories/35.png" },
+  { id: 147, name: "طقم مشابك شعر ملونة 12 قطعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/36.png" },
+  { id: 148, name: "حامل ربطات شعر دوار 6 قطع", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.9, img: "accessories/37.png" },
+  { id: 150, name: "طقم ساعة وسوار هدية", cat: "إكسسوارات", sub: "ساعات", price: 2.63, img: "accessories/38.png" },
+  { id: 151, name: "سوار خرز فضي وأزرق", cat: "إكسسوارات", sub: "مجوهرات", price: 2.9, img: "accessories/39.png" },
+  { id: 153, name: "طقم ساعة ومجوهرات 5 قطع", cat: "إكسسوارات", sub: "ساعات", price: 3.72, img: "accessories/40.png" },
+  { id: 154, name: "طقم مشابك شعر وردية 100 قطعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.9, img: "accessories/41.png" },
+
+  // مكياج (قسم جديد)
+  { id: 66, name: "طقم مكياج عيون ماسكارا وآيلاينر 3 قطع", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/1.png" },
+  { id: 67, name: "باودر مضغوط", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/2.png" },
+  { id: 68, name: "شنطة تجميل مبطنة متعددة الأقسام", cat: "مكياج", sub: "أدوات تجميل", price: 6.17, img: "makeup/3.png" },
+  { id: 69, name: "ظل عيون كريمي بعلبتين بني وذهبي", cat: "مكياج", sub: "مكياج", price: 5.63, img: "makeup/4.png" },
+  { id: 70, name: "طقم عناية بالبشرة سيروم وبخاخ", cat: "مكياج", sub: "عناية بالبشرة", price: 15.70, img: "makeup/5.png" },
+  { id: 71, name: "زينة أظافر 120 قطعة", cat: "مكياج", sub: "عناية بالأظافر", price: 3.45, img: "makeup/6.png" },
+  { id: 74, name: "طقم فرش مكياج 8 قطع", cat: "مكياج", sub: "أدوات تجميل", price: 11.7, img: "makeup/7.png" },
+  { id: 75, name: "قلم آيلاينر مزدوج الرأس", cat: "مكياج", sub: "مكياج", price: 5.8, img: "makeup/8.png" },
+  { id: 80, name: "جهاز صنفرة أظافر كهربائي", cat: "مكياج", sub: "عناية بالأظافر", price: 3.72, img: "makeup/9.png" },
+  { id: 82, name: "طقم عناية بالأظافر أخضر", cat: "مكياج", sub: "عناية بالأظافر", price: 3.45, img: "makeup/10.png" },
+  { id: 84, name: "بالتة ظلال عيون ملونة", cat: "مكياج", sub: "مكياج", price: 8.62, img: "makeup/11.png" },
+  { id: 85, name: "بالتة ظلال عيون Sahara Heat", cat: "مكياج", sub: "مكياج", price: 6.17, img: "makeup/12.png" },
+  { id: 86, name: "طلاء أظافر بغطاء ذهبي", cat: "مكياج", sub: "عناية بالأظافر", price: 4.54, img: "makeup/13.png" },
+  { id: 87, name: "طقم أقلام تحديد شفاه", cat: "مكياج", sub: "مكياج", price: 3.99, img: "makeup/14.png" },
+  { id: 88, name: "طقم لمعان ومرطب شفاه", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/15.png" },
+  { id: 89, name: "قلم تصحيح كونسيلر", cat: "مكياج", sub: "مكياج", price: 7.52, img: "makeup/16.png" },
+  { id: 90, name: "كونسيلر تغطية عالية", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/17.png" },
+  { id: 91, name: "ماسكارا وآيلاينر ووتربروف أسود", cat: "مكياج", sub: "مكياج", price: 9.71, img: "makeup/18.png" },
+  { id: 92, name: "جهاز تجفيف أظافر UV قابل للشحن", cat: "مكياج", sub: "عناية بالأظافر", price: 5.8, img: "makeup/19.png" },
+  { id: 95, name: "أظافر ضغط جاهزة تصاميم داكنة 10 قطع", cat: "مكياج", sub: "عناية بالأظافر", price: 3.18, img: "makeup/20.png" },
+  { id: 96, name: "أظافر ضغط جاهزة نيود ووردي", cat: "مكياج", sub: "عناية بالأظافر", price: 3.99, img: "makeup/21.png" },
+  { id: 97, name: "طلاء جل أظافر 288 قطعة", cat: "مكياج", sub: "عناية بالأظافر", price: 4.54, img: "makeup/22.png" },
+  { id: 102, name: "بالتة ظلال عيون", cat: "مكياج", sub: "مكياج", price: 10.26, img: "makeup/23.png" },
+  { id: 103, name: "طلاء جل أظافر 36 لون", cat: "مكياج", sub: "عناية بالأظافر", price: 2.63, img: "makeup/24.png" },
+ // { id: 104, name: "طلاء جل أظافر 36 لون - تشكيلة ثانية", cat: "مكياج", sub: "عناية بالأظافر", price: 0, img: "makeup/25.png" },
+  { id: 105, name: "طقم مقص أظافر مغناطيسي", cat: "مكياج", sub: "عناية بالأظافر", price: 2.9, img: "makeup/26.png" },
+  { id: 106, name: "طقم قوالب أظافر مطبقة", cat: "مكياج", sub: "عناية بالأظافر", price: 3.72, img: "makeup/27.png" },
+  { id: 109, name: "طقم شفاه 2 في 1 لاينر ولمعان", cat: "مكياج", sub: "مكياج", price: 7.72, img: "makeup/28.png" },
+  { id: 110, name: "مجموعة مكياج 50 تشمل 10 قطع اسفنجات مكياج", cat: "مكياج", sub: "أدوات تجميل", price: 2.63, img: "makeup/29.png" },
+  { id: 111, name: "عصا بلاش شفافة", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/30.png" },
+  { id: 113, name: "طقم احمر شفاه لامع", cat: "مكياج", sub: "مكياج", price: 8.8, img: "makeup/31.png" },
+  { id: 114, name: "طقم فرش مكياج 15 قطعة مع حافظة", cat: "مكياج", sub: "أدوات تجميل", price: 9.44, img: "makeup/32.png" },
+  { id: 115, name: "عصا هايلايتر", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/33.png" },
+  { id: 116, name: "طقم مجموعة أنامل مكون من خواتم 21/64", cat: "إكسسوارات", sub: "مجوهرات", price: 3.72, img: "makeup/34.png" },
+  { id: 117, name: "طقم تلوين شفاه قابل للتقشير", cat: "مكياج", sub: "مكياج", price: 5.8, img: "makeup/35.png" },
+  { id: 118, name: "مجموعة أدوات الرموش والحواجب", cat: "مكياج", sub: "أدوات تجميل", price: 3.18, img: "makeup/36.png" },
+  { id: 121, name: "جل تصفيف الحواجب", cat: "مكياج", sub: "مكياج", price: 5.8, img: "makeup/37.png" },
+  { id: 123, name: "منظم فرش مكياج للطاولة", cat: "مكياج", sub: "أدوات تجميل", price: 3.72, img: "makeup/38.png" },
+  //{ id: 125, name: "طقم عناية بالجسم صابون وفرشاة تدليك", cat: "مكياج", sub: "عناية بالبشرة", price: 0, img: "makeup/39.png" },
+  { id: 128, name: "قفازات حمام رقيقة مقشرة", cat: "مكياج", sub: "عناية بالبشرة", price: 2.91, img: "makeup/40.png" },
+  { id: 130, name: "قناع نوم على شكل باندا", cat: "مكياج", sub: "عناية بالبشرة", price: 2.91, img: "makeup/41.png" },
+  { id: 132, name: "مجموعة أدوات جمال يومية متكاملة", cat: "مكياج", sub: "أدوات تجميل", price: 2.9, img: "makeup/42.png" },
+  { id: 133, name: "طقم عبوات عناية بالبشرة", cat: "مكياج", sub: "عناية بالبشرة", price: 6.17, img: "makeup/43.png" },
+  { id: 143, name: "طقم فرش مكياج بحافظة فيونكة", cat: "مكياج", sub: "أدوات تجميل", price: 1.82, img: "makeup/44.png" },
+
+  // أدوات منزلية (قسم جديد)
+  { id: 124, name: "خفاقة حليب كهربائية للقهوة", cat: "أدوات منزلية", sub: "", price: 3.72, img: "home/1.png" },
+  { id: 127, name: "طقم مناشف فاخرة 4 إلى 8 قطع", cat: "أدوات منزلية", sub: "", price: 6.17, img: "home/2.png" },
+  { id: 129, name: "مرآة مكياج كبيرة بإضاءة", cat: "أدوات منزلية", sub: "", price: 6.17, img: "home/3.png" },
+  { id: 131, name: "طقم أكواب حرارية ملونة", cat: "أدوات منزلية", sub: "", price: 3.18, img: "home/4.png" },
+  { id: 136, name: "صندوق تنظيم مكياج ومستحضرات", cat: "أدوات منزلية", sub: "", price: 5.36, img: "home/5.png" },
+  { id: 137, name: "طقم حقائب تخزين ملابس", cat: "أدوات منزلية", sub: "", price: 2.36, img: "home/6.png" },
+  { id: 138, name: "آلة خياطة محمولة صغيرة", cat: "أدوات منزلية", sub: "", price: 1.82, img: "home/7.png" },
+  { id: 146, name: "حافظة اقلام أبداعية بسعة كبير", cat: "أدوات منزلية", sub: "", price: 5.26, img: "home/8.png" },
+  { id: 155, name: "جهاز اغلاق حراري محمول", cat: "أدوات منزلية", sub: "", price: 3.18, img: "home/13.png" },
+  { id: 152, name: "كوب حراري بتصميم كرز", cat: "أدوات منزلية", sub: "", price: 14.88, img: "home/9.png" },
+  { id: 156, name: "طقم أغطية مخدات ساتان فاخرة", cat: "أدوات منزلية", sub: "", price: 2.91, img: "home/10.png" },
+  { id: 157, name: "جهاز إزالة وبر الأقمشة قابل للشحن", cat: "أدوات منزلية", sub: "", price: 7.26, img: "home/11.png" },
+  { id: 233, name: "منظم مكتبي متعدد الأدراج", cat: "أدوات منزلية", sub: "", price: 4.86, img: "home/12.png" },
+
+  // أحذية (إضافة أطفال)
+  { id: 149, name: "طقم أحذية أطفال دونات 4 قطع", cat: "أحذية", sub: "أطفال", price: 6.17, img: "shoes/17.png" },
 ];
 
-const categories = ["الكل", "رجالي", "حريمي", "أطفال", "أحذية", "إكسسوارات"];
-const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "حريمي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc" };
+const categories = ["الكل", "رجالي", "حريمي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
+const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "حريمي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home" };
 
 /* ============ التصنيفات الفرعية لكل فئة رئيسية ============ */
 const subcatsByCat = {
   "رجالي": ["ملابس علوية", "أطقم منسقة", "ملابس سفلية", "ملابس دينيم"],
   "حريمي": ["تنانير", "فساتين", "أطقم منسقة", "ملابس علوية", "ملابس سفلية"],
   "أطفال": ["بناتي", "أولادي"],
-  "أحذية": ["صنادل", "كعوب", "كلاسيك"],
-  "إكسسوارات": ["شعر مستعار", "جنط", "مجوهرات"],
+  "أحذية": ["صنادل", "كعوب", "كلاسيك", "أطفال"],
+  "إكسسوارات": ["جنط", "مجوهرات", "ساعات", "اكسسوارات موبايل", "نظارات", "جوارب", "إكسسوارات شعر", "شعر مستعار"],
+  "مكياج": ["مكياج", "عناية بالأظافر", "أدوات تجميل", "عناية بالبشرة"],
 };
 const subKeyMap = {
   "ملابس علوية": "sub_top", "أطقم منسقة": "sub_sets", "ملابس سفلية": "sub_bottom", "ملابس دينيم": "sub_denim",
   "فساتين": "sub_dresses", "تنانير": "sub_skirts", "بناتي": "sub_girls", "أولادي": "sub_boys",
-  "صنادل": "sub_sandals", "كعوب": "sub_heels", "كلاسيك": "sub_classic",
+  "صنادل": "sub_sandals", "كعوب": "sub_heels", "كلاسيك": "sub_classic", "أطفال": "sub_kidshoes",
   "شعر مستعار": "sub_hair", "جنط": "sub_bags", "مجوهرات": "sub_jewelry",
+  "مكياج": "sub_makeup", "عناية بالأظافر": "sub_nailcare", "أدوات تجميل": "sub_beautytools", "عناية بالبشرة": "sub_skincare",
+  "اكسسوارات موبايل": "sub_phoneacc", "نظارات": "sub_sunglasses", "ساعات": "sub_watches", "جوارب": "sub_socks", "إكسسوارات شعر": "sub_hairacc",
 };
 let activeCat = "الكل";
 let activeSub = "الكل";
@@ -308,6 +520,9 @@ document.querySelectorAll(".cat-tile").forEach(tile => {
 });
 
 /* ============ عرض المعرض ============ */
+const shuffleRank = {};
+[...products].sort(() => Math.random() - 0.5).forEach((p, i) => { shuffleRank[p.id] = i; });
+
 const galleryEl = document.getElementById("gallery-grid");
 function renderGallery() {
   galleryEl.innerHTML = "";
@@ -326,7 +541,9 @@ function renderGallery() {
 
   const sortVal = document.getElementById("sortSelect") ? document.getElementById("sortSelect").value : "default";
   if (sortVal === "price-asc") list.sort((a, b) => a.price - b.price);
-  if (sortVal === "price-desc") list.sort((a, b) => b.price - a.price);
+  else if (sortVal === "price-desc") list.sort((a, b) => b.price - a.price);
+  else if (activeCat === "الكل") list.sort((a, b) => shuffleRank[a.id] - shuffleRank[b.id]); // تبويب "الكل": منتجات مخربطة
+  else list.reverse(); // تبويب فئة محددة: آخر منتج تمت إضافته يطلع أول واحد
 
   if (list.length === 0) {
     galleryEl.innerHTML = `<div class="no-results">${t("no_results")}</div>`;
