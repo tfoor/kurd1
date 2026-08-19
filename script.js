@@ -3,6 +3,11 @@ const WHATSAPP_NUMBERS = {
   iq: "9647511429970", // خدمات في كردستان/العراق
   sy: "963984959066",  // خدمات في سوريا — تأكد من الرقم الكامل بصيغة دولية (كود سوريا 963)
 };
+// ⚠️ بدّل الروابط تحت بروابط حسابات الانستغرام الحقيقية متاعك (نفس الروابط موجودة أيضاً بملف index.html بقسم contactModal)
+const INSTAGRAM_LINKS = {
+  iq: "https://www.instagram.com/awar.teter/",
+  sy: "https://www.instagram.com/awar.teter/",
+};
 const CURRENCY = "$";
 const ORDERS_ENABLED = true; // غيّرها إلى false.true لتفعيل إرسال الطلبات عبر واتساب من جديد
 
@@ -52,6 +57,16 @@ const translations = {
     service_off_title: "🚧 الخدمة متوقفة مؤقتاً", service_off_msg: "هذه صفحة تجريبية، وقريباً رح تتوفر جميع الخدمات.", service_off_ok: "تم",
     country_iq: "العراق", country_sy: "سوريا",
     footer_owner: "المالك:", footer_admin: "المسؤول  :",
+    bnav_home: "الرئيسية", bnav_contact: "تواصل", bnav_camera: "بحث بالصورة",
+    contact_title: "تواصل معنا", contact_wa_group: " واتساب", contact_ig_group: " انستغرام",
+    contact_ig_iq: "حساب الصفحة", contact_ig_sy: "حساب اوار",
+    camera_title: "🔎 دوّر بالصورة",
+    camera_hint: "صوّر القطعة أو ارفع صورتها، ورح نلقالك أقرب القطع الموجودة بمتجرنا. (مطابقة تقريبية حسب الألوان والشكل العام)",
+    camera_take: "التقاط صورة", camera_upload: "رفع من المعرض",
+    camera_analyzing: "🔄 جاري تحليل الصورة ومطابقتها بمنتجاتنا...",
+    camera_found: "✨ هاي أقرب القطع اللي لقيناها", camera_none: "😕 ما لقينا قطع مشابهة، جرّب صورة أوضح",
+    camera_error: "⚠️ صار خطأ بقراءة الصورة، جرّب مرة ثانية",
+    settings_title: "الإعدادات", settings_language: "اللغة",
   },
   en: {
     marq1: "🚚 Free shipping on your first order", marq2: "🔥 Discounts up to 40%", marq3: "🆕 New pieces weekly", marq4: "💬 Order directly via WhatsApp",
@@ -86,6 +101,16 @@ const translations = {
     service_off_title: "🚧 Service Temporarily Unavailable", service_off_msg: "This is a demo page. All services will be available soon.", service_off_ok: "OK",
     country_iq: "Iraq", country_sy: "Syria",
     footer_owner: "Owner:", footer_admin: "Page Admin:",
+    bnav_home: "Home", bnav_contact: "Contact", bnav_camera: "Visual Search",
+    contact_title: "Contact Us", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    contact_ig_iq: "Page Account", contact_ig_sy: "Awar Account",
+    camera_title: "🔎 Search by Photo",
+    camera_hint: "Take or upload a photo of the item, and we'll find the closest matches in our store. (Approximate match based on colors and general shape)",
+    camera_take: "Take Photo", camera_upload: "Upload from Gallery",
+    camera_analyzing: "🔄 Analyzing your photo and matching it to our products...",
+    camera_found: "✨ Here are the closest matches we found", camera_none: "😕 No similar items found, try a clearer photo",
+    camera_error: "⚠️ Something went wrong reading the image, please try again",
+    settings_title: "Settings", settings_language: "Language",
   },
   ku: {
     marq1: "🚚 Barkirina belaş bo siparîşa yekem", marq2: "🔥 Daşandin heta 40%", marq3: "🆕 Perçeyên nû hefteyane", marq4: "💬 Rasterast bi WhatsApp siparîş bike",
@@ -120,6 +145,16 @@ const translations = {
     service_off_title: "🚧 Xizmet Demildî Sekinî ye", service_off_msg: "Ev rûpelek ceribandinê ye. Bi zûtirîn dem hemû xizmet berdest dibin.", service_off_ok: "Baş e",
     country_iq: "Iraq", country_sy: "Sûriye",
     footer_owner: "Xwedan:", footer_admin: "Rêvebirê Rûpelê:",
+    bnav_home: "Serekî", bnav_contact: "Têkilî", bnav_camera: "Lêgerîn bi Wêne",
+    contact_title: "Têkilî Bi Me", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    contact_ig_iq: "Hesabê Rûpelê", contact_ig_sy: "Hesabê Awar",
+    camera_title: "🔎 Bi Wêne Bigere",
+    camera_hint: "Wêneyê perçeyê bikişîne an barbike, em ê nêzîktirîn perçeyên li dikana me bibînin. (Lihevkirineke nêzîkî li gorî reng û şeklê giştî)",
+    camera_take: "Wêne Bikişîne", camera_upload: "Ji Galeriyê Barbike",
+    camera_analyzing: "🔄 Wêne tê analîzkirin û bi hilberên me tê berhevdan...",
+    camera_found: "✨ Ev in nêzîktirîn perçeyên ku me dîtin", camera_none: "😕 Tu perçeyên dişibin nehatin dîtin, wêneyeke zelaltir biceribîne",
+    camera_error: "⚠️ Xeletiyek çêbû di xwendina wêne de, dîsa biceribîne",
+    settings_title: "Sazkarî", settings_language: "Ziman",
   },
   tr: {
     marq1: "🚚 İlk siparişte ücretsiz kargo", marq2: "🔥 %40'a varan indirim", marq3: "🆕 Her hafta yeni parçalar", marq4: "💬 WhatsApp'tan doğrudan sipariş ver",
@@ -154,6 +189,16 @@ const translations = {
     service_off_title: "🚧 Hizmet Geçici Olarak Kullanılamıyor", service_off_msg: "Bu bir deneme sayfasıdır. Tüm hizmetler yakında kullanıma sunulacaktır.", service_off_ok: "Tamam",
     country_iq: "Irak", country_sy: "Suriye",
     footer_owner: "Sahibi:", footer_admin: "Sayfa Yöneticisi:",
+    bnav_home: "Ana Sayfa", bnav_contact: "İletişim", bnav_camera: "Fotoğrafla Ara",
+    contact_title: "Bize Ulaşın", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    contact_ig_iq: "Sayfa Hesabı", contact_ig_sy: "Awar Hesabı",
+    camera_title: "🔎 Fotoğrafla Ara",
+    camera_hint: "Ürünün fotoğrafını çek ya da yükle, mağazamızdaki en yakın parçaları bulalım. (Renk ve genel şekle göre yaklaşık eşleşme)",
+    camera_take: "Fotoğraf Çek", camera_upload: "Galeriden Yükle",
+    camera_analyzing: "🔄 Fotoğraf analiz ediliyor ve ürünlerimizle eşleştiriliyor...",
+    camera_found: "✨ Bulduğumuz en yakın parçalar", camera_none: "😕 Benzer ürün bulunamadı, daha net bir fotoğraf dene",
+    camera_error: "⚠️ Fotoğraf okunurken bir hata oluştu, tekrar dene",
+    settings_title: "Ayarlar", settings_language: "Dil",
   }
 };
 
@@ -178,18 +223,16 @@ function applyLanguage(lang) {
     el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
   });
 
-  document.querySelectorAll(".lang-btn").forEach(b => {
+  document.querySelectorAll(".lang-option").forEach(b => {
     b.classList.toggle("active", b.dataset.lang === currentLang);
   });
+  const langLabel = document.getElementById("currentLangLabel");
+  if (langLabel) langLabel.textContent = currentLang.toUpperCase();
 
   renderFilters();
   renderGallery();
   updateCartUI();
 }
-
-document.querySelectorAll(".lang-btn").forEach(btn => {
-  btn.onclick = () => applyLanguage(btn.dataset.lang);
-});
 
 /* ============ نظام المظهر (فاتح / داكن) ============ */
 function applyTheme(theme) {
@@ -529,7 +572,7 @@ function renderGallery() {
   let list = activeCat === "الكل" ? [...products] : products.filter(p => p.cat === activeCat);
   if (activeSub !== "الكل") list = list.filter(p => p.sub === activeSub);
 
-  const searchInput = document.getElementById("searchInput");
+  const searchInput = document.getElementById("globalSearchInput");
   const searchVal = searchInput ? searchInput.value.trim() : "";
   if (searchVal) {
     const q = searchVal.toLowerCase();
@@ -558,9 +601,9 @@ function renderGallery() {
         <img src="${p.img}" alt="${p.name}" ${p.fallback ? `onerror="this.onerror=null;this.src='${p.fallback}'"` : ""} onclick="openLightbox(this.src,'${p.name.replace(/'/g, "\\'")}')">
         <span class="product-id">#${p.id}</span>
         ${p.badge ? `<span class="badge ${p.sale ? 'sale' : ''} ${p.best ? 'best' : ''}">${p.badge}</span>` : ""}
-        <div class="quick-add">
-          <button class="add-btn" data-id="${p.id}"><span>${t("add_btn")}</span></button>
-        </div>
+        <button class="add-btn" data-id="${p.id}" title="${t("add_btn")}">
+          <span class="add-btn-icon">🛒</span>
+        </button>
       </div>
       <div class="card-body">
         <div class="card-cat">${t(catKeyMap[p.cat] || p.cat)}</div>
@@ -574,11 +617,13 @@ function renderGallery() {
   });
 
   document.querySelectorAll(".add-btn").forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
       addToCart(Number(btn.dataset.id));
+      const icon = btn.querySelector(".add-btn-icon");
       btn.classList.add("added");
-      btn.querySelector("span").textContent = t("added_btn");
-      setTimeout(() => { btn.classList.remove("added"); btn.querySelector("span").textContent = t("add_btn"); }, 1200);
+      icon.textContent = "✓";
+      setTimeout(() => { btn.classList.remove("added"); icon.textContent = "🛒"; }, 1200);
     };
   });
   requestAnimationFrame(observeCards);
@@ -589,8 +634,12 @@ function observeCards() {
   const cards = document.querySelectorAll(".card:not(.reveal)");
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("reveal"); io.unobserve(e.target); } });
-  }, { threshold: .15 });
+  }, { threshold: .1 });
   cards.forEach(c => io.observe(c));
+  // ضمان إضافي: أي بطاقة ما ظهرت خلال ثانية (بسبب سكرول برمجي أو تغيّر بالتخطيط) تنكشف تلقائياً
+  setTimeout(() => {
+    cards.forEach(c => { if (!c.classList.contains("reveal")) c.classList.add("reveal"); });
+  }, 900);
 }
 
 /* ============ السلة ============ */
@@ -664,7 +713,7 @@ function closeLightbox() {
   document.body.style.overflow = "";
 }
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeLightbox();
+  if (e.key === "Escape") { closeLightbox(); closeContactModal(); closeCameraModal(); closeSettingsModal(); closeLanguageModal(); }
 });
 
 /* ============ فتح / إغلاق السلة ============ */
@@ -695,6 +744,172 @@ function closeAllPanels() {
   closeNav();
 }
 document.querySelectorAll("#nav a").forEach(a => a.addEventListener("click", closeNav));
+
+/* ============ شريط البحث المنسدل (أيقونة البحث بالزاوية) ============ */
+function toggleSearchBar() {
+  const bar = document.getElementById("searchBar");
+  const opening = !bar.classList.contains("open");
+  bar.classList.toggle("open");
+  if (opening) {
+    setTimeout(() => document.getElementById("globalSearchInput").focus(), 200);
+  }
+}
+function handleGlobalSearch(val) {
+  renderGallery();
+  const gallerySection = document.getElementById("gallery");
+  if (gallerySection) gallerySection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ============ الانتقال للأعلى (زر الرئيسية بالشريط السفلي) ============ */
+function scrollToTop() {
+  closeCameraModal();
+  closeContactModal();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ============ نافذة الإعدادات + اختيار اللغة ============ */
+function openSettingsModal() {
+  document.getElementById("settingsModal").classList.add("show");
+}
+function closeSettingsModal() {
+  document.getElementById("settingsModal").classList.remove("show");
+}
+function openLanguageModal() {
+  closeSettingsModal();
+  document.getElementById("languageModal").classList.add("show");
+}
+function closeLanguageModal() {
+  document.getElementById("languageModal").classList.remove("show");
+}
+function selectLanguageOption(lang) {
+  applyLanguage(lang);
+  closeLanguageModal();
+}
+
+/* ============ نافذة "تواصل معنا" (واتساب + انستغرام) ============ */
+function openContactModal() {
+  document.getElementById("contactModal").classList.add("show");
+}
+function closeContactModal() {
+  document.getElementById("contactModal").classList.remove("show");
+}
+// ربط روابط الانستغرام بإعدادات INSTAGRAM_LINKS تلقائياً
+document.addEventListener("DOMContentLoaded", () => {
+  const igLinks = document.querySelectorAll(".contact-link.ig");
+  if (igLinks[0] && INSTAGRAM_LINKS.iq) igLinks[0].href = INSTAGRAM_LINKS.iq;
+  if (igLinks[1] && INSTAGRAM_LINKS.sy) igLinks[1].href = INSTAGRAM_LINKS.sy;
+});
+
+/* ============ البحث بالصورة (كاميرا) — مطابقة تقريبية بالألوان والنمط العام ============ */
+function openCameraModal() {
+  document.getElementById("cameraModal").classList.add("show");
+}
+function closeCameraModal() {
+  document.getElementById("cameraModal").classList.remove("show");
+}
+
+function loadImageEl(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+// يحسب "بصمة لونية" بسيطة للصورة (شبكة 8×8 من متوسطات الألوان) تُستخدم للمقارنة
+function computeSignature(img) {
+  const canvas = document.getElementById("visionCanvas");
+  const ctx = canvas.getContext("2d");
+  const N = 8;
+  canvas.width = N; canvas.height = N;
+  ctx.clearRect(0, 0, N, N);
+  ctx.drawImage(img, 0, 0, N, N);
+  const data = ctx.getImageData(0, 0, N, N).data;
+  const sig = [];
+  for (let i = 0; i < data.length; i += 4) {
+    sig.push(data[i] / 255, data[i + 1] / 255, data[i + 2] / 255);
+  }
+  return sig;
+}
+
+function sigDistance(a, b) {
+  let s = 0;
+  for (let i = 0; i < a.length; i++) { const d = a[i] - b[i]; s += d * d; }
+  return s;
+}
+
+async function ensureProductSignature(p) {
+  if (p.__sig) return p.__sig;
+  if (p.__sig === null) return null; // فشلت قبل، ما نعيد المحاولة
+  try {
+    const img = await loadImageEl(p.img);
+    p.__sig = computeSignature(img);
+  } catch (e) {
+    p.__sig = null;
+  }
+  return p.__sig;
+}
+
+let cameraSearchToken = 0;
+async function handleCameraFile(file) {
+  if (!file) return;
+  const myToken = ++cameraSearchToken;
+  const status = document.getElementById("cameraStatus");
+  const preview = document.getElementById("cameraPreview");
+  const results = document.getElementById("cameraResults");
+  results.innerHTML = "";
+  const url = URL.createObjectURL(file);
+  preview.innerHTML = `<img src="${url}" alt="صورة القطعة">`;
+  status.textContent = t("camera_analyzing");
+  status.classList.add("loading");
+
+  try {
+    const img = await loadImageEl(url);
+    const targetSig = computeSignature(img);
+    const scored = [];
+    for (const p of products) {
+      if (myToken !== cameraSearchToken) return; // المستخدم رفع صورة جديدة، نلغي القديمة
+      const sig = await ensureProductSignature(p);
+      if (sig) scored.push({ p, dist: sigDistance(targetSig, sig) });
+    }
+    if (myToken !== cameraSearchToken) return;
+    scored.sort((a, b) => a.dist - b.dist);
+    const top = scored.slice(0, 8);
+    status.textContent = top.length ? t("camera_found") : t("camera_none");
+    status.classList.remove("loading");
+    renderCameraResults(top);
+  } catch (e) {
+    if (myToken !== cameraSearchToken) return;
+    status.textContent = t("camera_error");
+    status.classList.remove("loading");
+  }
+}
+
+function renderCameraResults(list) {
+  const results = document.getElementById("cameraResults");
+  if (!list.length) { results.innerHTML = ""; return; }
+  results.innerHTML = list.map(({ p }) => `
+    <div class="cam-result-card" onclick="goToProduct(${p.id})">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="cam-result-info">
+        <span class="cam-result-id">#${p.id}</span>
+        <span class="cam-result-name">${p.name}</span>
+        <span class="cam-result-price">${p.price}${CURRENCY}</span>
+      </div>
+    </div>`).join("");
+}
+
+function goToProduct(id) {
+  closeCameraModal();
+  const bar = document.getElementById("searchBar");
+  const gi = document.getElementById("globalSearchInput");
+  if (gi) gi.value = String(id);
+  if (bar) bar.classList.add("open");
+  renderGallery();
+  const gallerySection = document.getElementById("gallery");
+  if (gallerySection) gallerySection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 /* ============ نافذة "الخدمة متوقفة مؤقتاً" ============ */
 function openServiceModal() {

@@ -27,21 +27,25 @@
       <li><a href="#gallery" data-i18n="nav_shop">تسوّق</a></li>
       <li><a href="#deals" data-i18n="nav_deals">عروض</a></li>
       <li><a href="#about" data-i18n="nav_about">من نحن</a></li>
-      <li><a href="#contact" data-i18n="nav_contact">تواصل معنا</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+      
+        <li><a href="#" class="menu-language-btn" onclick="openLanguageModal()"> لغة</a></li>
     </ul>
   </nav>
   <div class="header-actions">
-    <div class="lang-switch" id="langSwitch">
-      <button class="lang-btn" data-lang="ar">AR</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="ku">KU</button>
-      <button class="lang-btn" data-lang="tr">TR</button>
-    </div>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
     <button class="cart-btn" onclick="openCart()">🛍️<span class="cart-count" id="cartCount">0</span></button>
+    <button class="search-fab" id="searchFab" onclick="toggleSearchBar()" title="بحث">🔍</button>
     <button class="burger" onclick="toggleNav()">☰</button>
   </div>
 </header>
+
+<div class="search-bar" id="searchBar">
+  <div class="search-bar-inner">
+    <input type="text" id="globalSearchInput" class="search-input global-search" placeholder="🔍 بحث برقم المنتج أو الاسم" data-i18n-placeholder="search_placeholder" oninput="handleGlobalSearch(this.value)">
+    <button class="search-bar-close" onclick="toggleSearchBar()">✕</button>
+  </div>
+</div>
 
 <section class="hero">
   <a href="#gallery" class="top-banner">
@@ -100,7 +104,6 @@
   <div class="toolbar">
     <div class="filters" id="filters"></div>
     <div class="toolbar-right">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 بحث برقم المنتج أو الاسم" data-i18n-placeholder="search_placeholder" oninput="renderGallery()">
       <select class="sort-select" id="sortSelect" onchange="renderGallery()">
         <option value="default" data-i18n="sort_default">الترتيب: افتراضي</option>
         <option value="price-asc" data-i18n="sort_asc">السعر: من الأقل للأعلى</option>
@@ -174,6 +177,137 @@
     <p data-i18n="service_off_msg">هذه صفحة تجريبية، وقريباً رح توفر جميع الخدمات.</p>
     <button class="btn-accent" onclick="closeServiceModal()" data-i18n="service_off_ok">تم</button>
   </div>
+</div>
+
+<!-- نافذة الإعدادات -->
+<div class="settings-modal" id="settingsModal" onclick="closeSettingsModal()">
+  <div class="settings-modal-box" onclick="event.stopPropagation()">
+    <div class="camera-modal-head">
+      <h3 data-i18n="settings_title">الإعدادات</h3>
+      <button class="lightbox-close cam-close" onclick="closeSettingsModal()">✕</button>
+    </div>
+    <button class="settings-row" onclick="openLanguageModal()">
+      <span class="settings-row-label">🌐 <span data-i18n="settings_language">اللغة</span></span>
+      <span class="settings-row-right"><span class="settings-row-value" id="currentLangLabel">AR</span><span class="settings-row-arrow">‹</span></span>
+    </button>
+  </div>
+</div>
+
+<!-- نافذة اختيار اللغة -->
+<div class="language-modal" id="languageModal" onclick="closeLanguageModal()">
+  <div class="settings-modal-box" onclick="event.stopPropagation()">
+    <div class="camera-modal-head">
+      <h3 data-i18n="settings_language">اللغة</h3>
+      <button class="lightbox-close cam-close" onclick="closeLanguageModal()">✕</button>
+    </div>
+    <button class="lang-option" data-lang="ar" onclick="selectLanguageOption('ar')"><span>العربية</span><span class="lang-check">✓</span></button>
+    <button class="lang-option" data-lang="en" onclick="selectLanguageOption('en')"><span>English</span><span class="lang-check">✓</span></button>
+    <button class="lang-option" data-lang="ku" onclick="selectLanguageOption('ku')"><span>Kurd</span><span class="lang-check">✓</span></button>
+    <button class="lang-option" data-lang="tr" onclick="selectLanguageOption('tr')"><span>Türkçe</span><span class="lang-check">✓</span></button>
+  </div>
+</div>
+
+<!-- نافذة تواصل معنا (واتساب + انستغرام) -->
+<div class="contact-modal" id="contactModal" onclick="closeContactModal()">
+  <div class="contact-modal-box" onclick="event.stopPropagation()">
+    <button class="lightbox-close cam-close" onclick="closeContactModal()" style="float:left">✕</button>
+    <h3 data-i18n="contact_title">تواصل معنا</h3>
+<div class="contact-group">
+  <div class="contact-group-title">
+    <img src="logo2/whatsapp.png" class="contact-title-icon" alt="واتساب">
+    <span data-i18n="contact_wa_group">واتساب</span>
+  </div>
+
+<a class="contact-link wa" href="https://wa.me/9647511429970" target="_blank" rel="noopener">
+  <img src="logo2/whatsapp.png" class="contact-logo" alt="العراق">
+  <span data-i18n="footer_country">العراق</span> — 751 1429970
+</a>
+
+<a class="contact-link wa" href="https://wa.me/963984959066" target="_blank" rel="noopener">
+  <img src="logo2/whatsapp.png" class="contact-logo" alt="سوريا">
+  <span data-i18n="footer_country2">سوريا</span> — 984 959066
+</a>
+</div>
+<div class="contact-group">
+  <div class="contact-group-title">
+    <img src="logo2/instagram.png" class="contact-title-icon" alt="انستغرام">
+    <span data-i18n="contact_ig_group">انستغرام</span>
+  </div>
+
+  <a class="contact-link ig" href="https://www.instagram.com/awar.teter/" target="_blank" rel="noopener">
+    <img src="logo2/instagram.png" class="contact-logo" alt="حساب اوار">
+    <span data-i18n="contact_ig_iq">حساب اوار</span>
+  </a>
+
+  <a class="contact-link ig" href="https://instagram.com/" target="_blank" rel="noopener">
+    <img src="logo2/instagram.png" class="contact-logo" alt="حساب صفحة">
+    <span data-i18n="contact_ig_sy">حساب صفحة</span>
+  </a>
+</div>
+  </div>
+</div>
+
+<!-- نافذة البحث بالصورة (كاميرا) -->
+<div class="camera-modal" id="cameraModal" onclick="closeCameraModal()">
+  <div class="camera-modal-box" onclick="event.stopPropagation()">
+    <div class="camera-modal-head">
+      <h3 data-i18n="camera_title">🔎 دوّر بالصورة</h3>
+      <button class="lightbox-close cam-close" onclick="closeCameraModal()">✕</button>
+    </div>
+    <p class="camera-hint" data-i18n="camera_hint">صوّر القطعة أو ارفع صورتها، ورح نلقالك أقرب القطع الموجودة بمتجرنا. (مطابقة تقريبية حسب الألوان والشكل العام)</p>
+    <div class="camera-upload-row">
+      <label class="camera-upload-btn">
+        📷 <span data-i18n="camera_take">التقاط صورة</span>
+        <input type="file" accept="image/*" capture="environment" id="cameraCaptureInput" onchange="handleCameraFile(this.files[0])">
+      </label>
+      <label class="camera-upload-btn secondary">
+        🖼️ <span data-i18n="camera_upload">رفع من المعرض</span>
+        <input type="file" accept="image/*" id="cameraUploadInput" onchange="handleCameraFile(this.files[0])">
+      </label>
+    </div>
+    <div class="camera-preview" id="cameraPreview"></div>
+    <div class="camera-status" id="cameraStatus"></div>
+    <div class="camera-results" id="cameraResults"></div>
+  </div>
+</div>
+<canvas id="visionCanvas" width="8" height="8" style="display:none"></canvas>
+<script>
+let lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", () => {
+  const nav = document.querySelector(".bottom-nav");
+  if (!nav) return;
+
+  if (window.scrollY > lastScrollY && window.scrollY > 80) {
+    nav.classList.add("nav-hidden");
+  } else {
+    nav.classList.remove("nav-hidden");
+  }
+
+  lastScrollY = window.scrollY;
+});
+</script>
+<!-- شريط تنقّل سفلي (موبايل) -->
+<div class="bottom-nav">
+
+<button class="bnav-btn" onclick="openContactModal()">
+  <span class="bnav-icon">
+    <img src="logo2/contact.png" alt="تواصل">
+  </span>
+  <span class="bnav-label" data-i18n="bnav_contact">تواصل</span>
+</button>
+<button class="bnav-btn" onclick="scrollToTop()">
+  <span class="bnav-icon">
+    <img src="logo2/home.png" alt="الرئيسية">
+  </span>
+  <span class="bnav-label" data-i18n="bnav_home">الرئيسية</span>
+</button>
+  <button class="bnav-btn bnav-camera" onclick="openCameraModal()">
+  <span class="bnav-icon">
+    <img src="logo2/camera.png" alt="بحث بالصورة">
+  </span>
+  <span class="bnav-label" data-i18n="bnav_camera">بحث بالصورة</span>
+</button>
 </div>
 
 <script src="script.js"></script>
