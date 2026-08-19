@@ -5,7 +5,7 @@ const WHATSAPP_NUMBERS = {
 };
 // ⚠️ بدّل الروابط تحت بروابط حسابات الانستغرام الحقيقية متاعك (نفس الروابط موجودة أيضاً بملف index.html بقسم contactModal)
 const INSTAGRAM_LINKS = {
-  iq: "https://www.instagram.com/dilbershmo_divana/",
+  iq: "https://www.instagram.com/style__roj/",
   sy: "https://www.instagram.com/awar.teter/",
 };
 const CURRENCY = "$";
