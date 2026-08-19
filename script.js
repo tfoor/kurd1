@@ -5,7 +5,7 @@ const WHATSAPP_NUMBERS = {
 };
 // ⚠️ بدّل الروابط تحت بروابط حسابات الانستغرام الحقيقية متاعك (نفس الروابط موجودة أيضاً بملف index.html بقسم contactModal)
 const INSTAGRAM_LINKS = {
-  iq: "https://www.instagram.com/awar.teter/",
+  iq: "https://www.instagram.com/dilbershmo_divana/",
   sy: "https://www.instagram.com/awar.teter/",
 };
 const CURRENCY = "$";
@@ -57,7 +57,7 @@ const translations = {
     service_off_title: "🚧 الخدمة متوقفة مؤقتاً", service_off_msg: "هذه صفحة تجريبية، وقريباً رح تتوفر جميع الخدمات.", service_off_ok: "تم",
     country_iq: "العراق", country_sy: "سوريا",
     footer_owner: "المالك:", footer_admin: "المسؤول  :",
-    bnav_home: "الرئيسية", bnav_contact: "تواصل", bnav_camera: "بحث بالصورة",
+    bnav_home: "الرئيسية", bnav_contact: "تواصل", bnav_camera: "بحث بالصورة", bnav_language: "لغة",
     contact_title: "تواصل معنا", contact_wa_group: " واتساب", contact_ig_group: " انستغرام",
     contact_ig_iq: "حساب الصفحة", contact_ig_sy: "حساب اوار",
     camera_title: "🔎 دوّر بالصورة",
@@ -101,8 +101,8 @@ const translations = {
     service_off_title: "🚧 Service Temporarily Unavailable", service_off_msg: "This is a demo page. All services will be available soon.", service_off_ok: "OK",
     country_iq: "Iraq", country_sy: "Syria",
     footer_owner: "Owner:", footer_admin: "Page Admin:",
-    bnav_home: "Home", bnav_contact: "Contact", bnav_camera: "Visual Search",
-    contact_title: "Contact Us", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    bnav_home: "Home", bnav_contact: "Contact", bnav_camera: "Visual Search", bnav_language: "Language",
+    contact_title: "Contact Us", contact_wa_group: " WhatsApp", contact_ig_group: " Instagram",
     contact_ig_iq: "Page Account", contact_ig_sy: "Awar Account",
     camera_title: "🔎 Search by Photo",
     camera_hint: "Take or upload a photo of the item, and we'll find the closest matches in our store. (Approximate match based on colors and general shape)",
@@ -145,8 +145,8 @@ const translations = {
     service_off_title: "🚧 Xizmet Demildî Sekinî ye", service_off_msg: "Ev rûpelek ceribandinê ye. Bi zûtirîn dem hemû xizmet berdest dibin.", service_off_ok: "Baş e",
     country_iq: "Iraq", country_sy: "Sûriye",
     footer_owner: "Xwedan:", footer_admin: "Rêvebirê Rûpelê:",
-    bnav_home: "Serekî", bnav_contact: "Têkilî", bnav_camera: "Lêgerîn bi Wêne",
-    contact_title: "Têkilî Bi Me", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    bnav_home: "Serekî", bnav_contact: "Têkilî", bnav_camera: "Lêgerîn bi Wêne", bnav_language: "Ziman",
+    contact_title: "Têkilî Bi Me", contact_wa_group: " WhatsApp", contact_ig_group: " Instagram",
     contact_ig_iq: "Hesabê Rûpelê", contact_ig_sy: "Hesabê Awar",
     camera_title: "🔎 Bi Wêne Bigere",
     camera_hint: "Wêneyê perçeyê bikişîne an barbike, em ê nêzîktirîn perçeyên li dikana me bibînin. (Lihevkirineke nêzîkî li gorî reng û şeklê giştî)",
@@ -189,8 +189,8 @@ const translations = {
     service_off_title: "🚧 Hizmet Geçici Olarak Kullanılamıyor", service_off_msg: "Bu bir deneme sayfasıdır. Tüm hizmetler yakında kullanıma sunulacaktır.", service_off_ok: "Tamam",
     country_iq: "Irak", country_sy: "Suriye",
     footer_owner: "Sahibi:", footer_admin: "Sayfa Yöneticisi:",
-    bnav_home: "Ana Sayfa", bnav_contact: "İletişim", bnav_camera: "Fotoğrafla Ara",
-    contact_title: "Bize Ulaşın", contact_wa_group: "📲 WhatsApp", contact_ig_group: "📸 Instagram",
+    bnav_home: "Ana Sayfa", bnav_contact: "İletişim", bnav_camera: "Fotoğrafla Ara", bnav_language: "Dil",
+    contact_title: "Bize Ulaşın", contact_wa_group: " WhatsApp", contact_ig_group: " Instagram",
     contact_ig_iq: "Sayfa Hesabı", contact_ig_sy: "Awar Hesabı",
     camera_title: "🔎 Fotoğrafla Ara",
     camera_hint: "Ürünün fotoğrafını çek ya da yükle, mağazamızdaki en yakın parçaları bulalım. (Renk ve genel şekle göre yaklaşık eşleşme)",
