@@ -9,6 +9,9 @@
   --sale:#1FAE7A;
   --sale-soft:#EAF7F1;
   --shadow: 0 10px 26px rgba(36,30,46,0.08);
+  --nav-glass: rgba(255,255,255,0.78);
+  --nav-border: rgba(214,61,110,0.20);
+  --nav-shadow: 0 14px 32px rgba(214,61,110,0.18), 0 2px 8px rgba(36,30,46,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 [data-theme="dark"]{
   --bg:#151119;
@@ -21,6 +24,9 @@
   --sale:#2FD996;
   --sale-soft:#173A2C;
   --shadow: 0 10px 26px rgba(0,0,0,0.35);
+  --nav-glass: rgba(31,26,38,0.80);
+  --nav-border: rgba(255,127,163,0.25);
+  --nav-shadow: 0 14px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
@@ -314,25 +320,28 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
 .bottom-nav{
   display:none;
   position:fixed;
-  bottom:8px;
+  bottom:14px;
   left:50%;
   transform:translateX(-50%);
-  width:250px;
   z-index:70;
 
-  background:rgba(28,28,30,0.58);
+  align-items:center;
+  gap:6px;
 
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  background:var(--nav-glass);
 
-  border:1px solid rgba(255,255,255,0.14) !important;
-  border-radius:18px;
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
 
-  padding:4px 8px;
+  border:1px solid var(--nav-border) !important;
+  border-radius:28px;
 
-  box-shadow:
-    0 6px 20px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.10);
+  padding:7px 9px;
+
+  box-shadow:var(--nav-shadow);
+
+  transition:transform .45s cubic-bezier(.4,0,.2,1), gap .35s ease, padding .35s ease, box-shadow .35s ease, background .3s ease, border-color .3s ease;
+  will-change:transform;
 }
 
 /* ===== CART DRAWER ===== */
@@ -378,55 +387,45 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
+  gap:4px;
 }
 
 .bnav-btn{
   display:flex;
-  flex-direction:column;
   align-items:center;
-  gap:6px;
-  padding:8px 12px;
-  border-radius:12px;
-  transition:.25s;
-  color:rgba(255,255,255,0.7);
+  justify-content:center;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  color:var(--ink-soft);
+  background:transparent;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), width .3s ease, height .3s ease, background .25s ease, color .25s ease, box-shadow .3s ease;
   position:relative;
 }
 
 .bnav-btn:hover,
-.bnav-btn:active{
-  color:#fff;
-  background:rgba(255,255,255,0.15);
-  transform:scale(1.05);
+.bnav-btn:focus-visible{
+  color:var(--accent-deep);
+  background:var(--accent-soft);
 }
 
-.bnav-btn:active::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:rgba(255,255,255,0.3);
-  border-radius:12px;
-  animation:pulse-white .5s ease-out;
+.bnav-btn:active{
+  transform:scale(.88);
 }
 
 .bnav-icon{
-  width:34px;
-  height:34px;
-
-  border-radius:50%;
-
-  background:rgba(255,255,255,0.22);
-  border:1px solid rgba(255,255,255,0.28);
-
+  width:22px;
+  height:22px;
   display:flex;
   align-items:center;
   justify-content:center;
+  transition:width .3s ease, height .3s ease, transform .3s ease;
+}
 
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-
-  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+.bnav-icon svg{
+  width:100%;
+  height:100%;
+  display:block;
 }
 
 .bnav-label{
@@ -434,38 +433,77 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   font-weight:600;
 }
 
-.bnav-language .bnav-icon{
-  font-size:20px;
+/* زر الكاميرا: زر بارز بلون العلامة التجارية (CTA رئيسي) */
+.bnav-camera{
+  width:52px;
+  height:52px;
+  color:#fff;
+  background:linear-gradient(145deg,var(--accent),var(--accent-deep));
+  box-shadow:0 8px 18px rgba(214,61,110,0.42), inset 0 1px 0 rgba(255,255,255,0.35);
+  transform:translateY(-6px);
 }
+.bnav-camera .bnav-icon{width:24px;height:24px;}
+.bnav-camera:hover,
+.bnav-camera:focus-visible{
+  color:#fff;
+  background:linear-gradient(145deg,var(--accent-deep),var(--accent));
+}
+.bnav-camera:active{transform:translateY(-6px) scale(.9);}
 
-  .bnav-btn:hover,
-  .bnav-btn:active{
-    color:var(--accent-deep);
-    background:var(--accent-soft);
-  }
-
-  .bnav-icon{
-  width:28px;
-  height:28px;
+/* نبضة/توهج عند الضغط على أي زر (تُفعَّل عبر JS) */
+.bnav-btn.bnav-pop{animation:bnavPop .45s cubic-bezier(.34,1.56,.64,1);}
+.bnav-btn.bnav-pop .bnav-icon{animation:bnavIconPop .45s cubic-bezier(.34,1.56,.64,1);}
+.bnav-btn.bnav-pop::after{
+  content:'';
+  position:absolute;
+  inset:-4px;
   border-radius:50%;
-  background:rgba(255,255,255,0.22);
-  border:1px solid rgba(255,255,255,0.28);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  background:radial-gradient(circle,rgba(214,61,110,0.38),rgba(214,61,110,0) 70%);
+  animation:bnavGlow .5s ease-out;
+  pointer-events:none;
+}
+.bnav-camera.bnav-pop::after{
+  inset:-6px;
+  background:radial-gradient(circle,rgba(255,92,138,0.55),rgba(255,92,138,0) 70%);
 }
 
-.bnav-icon img{
-  width:20px;
-  height:20px;
-  object-fit:contain;
-  border-radius:0;
+@keyframes bnavPop{
+  0%{transform:scale(1);}
+  35%{transform:scale(.86);}
+  65%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
+.bnav-camera.bnav-pop{animation-name:bnavPopCamera;}
+@keyframes bnavPopCamera{
+  0%{transform:translateY(-6px) scale(1);}
+  35%{transform:translateY(-6px) scale(.86);}
+  65%{transform:translateY(-6px) scale(1.1);}
+  100%{transform:translateY(-6px) scale(1);}
+}
+@keyframes bnavIconPop{
+  0%{transform:scale(1) rotate(0);}
+  40%{transform:scale(.78) rotate(-4deg);}
+  70%{transform:scale(1.15) rotate(3deg);}
+  100%{transform:scale(1) rotate(0);}
+}
+@keyframes bnavGlow{
+  0%{opacity:0;transform:scale(.6);}
+  40%{opacity:1;}
+  100%{opacity:0;transform:scale(1.35);}
 }
 
-  .bnav-camera{color:var(--ink);}
+/* حالة "مصغّر" أثناء التمرير للأسفل */
+.bottom-nav.nav-compact{
+  gap:2px;
+  padding:5px 6px;
+  transform:translateX(-50%) scale(.88);
+  box-shadow:0 6px 16px rgba(214,61,110,0.14), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+.bottom-nav.nav-compact .bnav-btn{width:38px;height:38px;}
+.bottom-nav.nav-compact .bnav-camera{width:42px;height:42px;transform:translateY(-4px);}
+.bottom-nav.nav-compact .bnav-camera:active{transform:translateY(-4px) scale(.9);}
+.bottom-nav.nav-compact .bnav-icon{width:18px;height:18px;}
+.bottom-nav.nav-compact .bnav-camera .bnav-icon{width:19px;height:19px;}
   nav{position:fixed;top:0;right:0;height:100vh;width:min(280px,80vw);background:var(--surface);flex-direction:column;padding:100px 30px;transform:translateX(100%);transition:.35s;z-index:82;box-shadow:-10px 0 30px rgba(0,0,0,.1);}
   nav.open{transform:translateX(0);}
   nav ul{flex-direction:column;gap:26px;}
@@ -487,15 +525,6 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   .price-display{font-size:14px;}
   .price-old{font-size:11px;}
 
-  .bottom-nav{
-  transition: transform .3s ease, opacity .3s ease;
-}
-
- .bottom-nav.nav-hidden{
-  transform: translateY(110%);
-  opacity: 0;
-  pointer-events: none;
-}
 }
 
 /* ===== شاشات صغيرة جداً (موبايل ضيق) ===== */
@@ -528,7 +557,10 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   .signature p{font-size:14px;}
   .footer-grid{gap:22px;}
   footer{padding:40px 5% 18px;}
-  .bnav-btn{padding:6px 10px;}
+  .bnav-btn{width:42px;height:42px;}
+  .bnav-camera{width:48px;height:48px;}
+  .bnav-icon{width:20px;height:20px;}
+  .bnav-camera .bnav-icon{width:22px;height:22px;}
   .bnav-label{font-size:9.5px;}
   .contact-modal-box,.camera-modal-box,.settings-modal-box{padding:20px 16px;}
 }
@@ -564,22 +596,4 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   display:inline-block;
   vertical-align:middle;
   margin-left:5px;
-}
-
-
-.bnav-camera .bnav-icon img{
-  width:28px !important;
-  height:28px !important;
-  object-fit:contain;
-  border-radius:0 !important;
-  background:none !important;
-  box-shadow:none !important;
-}
-
-.bnav-btn{
-  min-width:48px;
-  padding:2px 5px;
-  gap:1px;
-  color:#fff;
-  font-size:8px;
 }

@@ -271,41 +271,74 @@
   </div>
 </div>
 <canvas id="visionCanvas" width="8" height="8" style="display:none"></canvas>
-<script>
-let lastScrollY = window.scrollY;
-
-window.addEventListener("scroll", () => {
-  const nav = document.querySelector(".bottom-nav");
-  if (!nav) return;
-
-  if (window.scrollY > lastScrollY && window.scrollY > 80) {
-    nav.classList.add("nav-hidden");
-  } else {
-    nav.classList.remove("nav-hidden");
-  }
-
-  lastScrollY = window.scrollY;
-});
-</script>
 <!-- شريط تنقّل سفلي (موبايل) -->
 <div class="bottom-nav">
 
-<button class="bnav-btn" onclick="openContactModal()">
+<button class="bnav-btn" onclick="openContactModal()" aria-label="تواصل معنا">
   <span class="bnav-icon">
-    <img src="logo2/contact.png" alt="تواصل">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M21 11.5c0 4.14-3.94 7.5-8.8 7.5-1.02 0-2-.14-2.92-.4L4 20l1.24-3.72C3.86 15.14 3 13.4 3 11.5 3 7.36 6.94 4 11.8 4S21 7.36 21 11.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="8.6" cy="11.5" r="1" fill="currentColor"/>
+      <circle cx="12" cy="11.5" r="1" fill="currentColor"/>
+      <circle cx="15.4" cy="11.5" r="1" fill="currentColor"/>
+    </svg>
   </span>
 </button>
-<button class="bnav-btn" onclick="scrollToTop()">
+<button class="bnav-btn" onclick="scrollToTop()" aria-label="الرئيسية">
   <span class="bnav-icon">
-    <img src="logo2/home.png" alt="الرئيسية">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 10.5 12 4l8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 9.5V19a1 1 0 0 0 1 1h3.2v-4.6a1.8 1.8 0 0 1 1.8-1.8v0a1.8 1.8 0 0 1 1.8 1.8V20H17a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </span>
 </button>
-<button class="bnav-btn bnav-camera" onclick="openCameraModal()">
+<button class="bnav-btn bnav-camera" onclick="openCameraModal()" aria-label="بحث بالصورة">
   <span class="bnav-icon">
-    <img src="logo2/camera.png" alt="بحث بالصورة">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 8.6A1.6 1.6 0 0 1 5.6 7h2L8.7 5.4h6.6L16.4 7h2A1.6 1.6 0 0 1 20 8.6V17a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 17V8.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle cx="12" cy="12.3" r="3.3" stroke="currentColor" stroke-width="1.7"/>
+    </svg>
   </span>
 </button>
 </div>
+
+<script>
+(function(){
+  const nav = document.querySelector(".bottom-nav");
+  if (!nav) return;
+
+  /* تصغير ناعم للشريط أثناء التمرير للأسفل، ورجوعه لحجمه عند التوقف أو الصعود للأعلى */
+  let lastY = window.scrollY;
+  let stopTimer = null;
+
+  function onScroll(){
+    const y = window.scrollY;
+
+    if (y > lastY && y > 80) {
+      nav.classList.add("nav-compact");
+    } else if (y < lastY) {
+      nav.classList.remove("nav-compact");
+    }
+    lastY = y;
+
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(() => nav.classList.remove("nav-compact"), 650);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  /* نبضة/توهج ناعمة عند الضغط على أي زر */
+  nav.querySelectorAll(".bnav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.remove("bnav-pop");
+      void btn.offsetWidth; // إعادة تشغيل الأنيميشن
+      btn.classList.add("bnav-pop");
+    });
+    btn.addEventListener("animationend", (e) => {
+      if (e.target === btn) btn.classList.remove("bnav-pop");
+    });
+  });
+})();
+</script>
 
 <script src="script.js"></script>
 </body>
