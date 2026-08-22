@@ -31,7 +31,7 @@ const translations = {
     hero_eyebrow: "تشكيلة ٢٠٢٦", hero_title: "ستايلك يبدأ<br>من هون",
     hero_desc: "مئات القطع المختارة بعناية بأسعار تناسبك، وطلب سهل عبر واتساب بضغطة واحدة.",
     hero_cta1: "تسوّق الآن", hero_cta2: "شاهد العروض", hero_tag: "الأكثر طلباً 🔥",
-    cat_men: "رجالي", cat_women: "حريمي", cat_girls: "بناتي", cat_acc: "إكسسوارات", cat_all: "الكل",
+    cat_men: "رجالي", cat_women: "نسائي", cat_girls: "بناتي", cat_acc: "إكسسوارات", cat_all: "الكل",
     cat_kids: "أطفال", cat_shoes: "أحذية", cat_makeup: "مكياج", cat_home: "أدوات منزلية",
     sub_top: "ملابس علوية", sub_sets: "أطقم منسقة", sub_bottom: "ملابس سفلية", sub_denim: "ملابس دينيم",
     sub_dresses: "فساتين", sub_skirts: "تنانير", sub_girls: "بناتي", sub_boys: "أولادي",
@@ -45,7 +45,7 @@ const translations = {
     gal_eyebrow: "المعرض", gal_title: "اكتشف تشكيلتنا",
     sort_default: "الترتيب: افتراضي", sort_asc: "السعر: من الأقل للأعلى", sort_desc: "السعر: من الأعلى للأقل",
     sig_title: "ستايلك، قرارك", sig_desc: "في ستايل روج منختار كل قطعة بعين تهتم بالتفاصيل، ونوصلها لباب بيتك بأسهل طريقة. جودة تستمر، وأسعار تناسب الكل.",
-    footer_brand: "ستايل روج", footer_brand_desc: "تسوّق أزياء رجالي، حريمي، وبناتي بأسلوب عصري وخدمة طلب مباشرة عبر واتساب.",
+    footer_brand: "ستايل روج", footer_brand_desc: "تسوّق أزياء رجالي، نسائي، وبناتي بأسلوب عصري وخدمة طلب مباشرة عبر واتساب.",
     footer_links: "روابط سريعة", footer_contact: "تواصل معنا", footer_wa: "واتساب:", footer_country: "العراق", footer_country2: "سوريا",
     footer_bottom: "© 2026 ستايل روج – جميع الحقوق محفوظة",
     cart_title: "سلة المشتريات", cart_total: "الإجمالي", cart_wa_btn: "إرسال الطلب عبر واتساب",
@@ -251,7 +251,7 @@ applyTheme(localStorage.getItem("boutique_theme") || "light");
 
 
 /* ============ بيانات المنتجات ============ */
-const products = [
+const allProducts = [
   // أطفال (مثال جاهز - فعّل السطر لما توصل الصور)
   // { id: 7, name: "طقم رومبير وردي بدانتيل", cat: "أطفال", sub: "بناتي", price: 38, img: "images/children/product-romper.webp", badge: "جديد" },
   // { id: 10, name: "فستان قميصي وردي بحزام", cat: "أطفال", sub: "بناتي", price: 42, img: "images/children/product-dress.webp" },
@@ -286,85 +286,85 @@ const products = [
   { id: 62, name: "شورت رياضي رجالي قطعتين", cat: "رجالي", sub: "ملابس سفلية", price: 17.51, color: "أبيض", img: "men's/17.webp", badge: "" },
 
 
-  // حريمي
-  { id: 12, name: "تنورة طويلة بيضاء بطبقات", cat: "حريمي", sub: "تنانير", price: 15, color: "أبيض", img: "female/1.webp" },
-  { id: 13, name: "تنورة طويلة مطبوعة أزرق وأبيض", cat: "حريمي", sub: "تنانير", price: 14, color: "أزرق مطبوع", img: "female/2.webp" },
-  { id: 14, name: "تنورة بنطلون كحلية بحزام", cat: "حريمي", sub: "تنانير", price: 10, color: "كحلي", img: "female/3.webp" },
-  { id: 15, name: "تنورة بني غامق بأزرار جانبية", cat: "حريمي", sub: "تنانير", price: 14, color: "بني غامق", img: "female/4.webp" },
-  { id: 16, name: "تنورة كشمير أصفر كاروهات", cat: "حريمي", sub: "تنانير", price: 12, color: "أصفر كاروهات", img: "female/5.webp" },
-  { id: 17, name: "تنورة بيضاء بحزام مطرز بألوان", cat: "حريمي", sub: "تنانير", price: 17, color: "أبيض بحزام ملون", img: "female/6.webp" },
-  { id: 18, name: "تنورة طويلة بني غامق بطبقات", cat: "حريمي", sub: "تنانير", price: 12, color: "بني غامق", img: "female/7.webp" },
-  { id: 19, name: "تنورة جينز أزرق فاتح", cat: "حريمي", sub: "تنانير", price: 18, color: "أزرق جينز فاتح", img: "female/8.webp" },
-  { id: 20, name: "تنورة شيفون أخضر زيتي بطبقات", cat: "حريمي", sub: "تنانير", price: 15, color: "أخضر زيتي", img: "female/9.webp" },
-  { id: 26, name: "فستان ساتان موف بحزام سلسلة", cat: "حريمي", sub: "فساتين", price: 26, color: "موف", img: "female/10.webp" },
-  { id: 27, name: "طقم بلوزة سوداء وتنورة لفّة بيضاء", cat: "حريمي", sub: "أطقم منسقة", price: 27, color: "أسود وأبيض", img: "female/11.webp" },
-  { id: 28, name: "فستان ساتان وردي مموّه بسحاب", cat: "حريمي", sub: "فساتين", price: 26, color: "وردي مموّه", img: "female/12.webp" },
-  { id: 29, name: "فستان سهرة نبيتي بترتر ودانتيل", cat: "حريمي", sub: "فساتين", price: 33, color: "نبيتي", img: "female/13.webp" },
-  { id: 30, name: "فستان دانتيل نبيتي بأكمام جرس", cat: "حريمي", sub: "فساتين", price: 24, color: "نبيتي", img: "female/14.webp" },
-  { id: 31, name: "طقم كحلي ببلوزة وتنورة شيفون وحزام", cat: "حريمي", sub: "أطقم منسقة", price: 28, color: "كحلي", img: "female/15.webp" },
-  { id: 32, name: "طقم بني دگراديه ببلوزة وتنورة شيفون", cat: "حريمي", sub: "أطقم منسقة", price: 26, color: "بني دگراديه", img: "female/16.webp" },
-  { id: 33, name: "فستان سهرة أخضر فستقي بياقة مرصعة", cat: "حريمي", sub: "فساتين", price: 26, color: "أخضر فستقي", img: "female/17.webp" },
-  { id: 34, name: "طقم كروب توب أسود وتنورة تاي داي", cat: "حريمي", sub: "أطقم منسقة", price: 21, color: "أسود وبرتقالي", img: "female/18.webp" },
+  // نسائي
+  { id: 12, name: "تنورة طويلة بيضاء بطبقات", cat: "نسائي", sub: "تنانير", price: 15, color: "أبيض", img: "female/1.webp" },
+  { id: 13, name: "تنورة طويلة مطبوعة أزرق وأبيض", cat: "نسائي", sub: "تنانير", price: 14, color: "أزرق مطبوع", img: "female/2.webp" },
+  { id: 14, name: "تنورة بنطلون كحلية بحزام", cat: "نسائي", sub: "تنانير", price: 10, color: "كحلي", img: "female/3.webp" },
+  { id: 15, name: "تنورة بني غامق بأزرار جانبية", cat: "نسائي", sub: "تنانير", price: 14, color: "بني غامق", img: "female/4.webp" },
+  { id: 16, name: "تنورة كشمير أصفر كاروهات", cat: "نسائي", sub: "تنانير", price: 12, color: "أصفر كاروهات", img: "female/5.webp" },
+  { id: 17, name: "تنورة بيضاء بحزام مطرز بألوان", cat: "نسائي", sub: "تنانير", price: 17, color: "أبيض بحزام ملون", img: "female/6.webp" },
+  { id: 18, name: "تنورة طويلة بني غامق بطبقات", cat: "نسائي", sub: "تنانير", price: 12, color: "بني غامق", img: "female/7.webp" },
+  { id: 19, name: "تنورة جينز أزرق فاتح", cat: "نسائي", sub: "تنانير", price: 18, color: "أزرق جينز فاتح", img: "female/8.webp" },
+  { id: 20, name: "تنورة شيفون أخضر زيتي بطبقات", cat: "نسائي", sub: "تنانير", price: 15, color: "أخضر زيتي", img: "female/9.webp" },
+  { id: 26, name: "فستان ساتان موف بحزام سلسلة", cat: "نسائي", sub: "فساتين", price: 26, color: "موف", img: "female/10.webp" },
+  { id: 27, name: "طقم بلوزة سوداء وتنورة لفّة بيضاء", cat: "نسائي", sub: "أطقم منسقة", price: 27, color: "أسود وأبيض", img: "female/11.webp" },
+  { id: 28, name: "فستان ساتان وردي مموّه بسحاب", cat: "نسائي", sub: "فساتين", price: 26, color: "وردي مموّه", img: "female/12.webp" },
+  { id: 29, name: "فستان سهرة نبيتي بترتر ودانتيل", cat: "نسائي", sub: "فساتين", price: 33, color: "نبيتي", img: "female/13.webp" },
+  { id: 30, name: "فستان دانتيل نبيتي بأكمام جرس", cat: "نسائي", sub: "فساتين", price: 24, color: "نبيتي", img: "female/14.webp" },
+  { id: 31, name: "طقم كحلي ببلوزة وتنورة شيفون وحزام", cat: "نسائي", sub: "أطقم منسقة", price: 28, color: "كحلي", img: "female/15.webp" },
+  { id: 32, name: "طقم بني دگراديه ببلوزة وتنورة شيفون", cat: "نسائي", sub: "أطقم منسقة", price: 26, color: "بني دگراديه", img: "female/16.webp" },
+  { id: 33, name: "فستان سهرة أخضر فستقي بياقة مرصعة", cat: "نسائي", sub: "فساتين", price: 26, color: "أخضر فستقي", img: "female/17.webp" },
+  { id: 34, name: "طقم كروب توب أسود وتنورة تاي داي", cat: "نسائي", sub: "أطقم منسقة", price: 21, color: "أسود وبرتقالي", img: "female/18.webp" },
 
-  // حريمي (دفعة جديدة)
-  { id: 158, name: "طقم بلوزة وبنطلون مطبوع أبيض وأسود", cat: "حريمي", sub: "أطقم منسقة", price: 16.52, img: "female/19.webp" },
-  { id: 159, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 13.52, img: "female/20.webp" },
-  { id: 160, name: "طقم بيج كارديجان وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 19.79, img: "female/21.webp" },
-  { id: 161, name: "كارديجان بيج", cat: "حريمي", sub: "ملابس علوية", price: 9.98, img: "female/22.webp" },
-  { id: 162, name: "طقم بيج بنطلون وبلوزة", cat: "حريمي", sub: "أطقم منسقة", price: 15.70, img: "female/23.webp" },
-  { id: 163, name: "طقم بيج توب وبنطلون مع شنطة", cat: "حريمي", sub: "أطقم منسقة", price: 15.70, img: "female/24.webp" },
-  { id: 164, name: "تنورة سوداء طويلة", cat: "حريمي", sub: "تنانير", price: 16.25, img: "female/25.webp" },
-  { id: 165, name: "طقم بني بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 18.15, img: "female/26.webp" },
-  { id: 166, name: "فستان أبيض بأزرار", cat: "حريمي", sub: "فساتين", price: 15.43, img: "female/27.webp" },
-  { id: 167, name: "طقم بلوزات أسود وليوبارد وبني", cat: "حريمي", sub: "ملابس علوية", price: 12.98, img: "female/28.webp" },
-  { id: 168, name: "طقم بيج سترة وبنطلون وتوب", cat: "حريمي", sub: "أطقم منسقة", price: 16.25, img: "female/29.webp" },
-  { id: 169, name: "طقم بيج توب وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 14.61, img: "female/30.webp" },
-  { id: 170, name: "طقم بلوزة وبنطلون زيتي", cat: "حريمي", sub: "أطقم منسقة", price: 15.97, img: "female/31.webp" },
-  { id: 171, name: "طقم جاكيت جلد أسود وبنطلون وتنورة", cat: "حريمي", sub: "أطقم منسقة", price: 29.04, img: "female/32.webp" },
-  { id: 172, name: "طقم تيشيرتات مخططة", cat: "حريمي", sub: "ملابس علوية", price: 6.72, img: "female/33.webp" },
-  { id: 173, name: "جمبسوت بيج", cat: "حريمي", sub: "أطقم منسقة", price: 18.15, img: "female/34.webp" },
-  { id: 174, name: "طقم بناطيل واسعة بألوان متعددة", cat: "حريمي", sub: "ملابس سفلية", price: 14.88, img: "female/35.webp" },
-  { id: 175, name: "طقم بيجامة وردية منقطة", cat: "حريمي", sub: "أطقم منسقة", price: 14.89, img: "female/36.webp" },
-  { id: 176, name: "طقم فستان مطبوع وكارديجان بنفسجي", cat: "حريمي", sub: "أطقم منسقة", price: 18.70, img: "female/37.webp" },
-  { id: 177, name: "طقم رياضي كحلي هودي وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 26.32, img: "female/38.webp" },
-  { id: 178, name: "بنطلون جينز واسع نسائي", cat: "حريمي", sub: "ملابس سفلية", price: 23.87, img: "female/39.webp" },
-  { id: 179, name: "جمبسوت أبيض", cat: "حريمي", sub: "أطقم منسقة", price: 25.77, img: "female/40.webp" },
-  { id: 180, name: "بلوزة مخططة أبيض وأسود", cat: "حريمي", sub: "ملابس علوية", price: 6.99, img: "female/41.webp" },
-  { id: 181, name: "طقم كارديجان بني وقميص", cat: "حريمي", sub: "أطقم منسقة", price: 13.52, img: "female/42.webp" },
-  { id: 182, name: "معطف نسائي بني طويل", cat: "حريمي", sub: "ملابس علوية", price: 16.79, img: "female/43.webp" },
-  { id: 183, name: "فستان أصفر طويل", cat: "حريمي", sub: "فساتين", price: 17.33, img: "female/44.webp" },
-  { id: 184, name: "بلوزة مطرزة بيج وأزرق", cat: "حريمي", sub: "ملابس علوية", price: 8.09, img: "female/45.webp" },
-  { id: 185, name: "جاكيت بليزر أسود", cat: "حريمي", sub: "ملابس علوية", price: 9.44, img: "female/46.webp" },
-  { id: 186, name: "تنورة كاروهات بنية طويلة", cat: "حريمي", sub: "تنانير", price: 14.88, img: "female/47.webp" },
-  { id: 187, name: "طقم بلوزات أساسية أبيض وأسود", cat: "حريمي", sub: "ملابس علوية", price: 12.98, img: "female/48.webp" },
-  { id: 188, name: "طقم أبيض بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 18.70, img: "female/49.webp" },
-  { id: 189, name: "بنطلون بني واسع", cat: "حريمي", sub: "ملابس سفلية", price: 13.91, img: "female/50.webp" },
-  { id: 190, name: "جاكيت جلد بني", cat: "حريمي", sub: "ملابس علوية", price: 23.87, img: "female/51.webp" },
-  { id: 191, name: "طقم تنانير كحلي وعنابي وبيج", cat: "حريمي", sub: "تنانير", price: 22.78, img: "female/52.webp" },
-  { id: 192, name: "طقم ملابس منزلية أزرق مطبوع", cat: "حريمي", sub: "أطقم منسقة", price: 8.62, img: "female/53.webp" },
-  { id: 193, name: "بنطلون جلد بني", cat: "حريمي", sub: "ملابس سفلية", price: 15.43, img: "female/54.webp" },
-  { id: 194, name: "طقم توب وتنورة جينز بني", cat: "حريمي", sub: "أطقم منسقة", price: 6.44, img: "female/55.webp" },
-  { id: 195, name: "بلوزة بولو بيضاء", cat: "حريمي", sub: "ملابس علوية", price: 15.43, img: "female/56.webp" },
-  { id: 196, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 14.61, img: "female/57.webp" },
-  { id: 197, name: "هودي أزرق NYC", cat: "حريمي", sub: "ملابس علوية", price: 16.52, img: "female/58.webp" },
-  { id: 198, name: "بلوزة زرقاء بأكمام مطرزة", cat: "حريمي", sub: "ملابس علوية", price: 6.99, img: "female/59.webp" },
-  { id: 199, name: "بنطلون أسود واسع", cat: "حريمي", sub: "ملابس سفلية", price: 14.61, img: "female/60.webp" },
-  { id: 200, name: "تنورة سوداء طويلة", cat: "حريمي", sub: "تنانير", price: 17.06, img: "female/61.webp" },
-  { id: 201, name: "بلوزة بيضاء واسعة", cat: "حريمي", sub: "ملابس علوية", price: 11.89, img: "female/62.webp" },
+  // نسائي (دفعة جديدة)
+  { id: 158, name: "طقم بلوزة وبنطلون مطبوع أبيض وأسود", cat: "نسائي", sub: "أطقم منسقة", price: 16.52, img: "female/19.webp" },
+  { id: 159, name: "بنطلون أسود واسع", cat: "نسائي", sub: "ملابس سفلية", price: 13.52, img: "female/20.webp" },
+  { id: 160, name: "طقم بيج كارديجان وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 19.79, img: "female/21.webp" },
+  { id: 161, name: "كارديجان بيج", cat: "نسائي", sub: "ملابس علوية", price: 9.98, img: "female/22.webp" },
+  { id: 162, name: "طقم بيج بنطلون وبلوزة", cat: "نسائي", sub: "أطقم منسقة", price: 15.70, img: "female/23.webp" },
+  { id: 163, name: "طقم بيج توب وبنطلون مع شنطة", cat: "نسائي", sub: "أطقم منسقة", price: 15.70, img: "female/24.webp" },
+  { id: 164, name: "تنورة سوداء طويلة", cat: "نسائي", sub: "تنانير", price: 16.25, img: "female/25.webp" },
+  { id: 165, name: "طقم بني بلوزة وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 18.15, img: "female/26.webp" },
+  { id: 166, name: "فستان أبيض بأزرار", cat: "نسائي", sub: "فساتين", price: 15.43, img: "female/27.webp" },
+  { id: 167, name: "طقم بلوزات أسود وليوبارد وبني", cat: "نسائي", sub: "ملابس علوية", price: 12.98, img: "female/28.webp" },
+  { id: 168, name: "طقم بيج سترة وبنطلون وتوب", cat: "نسائي", sub: "أطقم منسقة", price: 16.25, img: "female/29.webp" },
+  { id: 169, name: "طقم بيج توب وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 14.61, img: "female/30.webp" },
+  { id: 170, name: "طقم بلوزة وبنطلون زيتي", cat: "نسائي", sub: "أطقم منسقة", price: 15.97, img: "female/31.webp" },
+  { id: 171, name: "طقم جاكيت جلد أسود وبنطلون وتنورة", cat: "نسائي", sub: "أطقم منسقة", price: 29.04, img: "female/32.webp" },
+  { id: 172, name: "طقم تيشيرتات مخططة", cat: "نسائي", sub: "ملابس علوية", price: 6.72, img: "female/33.webp" },
+  { id: 173, name: "جمبسوت بيج", cat: "نسائي", sub: "أطقم منسقة", price: 18.15, img: "female/34.webp" },
+  { id: 174, name: "طقم بناطيل واسعة بألوان متعددة", cat: "نسائي", sub: "ملابس سفلية", price: 14.88, img: "female/35.webp" },
+  { id: 175, name: "طقم بيجامة وردية منقطة", cat: "نسائي", sub: "أطقم منسقة", price: 14.89, img: "female/36.webp" },
+  { id: 176, name: "طقم فستان مطبوع وكارديجان بنفسجي", cat: "نسائي", sub: "أطقم منسقة", price: 18.70, img: "female/37.webp" },
+  { id: 177, name: "طقم رياضي كحلي هودي وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 26.32, img: "female/38.webp" },
+  { id: 178, name: "بنطلون جينز واسع نسائي", cat: "نسائي", sub: "ملابس سفلية", price: 23.87, img: "female/39.webp" },
+  { id: 179, name: "جمبسوت أبيض", cat: "نسائي", sub: "أطقم منسقة", price: 25.77, img: "female/40.webp" },
+  { id: 180, name: "بلوزة مخططة أبيض وأسود", cat: "نسائي", sub: "ملابس علوية", price: 6.99, img: "female/41.webp" },
+  { id: 181, name: "طقم كارديجان بني وقميص", cat: "نسائي", sub: "أطقم منسقة", price: 13.52, img: "female/42.webp" },
+  { id: 182, name: "معطف نسائي بني طويل", cat: "نسائي", sub: "ملابس علوية", price: 16.79, img: "female/43.webp" },
+  { id: 183, name: "فستان أصفر طويل", cat: "نسائي", sub: "فساتين", price: 17.33, img: "female/44.webp" },
+  { id: 184, name: "بلوزة مطرزة بيج وأزرق", cat: "نسائي", sub: "ملابس علوية", price: 8.09, img: "female/45.webp" },
+  { id: 185, name: "جاكيت بليزر أسود", cat: "نسائي", sub: "ملابس علوية", price: 9.44, img: "female/46.webp" },
+  { id: 186, name: "تنورة كاروهات بنية طويلة", cat: "نسائي", sub: "تنانير", price: 14.88, img: "female/47.webp" },
+  { id: 187, name: "طقم بلوزات أساسية أبيض وأسود", cat: "نسائي", sub: "ملابس علوية", price: 12.98, img: "female/48.webp" },
+  { id: 188, name: "طقم أبيض بلوزة وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 18.70, img: "female/49.webp" },
+  { id: 189, name: "بنطلون بني واسع", cat: "نسائي", sub: "ملابس سفلية", price: 13.91, img: "female/50.webp" },
+  { id: 190, name: "جاكيت جلد بني", cat: "نسائي", sub: "ملابس علوية", price: 23.87, img: "female/51.webp" },
+  { id: 191, name: "طقم تنانير كحلي وعنابي وبيج", cat: "نسائي", sub: "تنانير", price: 22.78, img: "female/52.webp" },
+  { id: 192, name: "طقم ملابس منزلية أزرق مطبوع", cat: "نسائي", sub: "أطقم منسقة", price: 8.62, img: "female/53.webp" },
+  { id: 193, name: "بنطلون جلد بني", cat: "نسائي", sub: "ملابس سفلية", price: 15.43, img: "female/54.webp" },
+  { id: 194, name: "طقم توب وتنورة جينز بني", cat: "نسائي", sub: "أطقم منسقة", price: 6.44, img: "female/55.webp" },
+  { id: 195, name: "بلوزة بولو بيضاء", cat: "نسائي", sub: "ملابس علوية", price: 15.43, img: "female/56.webp" },
+  { id: 196, name: "بنطلون أسود واسع", cat: "نسائي", sub: "ملابس سفلية", price: 14.61, img: "female/57.webp" },
+  { id: 197, name: "هودي أزرق NYC", cat: "نسائي", sub: "ملابس علوية", price: 16.52, img: "female/58.webp" },
+  { id: 198, name: "بلوزة زرقاء بأكمام مطرزة", cat: "نسائي", sub: "ملابس علوية", price: 6.99, img: "female/59.webp" },
+  { id: 199, name: "بنطلون أسود واسع", cat: "نسائي", sub: "ملابس سفلية", price: 14.61, img: "female/60.webp" },
+  { id: 200, name: "تنورة سوداء طويلة", cat: "نسائي", sub: "تنانير", price: 17.06, img: "female/61.webp" },
+  { id: 201, name: "بلوزة بيضاء واسعة", cat: "نسائي", sub: "ملابس علوية", price: 11.89, img: "female/62.webp" },
 
-  // حريمي (دفعة جديدة 63-74)
-  { id: 218, name: "قميص أزرق مخطط فضفاض", cat: "حريمي", sub: "ملابس علوية", price: 11.35, img: "female/63.webp" },
-  { id: 219, name: "تيشيرت أبيض بطبعة كرز", cat: "حريمي", sub: "ملابس علوية", price: 6.44, img: "female/64.webp" },
-  { id: 220, name: "طقم رمادي توب وبنطلون واسع", cat: "حريمي", sub: "أطقم منسقة", price: 15.16, img: "female/65.webp" },
-  { id: 221, name: "بنطلون أبيض واسع بحزام", cat: "حريمي", sub: "ملابس سفلية", price: 18.15, img: "female/66.webp" },
-  { id: 222, name: "سترة بولو كحلية بياقة بيضاء", cat: "حريمي", sub: "ملابس علوية", price: 13.80, img: "female/67.webp" },
-  { id: 223, name: "طقم بيج توب وبنطلون واسع", cat: "حريمي", sub: "أطقم منسقة", price: 14.89, img: "female/68.webp" },
-  { id: 224, name: "طقم بيجامة وردية مخططة ستان", cat: "حريمي", sub: "أطقم منسقة", price: 15.43, img: "female/69.webp" },
-  { id: 225, name: "طقم أزرق فاتح قميص وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 20.60, img: "female/70.webp" },
-  { id: 226, name: "فستان أصفر مزهر", cat: "حريمي", sub: "فساتين", price: 25.78, img: "female/71.webp" },
-  { id: 227, name: "جاكيت دانتيل كريمي", cat: "حريمي", sub: "ملابس علوية", price: 16.25, img: "female/72.webp" },
-  { id: 228, name: "فستان أخضر مزهر", cat: "حريمي", sub: "فساتين", price: 25.23, img: "female/73.webp" },
-  { id: 229, name: "طقم عنابي بلوزة وبنطلون", cat: "حريمي", sub: "أطقم منسقة", price: 26.86, img: "female/74.webp" },
+  // نسائي (دفعة جديدة 63-74)
+  { id: 218, name: "قميص أزرق مخطط فضفاض", cat: "نسائي", sub: "ملابس علوية", price: 11.35, img: "female/63.webp" },
+  { id: 219, name: "تيشيرت أبيض بطبعة كرز", cat: "نسائي", sub: "ملابس علوية", price: 6.44, img: "female/64.webp" },
+  { id: 220, name: "طقم رمادي توب وبنطلون واسع", cat: "نسائي", sub: "أطقم منسقة", price: 15.16, img: "female/65.webp" },
+  { id: 221, name: "بنطلون أبيض واسع بحزام", cat: "نسائي", sub: "ملابس سفلية", price: 18.15, img: "female/66.webp" },
+  { id: 222, name: "سترة بولو كحلية بياقة بيضاء", cat: "نسائي", sub: "ملابس علوية", price: 13.80, img: "female/67.webp" },
+  { id: 223, name: "طقم بيج توب وبنطلون واسع", cat: "نسائي", sub: "أطقم منسقة", price: 14.89, img: "female/68.webp" },
+  { id: 224, name: "طقم بيجامة وردية مخططة ستان", cat: "نسائي", sub: "أطقم منسقة", price: 15.43, img: "female/69.webp" },
+  { id: 225, name: "طقم أزرق فاتح قميص وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 20.60, img: "female/70.webp" },
+  { id: 226, name: "فستان أصفر مزهر", cat: "نسائي", sub: "فساتين", price: 25.78, img: "female/71.webp" },
+  { id: 227, name: "جاكيت دانتيل كريمي", cat: "نسائي", sub: "ملابس علوية", price: 16.25, img: "female/72.webp" },
+  { id: 228, name: "فستان أخضر مزهر", cat: "نسائي", sub: "فساتين", price: 25.23, img: "female/73.webp" },
+  { id: 229, name: "طقم عنابي بلوزة وبنطلون", cat: "نسائي", sub: "أطقم منسقة", price: 26.86, img: "female/74.webp" },
   // أحذية
   { id: 8, name: "حذاء كلاسيك جلديشعر صناعي أحمر عنابي طويل", cat: "أحذية", sub: "كلاسيك", price: 9, img: "shoes/1.webp" },
   { id: 21, name: "صندل كعب نبيتي بفيونكة ساتان", cat: "أحذية", sub: "صنادل", price: 17, color: "نبيتي", img: "shoes/2.webp" },
@@ -390,7 +390,7 @@ const products = [
   { id: 81, name: "شنطة يد سوداء بتفصيل وشاح", cat: "إكسسوارات", sub: "جنط", price: 7.26, img: "accessories/11.webp" },
   { id: 83, name: "سوار انفينتي ذهبي", cat: "إكسسوارات", sub: "مجوهرات", price: 2.63, img: "accessories/12.webp" },
   { id: 93, name: "شنطة قش بيضاء بزهرة", cat: "إكسسوارات", sub: "جنط", price: 8.71, img: "accessories/14.webp" },
-  { id: 94, name: "مشابك شعر خشبية متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/15.webp" },
+ // { id: 94, name: "مشابك شعر خشبية متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/15.webp" },
   { id: 98, name: "شنطة كتف سوداء بفيونكة", cat: "إكسسوارات", sub: "جنط", price: 15.16, img: "accessories/16.webp" },
   { id: 99, name: "جوارب متوسطة الطول للأطفال/البنات 20", cat: "إكسسوارات", sub: " جوارب", price: 5.36, img: "accessories/17.webp" },
   { id: 100, name: "طقم أساور ذهبية 10 قطع", cat: "إكسسوارات", sub: "مجوهرات", price: 3.45, img: "accessories/18.webp" },
@@ -401,10 +401,10 @@ const products = [
   { id: 231, name: "شنطة يد بيج بحزام أسود", cat: "إكسسوارات", sub: "جنط", price: 7.26, img: "accessories/43.webp" },
   { id: 232, name: "مجموعة ربطات شعر متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 3.18, img: "accessories/44.webp" },
   { id: 112, name: "شنطة يد جلد بني", cat: "إكسسوارات", sub: "جنط", price: 8.36, img: "accessories/22.webp" },
-  { id: 119, name: "بونيه ساتان للشعر", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/23.webp" },
+  { id: 119, name: "بونيه ساتان للشعر", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 4.54, img: "accessories/23.webp" },
   { id: 120, name: "ساعة يد ذهبية", cat: "إكسسوارات", sub: "ساعات", price: 5.36, img: "accessories/24.webp" },
-  { id: 122, name: "طقم نظارتين شمسيتين", cat: "إكسسوارات", sub: "نظارات", price: 1.82, img: "accessories/25.webp" },
-  { id: 126, name: "طقم خرز DIY لصناعة الإكسسوارات", cat: "إكسسوارات", sub: "مجوهرات", price: 1.84, img: "accessories/26.webp" },
+  { id: 122, name: "طقم نظارتين شمسيتين", cat: "إكسسوارات", sub: "نظارات", price: 3.99, img: "accessories/25.webp" },
+  { id: 126, name: "طقم خرز DIY لصناعة الإكسسوارات", cat: "إكسسوارات", sub: "مجوهرات", price: 5.63, img: "accessories/26.webp" },
   { id: 134, name: "قطعة حامل هاتف سيليكون بكوب شفط", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 2.36, img: "accessories/27.webp" },
   { id: 135, name: "حامل هاتف بتصميم أرنب", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 2.9, img: "accessories/28.webp" },
   { id: 139, name: "طقم جوارب قصيرة 5 إلى 10 أزواج", cat: "إكسسوارات", sub: "جوارب", price: 4.81, img: "accessories/29.webp" },
@@ -473,7 +473,7 @@ const products = [
   { id: 131, name: "طقم أكواب حرارية ملونة", cat: "أدوات منزلية", sub: "", price: 3.18, img: "home/4.webp" },
   { id: 136, name: "صندوق تنظيم مكياج ومستحضرات", cat: "أدوات منزلية", sub: "", price: 5.36, img: "home/5.webp" },
   { id: 137, name: "طقم حقائب تخزين ملابس", cat: "أدوات منزلية", sub: "", price: 2.36, img: "home/6.webp" },
-  { id: 138, name: "آلة خياطة محمولة صغيرة", cat: "أدوات منزلية", sub: "", price: 1.82, img: "home/7.webp" },
+  { id: 138, name: "آلة خياطة محمولة صغيرة", cat: "أدوات منزلية", sub: "", price: 4.00, img: "home/7.webp" },
   { id: 146, name: "حافظة اقلام أبداعية بسعة كبير", cat: "أدوات منزلية", sub: "", price: 5.26, img: "home/8.webp" },
   { id: 155, name: "جهاز اغلاق حراري محمول", cat: "أدوات منزلية", sub: "", price: 3.18, img: "home/13.webp" },
   { id: 152, name: "كوب حراري بتصميم كرز", cat: "أدوات منزلية", sub: "", price: 14.88, img: "home/9.webp" },
@@ -485,13 +485,24 @@ const products = [
   { id: 149, name: "طقم أحذية أطفال دونات 4 قطع", cat: "أحذية", sub: "أطفال", price: 6.17, img: "shoes/17.webp" },
 ];
 
-const categories = ["الكل", "رجالي", "حريمي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
-const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "حريمي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home" };
+/* ============ إخفاء مؤقت لفئة كاملة أو منتجات معينة ============ */
+// لإخفاء فئة كاملة مؤقتاً (مثلاً لتصليح الأسعار): ضيف اسمها هون بالضبط زي ما هي بعمود "cat"
+// مثال: const HIDDEN_CATEGORIES = ["إكسسوارات"];
+const HIDDEN_CATEGORIES = ["إكسسوارات"];
+
+// لإخفاء منتج معيّن لحاله (بدون إخفاء الفئة كلها): ضيف رقم الـ id تبعه هون
+// مثال: const HIDDEN_PRODUCT_IDS = [214, 45];
+const HIDDEN_PRODUCT_IDS = [];
+
+const products = allProducts.filter(p => !HIDDEN_CATEGORIES.includes(p.cat) && !HIDDEN_PRODUCT_IDS.includes(p.id));
+
+const categories = ["الكل", "رجالي", "نسائي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
+const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "نسائي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home" };
 
 /* ============ التصنيفات الفرعية لكل فئة رئيسية ============ */
 const subcatsByCat = {
   "رجالي": ["ملابس علوية", "أطقم منسقة", "ملابس سفلية", "ملابس دينيم"],
-  "حريمي": ["تنانير", "فساتين", "أطقم منسقة", "ملابس علوية", "ملابس سفلية"],
+  "نسائي": ["تنانير", "فساتين", "أطقم منسقة", "ملابس علوية", "ملابس سفلية"],
   "أطفال": ["بناتي", "أولادي"],
   "أحذية": ["صنادل", "كعوب", "كلاسيك", "أطفال"],
   "إكسسوارات": ["جنط", "مجوهرات", "ساعات", "اكسسوارات موبايل", "نظارات", "جوارب", "إكسسوارات شعر", "شعر مستعار"],
@@ -515,6 +526,7 @@ const subfiltersEl = document.getElementById("subfilters");
 function buildFilters() {
   filtersEl.innerHTML = "";
   categories.forEach(cat => {
+    if (cat !== "الكل" && HIDDEN_CATEGORIES.includes(cat)) return;
     const btn = document.createElement("button");
     btn.className = "filter-btn" + (cat === activeCat ? " active" : "");
     btn.textContent = t(catKeyMap[cat] || cat);
@@ -553,6 +565,10 @@ function renderFilters() {
 
 /* ============ تفعيل الفلترة من مربعات الفئات بالأعلى ============ */
 document.querySelectorAll(".cat-tile").forEach(tile => {
+  if (HIDDEN_CATEGORIES.includes(tile.dataset.cat)) {
+    tile.style.display = "none";
+    return;
+  }
   tile.onclick = () => {
     activeCat = tile.dataset.cat;
     activeSub = "الكل";
