@@ -259,7 +259,7 @@ const allProducts = [
   { id: 214, name: "طقم تيشيرت وبنطلون كاروهات للأطفال", cat: "أطفال", sub: "بناتي", price: 17.34, img: "kids/1.webp" },
   { id: 215, name: "طقم تيشيرت وردي وشورت جينز Mommy is my Bestie", cat: "أطفال", sub: "بناتي", price: 7.47, img: "kids/2.webp" },
   { id: 217, name: "مجموعة بنطلون وبلوزة كاجوال للبنات", cat: "أطفال", sub: "بناتي", price: 11.89, img: "kids/4.webp" },
-  { id: 235, name: "قميص بولو قصير الأكمام بتطريز فيونكة", cat: "أطفال", sub: "بناتي", price: 13.35, img: "kids/5.webp", badge: "جديد" },
+  { id: 235, name: "قميص فيونكة قصير الأكمام بتطريز فيونكة", cat: "أطفال", sub: "بناتي", price: 13.35, img: "kids/5.webp", badge: "جديد" },
   { id: 236, name: "توب ازرق وبنطلون كارديجان", cat: "أطفال", sub: "بناتي", price: 13.80, img: "kids/6.webp", badge: "جديد" },
   { id: 237, name: "بلوز رياضي بياقة دائري مطبوع بفيونكة", cat: "أطفال", sub: "بناتي", price: 9.99, img: "kids/7.webp", badge: "جديد" },
   { id: 238, name: "تي شيرت قصير الأكمام و بنطلون كارغو وردي للفتيات", cat: "أطفال", sub: "بناتي", price: 12.99, img: "kids/8.webp", badge: "جديد" },
