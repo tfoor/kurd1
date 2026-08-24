@@ -256,9 +256,13 @@ const allProducts = [
   // { id: 7, name: "طقم رومبير وردي بدانتيل", cat: "أطفال", sub: "بناتي", price: 38, img: "images/children/product-romper.webp", badge: "جديد" },
   // { id: 10, name: "فستان قميصي وردي بحزام", cat: "أطفال", sub: "بناتي", price: 42, img: "images/children/product-dress.webp" },
   // { id: 11, name: "طقم بنطلون وقميص أزرق", cat: "أطفال", sub: "أولادي", price: 40, oldPrice: 52, img: "images/children/product-set.webp", badge: "خصم 20%", sale: true },
-{ id: 214, name: "طقم تيشيرت وبنطلون كاروهات للأطفال", cat: "أطفال", sub: "بناتي", price: 17.34, img: "kids/1.webp" },
+  { id: 214, name: "طقم تيشيرت وبنطلون كاروهات للأطفال", cat: "أطفال", sub: "بناتي", price: 17.34, img: "kids/1.webp" },
   { id: 215, name: "طقم تيشيرت وردي وشورت جينز Mommy is my Bestie", cat: "أطفال", sub: "بناتي", price: 7.47, img: "kids/2.webp" },
   { id: 217, name: "مجموعة بنطلون وبلوزة كاجوال للبنات", cat: "أطفال", sub: "بناتي", price: 11.89, img: "kids/4.webp" },
+  { id: 235, name: "قميص بولو قصير الأكمام بتطريز فيونكة", cat: "أطفال", sub: "بناتي", price: 13.35, img: "kids/5.webp", badge: "جديد" },
+  { id: 236, name: "توب ازرق وبنطلون كارديجان", cat: "أطفال", sub: "بناتي", price: 13.80, img: "kids/6.webp", badge: "جديد" },
+  { id: 237, name: "بلوز رياضي بياقة دائري مطبوع بفيونكة", cat: "أطفال", sub: "بناتي", price: 9.99, img: "kids/7.webp", badge: "جديد" },
+  { id: 238, name: "تي شيرت قصير الأكمام و بنطلون كارغو وردي للفتيات", cat: "أطفال", sub: "بناتي", price: 12.99, img: "kids/8.webp", badge: "جديد" },
   
   // رجالي 
   { id: 1, name: "طقم رجالي أبيض قميص بأزرار وبنطال مريح", cat: "رجالي", sub: "أطقم منسقة", price: 19, color: "أبيض", img: "men's/1.webp", badge: "" },
@@ -383,14 +387,14 @@ const allProducts = [
   { id: 65, name: "شنطة يد بيضاء بتفاصيل مطرزة", cat: "إكسسوارات", sub: "جنط", price: 14.7, img: "accessories/4.webp" },
   { id: 72, name: "كفر آيفون وردي مع حبل حمل", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 5.8, img: "accessories/5.webp" },
   { id: 73, name: "كفر آيفون فوشيا", cat: "إكسسوارات", sub: "اكسسوارات موبايل", price: 5.8, img: "accessories/6.webp" },
- // { id: 76, name: "طقم مجوهرات فاخر مع صندوق عرض", cat: "إكسسوارات", sub: "مجوهرات", price: 0.00, img: "accessories/7.webp" ,badge: "منتهي" },
+  { id: 76, name: "قلادة شمس ", cat: "إكسسوارات", sub: "مجوهرات", price: 3.75, img: "accessories/45.webp" ,badge: "جديد"},
   { id: 77, name: "طقم جوارب 5 ازواج الوان متنوع رمادي و ابيض وأسود", cat: "إكسسوارات", sub: "جوارب", price: 5.08, img: "accessories/8.webp" },
   { id: 78, name: "طقم ساعة فضي وذهبي", cat: "إكسسوارات", sub: "ساعات", price: 19.24, img: "accessories/9.webp" },
   { id: 79, name: "طقم أساور ذهبية معلقة", cat: "إكسسوارات", sub: "مجوهرات", price: 2.63, img: "accessories/10.webp" },
   { id: 81, name: "شنطة يد سوداء بتفصيل وشاح", cat: "إكسسوارات", sub: "جنط", price: 7.26, img: "accessories/11.webp" },
   { id: 83, name: "سوار انفينتي ذهبي", cat: "إكسسوارات", sub: "مجوهرات", price: 2.63, img: "accessories/12.webp" },
   { id: 93, name: "شنطة قش بيضاء بزهرة", cat: "إكسسوارات", sub: "جنط", price: 8.71, img: "accessories/14.webp" },
- // { id: 94, name: "مشابك شعر خشبية متنوعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 2.36, img: "accessories/15.webp" },
+  { id: 94, name: "قلادة شمس ذهبية", cat: "إكسسوارات", sub: "مجوهرات", price: 11.90, img: "accessories/46.webp" ,badge: "جديد"},
   { id: 98, name: "شنطة كتف سوداء بفيونكة", cat: "إكسسوارات", sub: "جنط", price: 15.16, img: "accessories/16.webp" },
   { id: 99, name: "جوارب متوسطة الطول للأطفال/البنات 20", cat: "إكسسوارات", sub: " جوارب", price: 5.36, img: "accessories/17.webp" },
   { id: 100, name: "طقم أساور ذهبية 10 قطع", cat: "إكسسوارات", sub: "مجوهرات", price: 5.10, img: "accessories/18.webp" },
@@ -419,6 +423,10 @@ const allProducts = [
   { id: 151, name: "سوار خرز فضي وأزرق", cat: "إكسسوارات", sub: "مجوهرات", price: 2.09, img: "accessories/39.webp" },
   { id: 153, name: "طقم ساعة ومجوهرات 5 قطع", cat: "إكسسوارات", sub: "ساعات", price: 4.30, img: "accessories/40.webp" },
   { id: 154, name: "طقم مشابك شعر وردية 100 قطعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 3.18, img: "accessories/41.webp" },
+  { id: 234, name: "قلادة شمس وقمر ذهبية", cat: "إكسسوارات", sub: "مجوهرات", price: 3.25, img: "accessories/47.webp" ,badge: "جديد"},
+  { id: 235, name: "قلادة شمس فضية", cat: "إكسسوارات", sub: "مجوهرات", price: 3.75, img: "accessories/48.webp"  ,badge: "جديد"},
+
+
 
   // مكياج (قسم جديد)
   { id: 66, name: "طقم مكياج عيون مسكرا وآيلاينر 3 قطع ", cat: "مكياج", sub: "مكياج", price: 7.26, img: "makeup/1.webp" },
