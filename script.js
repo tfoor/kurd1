@@ -257,10 +257,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // كل التعديلات على الأسماء والأسعار وإضافة/حذف منتجات تصير من لوحة Supabase (Table Editor)
 // أو من صفحة admin.html الخاصة، مو من هالملف.
 const allProductsFallback = [
-  // أطفال (مثال جاهز - فعّل السطر لما توصل الصور)
-  // { id: 7, name: "طقم رومبير وردي بدانتيل", cat: "أطفال", sub: "بناتي", price: 38, img: "images/children/product-romper.webp", badge: "جديد" },
-  // { id: 10, name: "فستان قميصي وردي بحزام", cat: "أطفال", sub: "بناتي", price: 42, img: "images/children/product-dress.webp" },
-  // { id: 11, name: "طقم بنطلون وقميص أزرق", cat: "أطفال", sub: "أولادي", price: 40, oldPrice: 52, img: "images/children/product-set.webp", badge: "خصم 20%", sale: true },
   { id: 214, name: "طقم تيشيرت وبنطلون كاروهات للأطفال", cat: "أطفال", sub: "بناتي", price: 17.34, img: "kids/1.webp" },
   { id: 215, name: "طقم تيشيرت وردي وشورت جينز Mommy is my Bestie", cat: "أطفال", sub: "بناتي", price: 7.47, img: "kids/2.webp" },
   { id: 217, name: "مجموعة بنطلون وبلوزة كاجوال للبنات", cat: "أطفال", sub: "بناتي", price: 11.89, img: "kids/4.webp" },
