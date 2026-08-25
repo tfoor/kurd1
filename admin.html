@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة التحكم | ستايل روج</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF6F3; --surface:#FFFFFF; --ink:#241E2E; --ink-soft:#726B7E;
+    --accent:#FF5C8A; --accent-deep:#D63D6E; --accent-soft:#FFE1EA;
+    --border:#EEE3E8; --shadow:0 10px 26px rgba(36,30,46,0.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:24px 16px 80px;}
+
+  .wrap{max-width:960px;margin:0 auto;}
+  h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+  .sub{color:var(--ink-soft);font-size:14px;margin-bottom:24px;}
+
+  /* شاشة تسجيل الدخول */
+  #loginScreen{max-width:380px;margin:60px auto;background:var(--surface);border-radius:20px;padding:32px 26px;box-shadow:var(--shadow);}
+  #loginScreen h2{font-size:19px;font-weight:800;margin-bottom:6px;text-align:center;}
+  #loginScreen p{color:var(--ink-soft);font-size:13px;text-align:center;margin-bottom:22px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink-soft);}
+  .field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);outline:none;transition:.2s;}
+  .field input:focus{border-color:var(--accent);}
+  .btn{width:100%;padding:13px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;transition:.2s;}
+  .btn:hover{background:var(--accent-deep);}
+  .btn:disabled{opacity:.6;cursor:not-allowed;}
+  .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);}
+  .btn-ghost:hover{border-color:var(--accent-deep);color:var(--accent-deep);background:transparent;}
+  .error-msg{color:#D63D6E;font-size:13px;margin-top:10px;text-align:center;display:none;}
+
+  /* لوحة التحكم */
+  #dashboard{display:none;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+  .topbar .btn{width:auto;padding:9px 18px;font-size:13px;}
+
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px;}
+  .stat-card{background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);}
+  .stat-card .num{font-size:26px;font-weight:800;color:var(--accent-deep);}
+  .stat-card .label{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .search-row{margin-bottom:16px;}
+  .search-row input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:14px;font-family:inherit;font-size:14px;background:var(--surface);color:var(--ink);outline:none;}
+  .search-row input:focus{border-color:var(--accent);}
+
+  .save-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 22px;border-radius:30px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+  .save-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .product-list{display:flex;flex-direction:column;gap:10px;}
+  .prod-row{background:var(--surface);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);display:grid;grid-template-columns:52px 1fr 110px 90px;gap:12px;align-items:center;}
+  .prod-row img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--accent-soft);}
+  .prod-id{font-size:11px;color:var(--ink-soft);font-weight:700;}
+  .prod-row input.name-input{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13.5px;background:var(--bg);color:var(--ink);outline:none;}
+  .prod-row input.name-input:focus{border-color:var(--accent);}
+  .price-field{display:flex;align-items:center;gap:4px;}
+  .price-field input{width:100%;padding:8px 8px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13.5px;background:var(--bg);color:var(--ink);outline:none;text-align:center;}
+  .price-field input:focus{border-color:var(--accent);}
+  .row-save-btn{padding:8px 6px;border:none;border-radius:9px;background:var(--accent-soft);color:var(--accent-deep);font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;transition:.2s;}
+  .row-save-btn:hover{background:var(--accent);color:#fff;}
+  .row-save-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .row-save-btn.saved{background:#1FAE7A;color:#fff;}
+
+  .loading-state, .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft);font-size:14px;}
+
+  @media (max-width:560px){
+    .prod-row{grid-template-columns:44px 1fr;grid-template-rows:auto auto;}
+    .prod-row img{width:44px;height:44px;}
+    .price-field, .row-save-btn{grid-column:2/3;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- شاشة تسجيل الدخول -->
+  <div id="loginScreen">
+    <h2>🔒 لوحة التحكم</h2>
+    <p>سجّل دخولك مشان تقدر تعدّل المنتجات</p>
+    <div class="field">
+      <label>الإيميل</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>كلمة السر</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" id="loginBtn" onclick="handleLogin()">تسجيل الدخول</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+
+  <!-- لوحة التحكم بعد الدخول -->
+  <div id="dashboard">
+    <div class="topbar">
+      <div>
+        <h1>لوحة التحكم</h1>
+        <div class="sub">عدّل اسم أو سعر أي منتج واضغط حفظ</div>
+      </div>
+      <button class="btn btn-ghost" onclick="handleLogout()">تسجيل الخروج</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num" id="visitsCount">—</div>
+        <div class="label">👀 عدد الزيارات الكلي</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="productsCount">—</div>
+        <div class="label">🛍️ عدد المنتجات</div>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="adminSearch" placeholder="🔍 دوّر برقم المنتج أو الاسم" oninput="renderProductList()">
+    </div>
+
+    <div class="product-list" id="productList">
+      <div class="loading-state">جاري التحميل...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="save-toast" id="saveToast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://gzhgokztibcctmmljorf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_7bfT9JW5Y7aMRR211n0GVA_Blfp1UDx";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let allProducts = [];
+
+function showToast(msg) {
+  const el = document.getElementById("saveToast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+/* ============ تسجيل الدخول ============ */
+async function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const btn = document.getElementById("loginBtn");
+  const errEl = document.getElementById("loginError");
+  errEl.style.display = "none";
+
+  if (!email || !password) {
+    errEl.textContent = "عبّي الإيميل وكلمة السر";
+    errEl.style.display = "block";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الدخول...";
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+  btn.disabled = false;
+  btn.textContent = "تسجيل الدخول";
+
+  if (error) {
+    errEl.textContent = "الإيميل أو كلمة السر غير صحيحة";
+    errEl.style.display = "block";
+    return;
+  }
+
+  showDashboard();
+}
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginScreen").style.display = "block";
+  document.getElementById("loginPassword").value = "";
+}
+
+/* ============ عرض اللوحة بعد الدخول ============ */
+async function showDashboard() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  await Promise.all([loadProducts(), loadVisitsCount()]);
+}
+
+/* ============ جلب المنتجات ============ */
+async function loadProducts() {
+  const { data, error } = await sb.from("products").select("*").order("id", { ascending: true });
+  if (error) {
+    document.getElementById("productList").innerHTML = `<div class="empty-state">صار خطأ بجلب المنتجات: ${error.message}</div>`;
+    return;
+  }
+  allProducts = data || [];
+  document.getElementById("productsCount").textContent = allProducts.length;
+  renderProductList();
+}
+
+/* ============ جلب عدد الزيارات ============ */
+async function loadVisitsCount() {
+  const { count, error } = await sb.from("visits").select("*", { count: "exact", head: true });
+  document.getElementById("visitsCount").textContent = error ? "—" : (count ?? 0);
+}
+
+/* ============ عرض قائمة المنتجات مع فلترة البحث ============ */
+function renderProductList() {
+  const listEl = document.getElementById("productList");
+  const q = document.getElementById("adminSearch").value.trim().toLowerCase();
+
+  let list = allProducts;
+  if (q) {
+    list = list.filter(p => String(p.id).includes(q) || (p.name || "").toLowerCase().includes(q));
+  }
+
+  if (!list.length) {
+    listEl.innerHTML = `<div class="empty-state">😕 ما في نتائج مطابقة</div>`;
+    return;
+  }
+
+  listEl.innerHTML = list.map(p => `
+    <div class="prod-row" data-id="${p.id}">
+      <img src="${p.img || ''}" alt="" onerror="this.style.visibility='hidden'">
+      <div>
+        <div class="prod-id">#${p.id} — ${p.cat || ''}</div>
+        <input type="text" class="name-input" value="${(p.name || '').replace(/"/g,'&quot;')}" id="name-${p.id}">
+      </div>
+      <div class="price-field">
+        <input type="number" step="0.01" value="${p.price}" id="price-${p.id}">
+        <span>$</span>
+      </div>
+      <button class="row-save-btn" id="save-${p.id}" onclick="saveProduct(${p.id})">حفظ</button>
+    </div>
+  `).join("");
+}
+
+/* ============ حفظ تعديل منتج (اسم + سعر) ============ */
+async function saveProduct(id) {
+  const nameInput = document.getElementById(`name-${id}`);
+  const priceInput = document.getElementById(`price-${id}`);
+  const btn = document.getElementById(`save-${id}`);
+  const newName = nameInput.value.trim();
+  const newPrice = parseFloat(priceInput.value);
+
+  if (!newName || isNaN(newPrice) || newPrice < 0) {
+    showToast("⚠️ تأكد من الاسم والسعر");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "...";
+
+  const { error } = await sb.from("products").update({ name: newName, price: newPrice }).eq("id", id);
+
+  btn.disabled = false;
+
+  if (error) {
+    btn.textContent = "خطأ ✕";
+    showToast("⚠️ صار خطأ، جرّب مرة ثانية");
+    setTimeout(() => { btn.textContent = "حفظ"; }, 1500);
+    return;
+  }
+
+  const p = allProducts.find(pr => pr.id === id);
+  if (p) { p.name = newName; p.price = newPrice; }
+
+  btn.classList.add("saved");
+  btn.textContent = "تم ✓";
+  showToast("✅ تم حفظ التعديل");
+  setTimeout(() => { btn.classList.remove("saved"); btn.textContent = "حفظ"; }, 1500);
+}
+
+/* ============ التحقق من الجلسة عند فتح الصفحة ============ */
+(async function checkSession() {
+  const { data } = await sb.auth.getSession();
+  if (data && data.session) {
+    showDashboard();
+  }
+})();
+
+document.getElementById("loginPassword").addEventListener("keydown", e => {
+  if (e.key === "Enter") handleLogin();
+});
+</script>
+</body>
+</html>

@@ -248,8 +248,15 @@ applyTheme(localStorage.getItem("boutique_theme") || "light");
 
 
 
-/* ============ بيانات المنتجات ============ */
-const allProducts = [
+/* ============ الاتصال بـ Supabase ============ */
+const SUPABASE_URL = "https://gzhgokztibcctmmljorf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_7bfT9JW5Y7aMRR211n0GVA_Blfp1UDx";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============ بيانات المنتجات (تُجلب من Supabase) ============ */
+// كل التعديلات على الأسماء والأسعار وإضافة/حذف منتجات تصير من لوحة Supabase (Table Editor)
+// أو من صفحة admin.html الخاصة، مو من هالملف.
+const allProductsFallback = [
   // أطفال (مثال جاهز - فعّل السطر لما توصل الصور)
   // { id: 7, name: "طقم رومبير وردي بدانتيل", cat: "أطفال", sub: "بناتي", price: 38, img: "images/children/product-romper.webp", badge: "جديد" },
   // { id: 10, name: "فستان قميصي وردي بحزام", cat: "أطفال", sub: "بناتي", price: 42, img: "images/children/product-dress.webp" },
@@ -500,7 +507,41 @@ const HIDDEN_CATEGORIES = [""];
 // مثال: const HIDDEN_PRODUCT_IDS = [214, 45];
 const HIDDEN_PRODUCT_IDS = [];
 
-const products = allProducts.filter(p => !HIDDEN_CATEGORIES.includes(p.cat) && !HIDDEN_PRODUCT_IDS.includes(p.id));
+let allProducts = [];
+let products = [];
+
+/* يجيب المنتجات من جدول products بـ Supabase. إذا صار خطأ اتصال (مثلاً النت واقف)
+   يرجع يستخدم النسخة الاحتياطية allProductsFallback مشان الموقع يضل شغال. */
+async function loadProducts() {
+  try {
+    const { data, error } = await sb
+      .from("products")
+      .select("*")
+      .order("id", { ascending: true });
+    if (error || !data || !data.length) throw error || new Error("empty");
+    allProducts = data.map(row => ({
+      id: row.id,
+      name: row.name,
+      cat: row.cat,
+      sub: row.sub,
+      price: Number(row.price),
+      oldPrice: row.old_price !== null && row.old_price !== undefined ? Number(row.old_price) : undefined,
+      color: row.color || undefined,
+      img: row.img,
+      badge: row.badge || undefined,
+      sale: !!row.sale,
+    }));
+  } catch (e) {
+    console.warn("تعذّر جلب المنتجات من Supabase، تم استخدام النسخة الاحتياطية:", e);
+    allProducts = allProductsFallback;
+  }
+  products = allProducts.filter(p => !HIDDEN_CATEGORIES.includes(p.cat) && !HIDDEN_PRODUCT_IDS.includes(p.id));
+}
+
+/* يسجّل زيارة جديدة بجدول visits (بدون ما يوقف تحميل الموقع لو صار خطأ) */
+function logVisit() {
+  sb.from("visits").insert({}).then(() => {}).catch(() => {});
+}
 
 const categories = ["الكل", "رجالي", "نسائي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
 const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "نسائي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home" };
@@ -585,8 +626,11 @@ document.querySelectorAll(".cat-tile").forEach(tile => {
 });
 
 /* ============ عرض المعرض ============ */
-const shuffleRank = {};
-[...products].sort(() => Math.random() - 0.5).forEach((p, i) => { shuffleRank[p.id] = i; });
+let shuffleRank = {};
+function buildShuffleRank() {
+  shuffleRank = {};
+  [...products].sort(() => Math.random() - 0.5).forEach((p, i) => { shuffleRank[p.id] = i; });
+}
 
 const galleryEl = document.getElementById("gallery-grid");
 function renderGallery() {
@@ -970,6 +1014,12 @@ window.addEventListener("scroll", () => {
 });
 
 /* ============ تهيئة أولية ============ */
-renderGallery();
-updateCartUI();
-applyLanguage(currentLang);
+async function initApp() {
+  logVisit();
+  await loadProducts();
+  buildShuffleRank();
+  renderGallery();
+  updateCartUI();
+  applyLanguage(currentLang);
+}
+initApp();
