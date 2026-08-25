@@ -1091,16 +1091,31 @@ function closeServiceModal() {
 }
 
 /* ============ إرسال الطلب عبر واتساب + حفظه كسجل فاتورة بقاعدة البيانات ============ */
-async function saveOrderRecord(items, total) {
+async function saveOrderRecord(items, total, customerName) {
   try {
-    const orderItems = items.map(it => ({ id: it.id, name: it.name, qty: it.qty, price: it.price }));
-    await sb.from("orders").insert({
+    const orderItems = items.map(it => ({
+      id: it.id,
+      name: it.name,
+      qty: it.qty,
+      price: it.price
+    }));
+
+    const { error } = await sb.from("orders").insert({
       customer_id: customerSession ? customerSession.user.id : null,
-      customer_name: customerSession ? (customerSession.user.user_metadata?.full_name || null) : null,
+      customer_name: customerName || (
+        customerSession
+          ? (customerSession.user.user_metadata?.full_name || null)
+          : null
+      ),
       country: selectedCountry,
       items: orderItems,
-      total: total,
+      total: total
     });
+
+    if (error) {
+      console.error("خطأ حفظ اسم الزبون:", error);
+    }
+
   } catch (e) {
     console.warn("تعذّر حفظ سجل الطلب:", e);
   }
@@ -1109,6 +1124,14 @@ async function saveOrderRecord(items, total) {
 function sendWhatsAppOrder() {
   if (cart.length === 0) return;
   if (!ORDERS_ENABLED) { openServiceModal(); return; }
+
+  const customerName = prompt("👤 اكتب اسمك:");
+
+  if (!customerName || !customerName.trim()) {
+    alert("⚠️ لازم تكتب اسمك قبل إرسال الطلب");
+    return;
+  }
+
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
   const orderedItems = [];
@@ -1126,7 +1149,7 @@ function sendWhatsAppOrder() {
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
 
-  saveOrderRecord(orderedItems, total);
+saveOrderRecord(orderedItems, total, customerName.trim());
 
   const url = `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
