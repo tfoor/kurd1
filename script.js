@@ -429,7 +429,7 @@ const allProductsFallback = [
   { id: 153, name: "طقم ساعة ومجوهرات 5 قطع", cat: "إكسسوارات", sub: "ساعات", price: 4.30, img: "accessories/40.webp" },
   { id: 154, name: "طقم مشابك شعر وردية 100 قطعة", cat: "إكسسوارات", sub: "إكسسوارات شعر", price: 3.18, img: "accessories/41.webp" },
   { id: 234, name: "قلادة شمس وقمر ذهبية", cat: "إكسسوارات", sub: "مجوهرات", price: 3.25, img: "accessories/47.webp" ,badge: "جديد"},
-  { id: 235, name: "قلادة شمس فضية", cat: "إكسسوارات", sub: "مجوهرات", price: 3.75, img: "accessories/48.webp"  ,badge: "جديد"},
+  { id: 239, name: "قلادة شمس فضية", cat: "إكسسوارات", sub: "مجوهرات", price: 3.75, img: "accessories/48.webp"  ,badge: "جديد"},
 
 
 
