@@ -45,6 +45,16 @@
   .stat-card .num{font-size:26px;font-weight:800;color:var(--accent-deep);}
   .stat-card .label{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
 
+  /* تبويبات رئيسية */
+  .main-tabs{display:flex;gap:8px;margin-bottom:18px;background:var(--surface);border-radius:14px;padding:5px;box-shadow:var(--shadow);width:fit-content;}
+  .main-tab{padding:10px 22px;border-radius:10px;font-weight:700;font-size:14px;color:var(--ink-soft);cursor:pointer;font-family:inherit;border:none;background:transparent;transition:.2s;}
+  .main-tab.active{background:var(--accent);color:#fff;}
+
+  /* تبويبات الفئات */
+  .cat-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+  .cat-tab{flex-shrink:0;padding:8px 16px;border-radius:20px;font-weight:700;font-size:13px;color:var(--ink-soft);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;}
+  .cat-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
   .search-row{margin-bottom:16px;}
   .search-row input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:14px;font-family:inherit;font-size:14px;background:var(--surface);color:var(--ink);outline:none;}
   .search-row input:focus{border-color:var(--accent);}
@@ -65,6 +75,17 @@
   .row-save-btn:hover{background:var(--accent);color:#fff;}
   .row-save-btn:disabled{opacity:.5;cursor:not-allowed;}
   .row-save-btn.saved{background:#1FAE7A;color:#fff;}
+
+  /* سجلات الطلبات (الفواتير) */
+  .orders-list{display:flex;flex-direction:column;gap:12px;}
+  .order-card{background:var(--surface);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);}
+  .order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
+  .order-head .order-id{font-weight:800;font-size:15px;}
+  .order-head .order-total{font-weight:800;font-size:16px;color:var(--accent-deep);}
+  .order-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;display:flex;gap:14px;flex-wrap:wrap;}
+  .order-items{border-top:1px dashed var(--border);padding-top:10px;display:flex;flex-direction:column;gap:5px;}
+  .order-item-row{display:flex;justify-content:space-between;font-size:13px;color:var(--ink);}
+  .order-item-row span:last-child{color:var(--ink-soft);}
 
   .loading-state, .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft);font-size:14px;}
 
@@ -114,14 +135,35 @@
         <div class="num" id="productsCount">—</div>
         <div class="label">🛍️ عدد المنتجات</div>
       </div>
+      <div class="stat-card">
+        <div class="num" id="ordersCount">—</div>
+        <div class="label">🧾 عدد الطلبات</div>
+      </div>
     </div>
 
-    <div class="search-row">
-      <input type="text" id="adminSearch" placeholder="🔍 دوّر برقم المنتج أو الاسم" oninput="renderProductList()">
+    <div class="main-tabs">
+      <button class="main-tab active" id="mainTabProducts" onclick="switchMainTab('products')">المنتجات</button>
+      <button class="main-tab" id="mainTabOrders" onclick="switchMainTab('orders')">الطلبات 🧾</button>
     </div>
 
-    <div class="product-list" id="productList">
-      <div class="loading-state">جاري التحميل...</div>
+    <!-- قسم المنتجات -->
+    <div id="productsSection">
+      <div class="cat-tabs" id="catTabs"></div>
+
+      <div class="search-row">
+        <input type="text" id="adminSearch" placeholder="🔍 دوّر برقم المنتج أو الاسم" oninput="renderProductList()">
+      </div>
+
+      <div class="product-list" id="productList">
+        <div class="loading-state">جاري التحميل...</div>
+      </div>
+    </div>
+
+    <!-- قسم الطلبات (سجلات الفاتورة) -->
+    <div id="ordersSection" style="display:none;">
+      <div class="orders-list" id="ordersList">
+        <div class="loading-state">جاري التحميل...</div>
+      </div>
     </div>
   </div>
 
@@ -136,6 +178,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_7bfT9JW5Y7aMRR211n0GVA_Blfp1UDx";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let allProducts = [];
+let activeCat = "الكل";
 
 function showToast(msg) {
   const el = document.getElementById("saveToast");
@@ -186,7 +229,16 @@ async function handleLogout() {
 async function showDashboard() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
-  await Promise.all([loadProducts(), loadVisitsCount()]);
+  await Promise.all([loadProducts(), loadVisitsCount(), loadOrdersCount()]);
+}
+
+/* ============ التبويبات الرئيسية: المنتجات / الطلبات ============ */
+function switchMainTab(tab) {
+  document.getElementById("mainTabProducts").classList.toggle("active", tab === "products");
+  document.getElementById("mainTabOrders").classList.toggle("active", tab === "orders");
+  document.getElementById("productsSection").style.display = tab === "products" ? "block" : "none";
+  document.getElementById("ordersSection").style.display = tab === "orders" ? "block" : "none";
+  if (tab === "orders") loadOrders();
 }
 
 /* ============ جلب المنتجات ============ */
@@ -198,6 +250,21 @@ async function loadProducts() {
   }
   allProducts = data || [];
   document.getElementById("productsCount").textContent = allProducts.length;
+  buildCatTabs();
+  renderProductList();
+}
+
+/* ============ بناء تبويبات الفئات (تلقائياً من المنتجات الموجودة) ============ */
+function buildCatTabs() {
+  const cats = ["الكل", ...new Set(allProducts.map(p => p.cat).filter(Boolean))];
+  const tabsEl = document.getElementById("catTabs");
+  tabsEl.innerHTML = cats.map(cat => `
+    <button class="cat-tab ${cat === activeCat ? 'active' : ''}" onclick="selectCatTab('${cat.replace(/'/g,"\\'")}')">${cat}</button>
+  `).join("");
+}
+function selectCatTab(cat) {
+  activeCat = cat;
+  buildCatTabs();
   renderProductList();
 }
 
@@ -207,12 +274,18 @@ async function loadVisitsCount() {
   document.getElementById("visitsCount").textContent = error ? "—" : (count ?? 0);
 }
 
-/* ============ عرض قائمة المنتجات مع فلترة البحث ============ */
+/* ============ جلب عدد الطلبات ============ */
+async function loadOrdersCount() {
+  const { count, error } = await sb.from("orders").select("*", { count: "exact", head: true });
+  document.getElementById("ordersCount").textContent = error ? "—" : (count ?? 0);
+}
+
+/* ============ عرض قائمة المنتجات مع فلترة الفئة والبحث ============ */
 function renderProductList() {
   const listEl = document.getElementById("productList");
   const q = document.getElementById("adminSearch").value.trim().toLowerCase();
 
-  let list = allProducts;
+  let list = activeCat === "الكل" ? allProducts : allProducts.filter(p => p.cat === activeCat);
   if (q) {
     list = list.filter(p => String(p.id).includes(q) || (p.name || "").toLowerCase().includes(q));
   }
@@ -272,6 +345,47 @@ async function saveProduct(id) {
   btn.textContent = "تم ✓";
   showToast("✅ تم حفظ التعديل");
   setTimeout(() => { btn.classList.remove("saved"); btn.textContent = "حفظ"; }, 1500);
+}
+
+/* ============ سجلات الطلبات (الفواتير) ============ */
+async function loadOrders() {
+  const listEl = document.getElementById("ordersList");
+  listEl.innerHTML = `<div class="loading-state">جاري التحميل...</div>`;
+
+  const { data, error } = await sb.from("orders").select("*").order("created_at", { ascending: false });
+
+  if (error) {
+    listEl.innerHTML = `<div class="empty-state">صار خطأ بجلب الطلبات: ${error.message}<br>(تأكد إنك نفّذت migration_accounts_orders.sql وحطيت is_admin = true لحسابك)</div>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    listEl.innerHTML = `<div class="empty-state">ما في طلبات مسجّلة بعد</div>`;
+    return;
+  }
+
+  document.getElementById("ordersCount").textContent = data.length;
+
+  listEl.innerHTML = data.map(o => {
+    const date = new Date(o.created_at).toLocaleString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    const items = o.items || [];
+    return `
+      <div class="order-card">
+        <div class="order-head">
+          <span class="order-id">🧾 طلب #${o.id}</span>
+          <span class="order-total">${o.total}$</span>
+        </div>
+        <div class="order-meta">
+          <span>📅 ${date}</span>
+          ${o.customer_name ? `<span>👤 ${o.customer_name}</span>` : ""}
+          ${o.country ? `<span>🌍 ${o.country === 'iq' ? 'العراق' : o.country === 'sy' ? 'سوريا' : o.country}</span>` : ""}
+          ${o.customer_id ? `<span>✅ زبون مسجل</span>` : `<span>👤 زائر</span>`}
+        </div>
+        <div class="order-items">
+          ${items.map(it => `<div class="order-item-row"><span>${it.name}</span><span>${it.qty} × ${it.price}$</span></div>`).join("")}
+        </div>
+      </div>`;
+  }).join("");
 }
 
 /* ============ التحقق من الجلسة عند فتح الصفحة ============ */

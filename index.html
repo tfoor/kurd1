@@ -49,6 +49,12 @@
       </svg>
       <span class="cart-count" id="cartCount">0</span>
     </button>
+    <button class="account-btn" id="accountBtn" onclick="openAccountModal()" title="حسابي" aria-label="حسابي">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="8.2" r="3.4" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M4.8 19.5c1.2-3.4 4-5.2 7.2-5.2s6 1.8 7.2 5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+    </button>
     <button class="search-fab" id="searchFab" onclick="toggleSearchBar()" title="بحث" aria-label="بحث">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <circle cx="10.8" cy="10.8" r="6.3" stroke="currentColor" stroke-width="1.8"/>
@@ -171,6 +177,62 @@
 <div class="img-lightbox" id="imgLightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- نافذة الحساب (تسجيل دخول / إنشاء حساب / طلباتي) -->
+<div class="account-modal" id="accountModal" onclick="closeAccountModal()">
+  <div class="account-modal-box" onclick="event.stopPropagation()">
+    <div class="camera-modal-head">
+      <h3 id="accountModalTitle">حسابي</h3>
+      <button class="lightbox-close cam-close" onclick="closeAccountModal()">✕</button>
+    </div>
+
+    <!-- حالة: غير مسجل دخول -->
+    <div id="authForms">
+      <div class="account-tabs">
+        <button class="account-tab active" id="tabLoginBtn" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+        <button class="account-tab" id="tabSignupBtn" onclick="switchAuthTab('signup')">حساب جديد</button>
+      </div>
+
+      <div id="loginPane">
+        <div class="acc-field">
+          <label>الإيميل</label>
+          <input type="email" id="custLoginEmail" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="acc-field">
+          <label>كلمة السر</label>
+          <input type="password" id="custLoginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn-accent acc-btn" onclick="handleCustomerLogin()">تسجيل الدخول</button>
+      </div>
+
+      <div id="signupPane" style="display:none;">
+        <div class="acc-field">
+          <label>الاسم</label>
+          <input type="text" id="custSignupName" placeholder="اسمك الكامل">
+        </div>
+        <div class="acc-field">
+          <label>الإيميل</label>
+          <input type="email" id="custSignupEmail" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="acc-field">
+          <label>كلمة السر</label>
+          <input type="password" id="custSignupPassword" placeholder="٦ أحرف على الأقل" autocomplete="new-password">
+        </div>
+        <button class="btn-accent acc-btn" onclick="handleCustomerSignup()">إنشاء حساب</button>
+      </div>
+
+      <div class="acc-error" id="accountError"></div>
+    </div>
+
+    <!-- حالة: مسجل دخول -->
+    <div id="accountLoggedIn" style="display:none;">
+      <div class="acc-welcome" id="accWelcomeText"></div>
+      <div class="acc-section-title">طلباتي السابقة</div>
+      <div class="acc-orders-list" id="accOrdersList"><div class="acc-empty">جاري التحميل...</div></div>
+      <button class="btn-ghost-acc acc-btn" onclick="handleCustomerLogout()">تسجيل الخروج</button>
+    </div>
+  </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>

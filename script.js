@@ -779,7 +779,7 @@ function closeLightbox() {
   document.body.style.overflow = "";
 }
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeLightbox(); closeContactModal(); closeCameraModal(); closeSettingsModal(); closeLanguageModal(); }
+  if (e.key === "Escape") { closeLightbox(); closeContactModal(); closeCameraModal(); closeSettingsModal(); closeLanguageModal(); closeAccountModal(); }
 });
 
 /* ============ فتح / إغلاق السلة ============ */
@@ -850,6 +850,111 @@ function closeLanguageModal() {
 function selectLanguageOption(lang) {
   applyLanguage(lang);
   closeLanguageModal();
+}
+
+/* ============ نافذة "حسابي" (تسجيل دخول / حساب جديد / طلباتي) ============ */
+let customerSession = null;
+
+function openAccountModal() {
+  document.getElementById("accountModal").classList.add("show");
+  refreshAccountModalView();
+}
+function closeAccountModal() {
+  document.getElementById("accountModal").classList.remove("show");
+}
+function switchAuthTab(tab) {
+  document.getElementById("accountError").textContent = "";
+  document.getElementById("tabLoginBtn").classList.toggle("active", tab === "login");
+  document.getElementById("tabSignupBtn").classList.toggle("active", tab === "signup");
+  document.getElementById("loginPane").style.display = tab === "login" ? "block" : "none";
+  document.getElementById("signupPane").style.display = tab === "signup" ? "block" : "none";
+}
+
+async function refreshAccountModalView() {
+  const { data } = await sb.auth.getSession();
+  customerSession = data && data.session ? data.session : null;
+
+  if (customerSession) {
+    document.getElementById("authForms").style.display = "none";
+    document.getElementById("accountLoggedIn").style.display = "block";
+    document.getElementById("accWelcomeText").textContent = "👋 أهلاً " + (customerSession.user.email || "");
+    loadMyOrders();
+  } else {
+    document.getElementById("authForms").style.display = "block";
+    document.getElementById("accountLoggedIn").style.display = "none";
+  }
+}
+
+async function handleCustomerSignup() {
+  const name = document.getElementById("custSignupName").value.trim();
+  const email = document.getElementById("custSignupEmail").value.trim();
+  const password = document.getElementById("custSignupPassword").value;
+  const errEl = document.getElementById("accountError");
+  errEl.textContent = "";
+
+  if (!name || !email || !password) { errEl.textContent = "عبّي كل الحقول"; return; }
+  if (password.length < 6) { errEl.textContent = "كلمة السر لازم ٦ أحرف على الأقل"; return; }
+
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: name } }
+  });
+
+  if (error) { errEl.textContent = "صار خطأ: " + error.message; return; }
+
+  if (data.session) {
+    refreshAccountModalView();
+  } else {
+    errEl.style.color = "#1FAE7A";
+    errEl.textContent = "تم إنشاء الحساب ✅ تحقق من إيميلك لتأكيد الحساب ثم سجّل دخول";
+  }
+}
+
+async function handleCustomerLogin() {
+  const email = document.getElementById("custLoginEmail").value.trim();
+  const password = document.getElementById("custLoginPassword").value;
+  const errEl = document.getElementById("accountError");
+  errEl.style.color = "";
+  errEl.textContent = "";
+
+  if (!email || !password) { errEl.textContent = "عبّي الإيميل وكلمة السر"; return; }
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { errEl.textContent = "الإيميل أو كلمة السر غير صحيحة"; return; }
+
+  refreshAccountModalView();
+}
+
+async function handleCustomerLogout() {
+  await sb.auth.signOut();
+  customerSession = null;
+  refreshAccountModalView();
+}
+
+async function loadMyOrders() {
+  const listEl = document.getElementById("accOrdersList");
+  listEl.innerHTML = `<div class="acc-empty">جاري التحميل...</div>`;
+
+  const { data, error } = await sb
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error || !data || !data.length) {
+    listEl.innerHTML = `<div class="acc-empty">ما عندك طلبات سابقة بعد</div>`;
+    return;
+  }
+
+  listEl.innerHTML = data.map(o => {
+    const date = new Date(o.created_at).toLocaleDateString("ar-EG", { year: "numeric", month: "short", day: "numeric" });
+    const itemsText = (o.items || []).map(it => `${it.name} × ${it.qty}`).join("، ");
+    return `
+      <div class="acc-order-card">
+        <div class="acc-order-head"><span>طلب #${o.id}</span><span>${o.total}${CURRENCY}</span></div>
+        <div class="acc-order-date">${date}</div>
+        <div class="acc-order-items">${itemsText}</div>
+      </div>`;
+  }).join("");
 }
 
 /* ============ نافذة "تواصل معنا" (واتساب + انستغرام) ============ */
@@ -985,16 +1090,33 @@ function closeServiceModal() {
   document.getElementById("serviceModal").classList.remove("show");
 }
 
-/* ============ إرسال الطلب عبر واتساب ============ */
+/* ============ إرسال الطلب عبر واتساب + حفظه كسجل فاتورة بقاعدة البيانات ============ */
+async function saveOrderRecord(items, total) {
+  try {
+    const orderItems = items.map(it => ({ id: it.id, name: it.name, qty: it.qty, price: it.price }));
+    await sb.from("orders").insert({
+      customer_id: customerSession ? customerSession.user.id : null,
+      customer_name: customerSession ? (customerSession.user.user_metadata?.full_name || null) : null,
+      country: selectedCountry,
+      items: orderItems,
+      total: total,
+    });
+  } catch (e) {
+    console.warn("تعذّر حفظ سجل الطلب:", e);
+  }
+}
+
 function sendWhatsAppOrder() {
   if (cart.length === 0) return;
   if (!ORDERS_ENABLED) { openServiceModal(); return; }
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
+  const orderedItems = [];
   cart.forEach(c => {
     const p = products.find(pr => pr.id === c.id);
     const subtotal = p.price * c.qty;
     total += subtotal;
+    orderedItems.push({ id: p.id, name: p.name, qty: c.qty, price: p.price });
     message += `🔸 *${p.name}* (رقم المنتج: #${p.id} - ${p.cat})\n`;
     message += `   الكمية: ${c.qty} × ${p.price}${CURRENCY} = ${subtotal}${CURRENCY}\n`;
     message += `   📸 صورة القطعة: ${p.img}\n\n`;
@@ -1003,6 +1125,8 @@ function sendWhatsAppOrder() {
   message += `💰 *الإجمالي: ${total}${CURRENCY}*\n`;
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
+
+  saveOrderRecord(orderedItems, total);
 
   const url = `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");

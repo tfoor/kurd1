@@ -318,6 +318,45 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
 .cam-close{position:static !important;width:32px;height:32px;font-size:15px;background:var(--accent-soft);color:var(--ink);}
 .cam-close:hover{background:var(--accent);color:#fff;}
 
+/* ===== ACCOUNT MODAL (حسابي) ===== */
+.account-btn{
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--nav-glass);color:var(--ink);border:1px solid var(--nav-border);transition:.2s;
+}
+.account-btn:hover{color:var(--accent-deep);background:var(--accent-soft);}
+.account-modal{
+  position:fixed;inset:0;z-index:141;background:rgba(20,16,26,0.55);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .3s;padding:20px;
+}
+.account-modal.show{opacity:1;visibility:visible;}
+.account-modal-box{
+  background:var(--surface);color:var(--ink);max-width:400px;width:100%;max-height:88vh;overflow-y:auto;
+  border-radius:18px;padding:24px 22px;box-shadow:var(--shadow);
+  transform:scale(.94);transition:transform .3s;
+}
+.account-modal.show .account-modal-box{transform:scale(1);}
+.account-modal-box #accountModalTitle{font-family:'Lalezar',sans-serif;font-size:20px;}
+.account-tabs{display:flex;gap:8px;margin-bottom:18px;background:var(--accent-soft);border-radius:14px;padding:4px;}
+.account-tab{flex:1;padding:10px 8px;border-radius:11px;font-weight:700;font-size:13.5px;color:var(--ink-soft);transition:.2s;}
+.account-tab.active{background:var(--accent);color:#fff;}
+.acc-field{margin-bottom:12px;}
+.acc-field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.acc-field input{width:100%;padding:11px 13px;border:1.5px solid var(--accent-soft);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);outline:none;transition:.2s;}
+.acc-field input:focus{border-color:var(--accent);}
+.acc-btn{width:100%;margin-top:4px;text-align:center;border:none;cursor:pointer;font-family:inherit;}
+.btn-ghost-acc{background:transparent;border:1.5px solid var(--accent-soft);color:var(--ink-soft);border-radius:30px;padding:13px;font-weight:700;transition:.2s;}
+.btn-ghost-acc:hover{border-color:var(--accent-deep);color:var(--accent-deep);}
+.acc-error{color:var(--accent-deep);font-size:13px;margin-top:10px;text-align:center;min-height:0;}
+.acc-welcome{font-weight:700;font-size:14.5px;margin-bottom:16px;background:var(--accent-soft);padding:12px 14px;border-radius:12px;}
+.acc-section-title{font-weight:800;font-size:13.5px;color:var(--ink-soft);margin-bottom:10px;}
+.acc-orders-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;max-height:260px;overflow-y:auto;}
+.acc-order-card{background:var(--accent-soft);border-radius:14px;padding:12px 14px;font-size:13px;}
+.acc-order-card .acc-order-head{display:flex;justify-content:space-between;font-weight:800;margin-bottom:4px;}
+.acc-order-card .acc-order-date{color:var(--ink-soft);font-size:11.5px;margin-bottom:6px;}
+.acc-order-card .acc-order-items{color:var(--ink-soft);font-size:12.5px;line-height:1.7;}
+.acc-empty{text-align:center;color:var(--ink-soft);font-size:13px;padding:20px 0;}
+
 /* ===== CAMERA / VISUAL SEARCH MODAL ===== */
 .camera-modal{
   position:fixed;inset:0;z-index:140;background:rgba(20,16,26,0.55);

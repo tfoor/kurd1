@@ -1,278 +1,104 @@
--- ========================================
--- جدول المنتجات (products)
--- ========================================
-create table if not exists public.products (
-  id bigint primary key,
-  name text not null,
-  cat text not null,
-  sub text,
-  price numeric not null,
-  old_price numeric,
-  color text,
-  img text,
-  badge text,
-  sale boolean default false,
+-- ========================================================
+-- الجزء الثاني: حسابات الزبائن + سجلات الطلبات (الفواتير)
+-- نفّذ هذا السكربت مرة وحدة بـ SQL Editor بلوحة Supabase
+-- (بعد ما تكون نفّذت migration.sql الأول)
+-- ========================================================
+
+-- ---------- جدول الملفات الشخصية (profiles) ----------
+-- كل مستخدم مسجل (سواء زبون أو أدمن) بياخذ صف هون تلقائياً
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  full_name text,
+  is_admin boolean not null default false,
   created_at timestamptz default now()
 );
 
-alter table public.products enable row level security;
+alter table public.profiles enable row level security;
 
-drop policy if exists "Public can read products" on public.products;
-create policy "Public can read products"
-  on public.products for select
-  to anon, authenticated
-  using (true);
-
-drop policy if exists "Only logged-in users can modify products" on public.products;
-create policy "Only logged-in users can modify products"
-  on public.products for all
+drop policy if exists "Users can read own profile" on public.profiles;
+create policy "Users can read own profile"
+  on public.profiles for select
   to authenticated
-  using (true)
-  with check (true);
+  using (id = auth.uid());
 
--- ========================================
--- جدول الزوار (visits)
--- ========================================
-create table if not exists public.visits (
+drop policy if exists "Users can update own profile" on public.profiles;
+create policy "Users can update own profile"
+  on public.profiles for update
+  to authenticated
+  using (id = auth.uid());
+
+-- دالة + trigger تنشئ صف بـ profiles تلقائياً كل ما حدا يسجل حساب جديد
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email)
+  values (new.id, new.email)
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- ---------- جدول الطلبات / سجلات الفاتورة (orders) ----------
+create table if not exists public.orders (
   id bigserial primary key,
-  visited_at timestamptz default now()
+  customer_id uuid references auth.users(id) on delete set null,
+  customer_name text,
+  customer_phone text,
+  country text,
+  items jsonb not null,
+  total numeric not null,
+  created_at timestamptz default now()
 );
 
-alter table public.visits enable row level security;
+alter table public.orders enable row level security;
 
-drop policy if exists "Anyone can log a visit" on public.visits;
-create policy "Anyone can log a visit"
-  on public.visits for insert
-  to anon, authenticated
-  with check (true);
-
-drop policy if exists "Only logged-in users can read visits" on public.visits;
-create policy "Only logged-in users can read visits"
-  on public.visits for select
+-- الزبون (مسجل دخول) يقدر يضيف طلب لحاله بس
+drop policy if exists "Customers can insert their own orders" on public.orders;
+create policy "Customers can insert their own orders"
+  on public.orders for insert
   to authenticated
-  using (true);
+  with check (customer_id = auth.uid());
 
--- ========================================
--- نقل بيانات المنتجات الحالية (209 منتج)
--- ========================================
-insert into public.products (id, name, cat, sub, price, old_price, color, img, badge, sale) values
-(214, 'طقم تيشيرت وبنطلون كاروهات للأطفال', 'أطفال', 'بناتي', 17.34, NULL, NULL, 'kids/1.webp', NULL, false),
-(215, 'طقم تيشيرت وردي وشورت جينز Mommy is my Bestie', 'أطفال', 'بناتي', 7.47, NULL, NULL, 'kids/2.webp', NULL, false),
-(217, 'مجموعة بنطلون وبلوزة كاجوال للبنات', 'أطفال', 'بناتي', 11.89, NULL, NULL, 'kids/4.webp', NULL, false),
-(235, 'قميص فيونكة قصير الأكمام بتطريز فيونكة', 'أطفال', 'بناتي', 13.35, NULL, NULL, 'kids/5.webp', 'جديد', false),
-(236, 'توب ازرق وبنطلون كارديجان', 'أطفال', 'بناتي', 13.8, NULL, NULL, 'kids/6.webp', 'جديد', false),
-(237, 'بلوز رياضي بياقة دائري مطبوع بفيونكة', 'أطفال', 'بناتي', 9.99, NULL, NULL, 'kids/7.webp', 'جديد', false),
-(238, 'تي شيرت قصير الأكمام و بنطلون كارغو وردي للفتيات', 'أطفال', 'بناتي', 12.99, NULL, NULL, 'kids/8.webp', 'جديد', false),
-(1, 'طقم رجالي أبيض قميص بأزرار وبنطال مريح', 'رجالي', 'أطقم منسقة', 19, NULL, 'أبيض', 'men''s/1.webp', NULL, false),
-(2, 'طقم بولو رجالي 3 قطع بألوان كلاسيكية', 'رجالي', 'ملابس علوية', 25.23, NULL, NULL, 'men''s/2.webp', NULL, false),
-(3, 'طقم بولو رجالي 3 قطع كاجوال', 'رجالي', 'ملابس علوية', 23.63, NULL, NULL, 'men''s/3.webp', NULL, false),
-(43, 'طقم رياضي رجالي ابيض قطعتين', 'رجالي', 'ملابس دينيم', 11.95, NULL, 'أبيض', 'men''s/4.webp', NULL, false),
-(44, 'طقم رياضي رجالي اسود قطعتين', 'رجالي', 'ملابس دينيم', 11.95, NULL, 'اسود', 'men''s/5.webp', NULL, false),
-(45, 'قميص بولو رجالي أسود مضلع', 'رجالي', 'ملابس علوية', 14, NULL, 'اسود', 'men''s/6.webp', NULL, false),
-(46, 'تيشيرت رجالي أبيض سادة', 'رجالي', 'ملابس علوية', 8.5, NULL, 'أبيض', 'men''s/7.webp', NULL, false),
-(47, 'طقم كتان رجالي أبيض فاخر', 'رجالي', 'أطقم منسقة', 29.5, NULL, 'أبيض', 'men''s/8.webp', NULL, false),
-(48, 'بلوزة رجالية بدون أكمام سوداء', 'رجالي', 'ملابس علوية', 6.86, NULL, 'اسود', 'men''s/9.webp', NULL, false),
-(49, 'طقم رجالي كاجوال أبيض وكحلي', 'رجالي', 'أطقم منسقة', 24.5, NULL, 'أبيض', 'men''s/10.webp', NULL, false),
-(50, 'قميص بولو رجالي أبيض بنقشة بارزة', 'رجالي', 'ملابس علوية', 14.05, NULL, 'أبيض', 'men''s/11.webp', NULL, false),
-(51, 'تيشيرت رجالي أسود مضلع', 'رجالي', 'ملابس علوية', 14.58, NULL, 'اسود', 'men''s/12.webp', NULL, false),
-(52, 'باك 4 تيشيرتات رجالية قطنية', 'رجالي', 'ملابس علوية', 24.43, NULL, 'أبيض', 'men''s/13.webp', NULL, false),
-(53, 'طقم رجالي بيج فاخر بقماش محبوك', 'رجالي', 'أطقم منسقة', 10.32, NULL, 'أبيض', 'men''s/14.webp', NULL, false),
-(54, 'تيشيرت رجالي أسود بتدرج رمادي', 'رجالي', 'ملابس علوية', 10.32, NULL, 'أبيض', 'men''s/15.webp', NULL, false),
-(55, 'طقم رجالي بني مع بنطال أبيض', 'رجالي', 'أطقم منسقة', 19.64, NULL, 'أبيض', 'men''s/16.webp', NULL, false),
-(56, 'طقم صيفي رجالي بيج بقميص وبنطال', 'رجالي', 'أطقم منسقة', 21, NULL, 'أبيض', 'men''s/18.webp', NULL, false),
-(57, 'طقم رجالي بني أنيق بقميص ياقة صينية', 'رجالي', 'أطقم منسقة', 23.63, NULL, 'أبيض', 'men''s/19.webp', NULL, false),
-(58, 'طقم رجالي صيفي أخضر فاتح (تيشيرت وشورت)', 'رجالي', 'أطقم منسقة', 19.9, NULL, 'أبيض', 'men''s/20.webp', NULL, false),
-(59, 'طقم رجالي بيج فاخر بنقشة مربعات', 'رجالي', 'ملابس علوية', 16.71, NULL, 'أبيض', 'men''s/21.webp', NULL, false),
-(60, 'بولو رجالي أبيض محبوك بسحاب ويا', 'رجالي', 'أطقم منسقة', 19.64, NULL, 'أبيض', 'men''s/22.webp', NULL, false),
-(61, 'طقم رجالي صيفي أبيض بقماش كريب مجعد', 'رجالي', 'أطقم منسقة', 24.7, NULL, 'أبيض', 'men''s/23.webp', NULL, false),
-(62, 'شورت رياضي رجالي قطعتين', 'رجالي', 'ملابس سفلية', 17.51, NULL, 'أبيض', 'men''s/17.webp', NULL, false),
-(12, 'تنورة طويلة بيضاء بطبقات', 'نسائي', 'تنانير', 15, NULL, 'أبيض', 'female/1.webp', NULL, false),
-(13, 'تنورة طويلة مطبوعة أزرق وأبيض', 'نسائي', 'تنانير', 14, NULL, 'أزرق مطبوع', 'female/2.webp', NULL, false),
-(14, 'تنورة بنطلون كحلية بحزام', 'نسائي', 'تنانير', 10, NULL, 'كحلي', 'female/3.webp', NULL, false),
-(15, 'تنورة بني غامق بأزرار جانبية', 'نسائي', 'تنانير', 14, NULL, 'بني غامق', 'female/4.webp', NULL, false),
-(16, 'تنورة كشمير أصفر كاروهات', 'نسائي', 'تنانير', 12, NULL, 'أصفر كاروهات', 'female/5.webp', NULL, false),
-(17, 'تنورة بيضاء بحزام مطرز بألوان', 'نسائي', 'تنانير', 17, NULL, 'أبيض بحزام ملون', 'female/6.webp', NULL, false),
-(18, 'تنورة طويلة بني غامق بطبقات', 'نسائي', 'تنانير', 12, NULL, 'بني غامق', 'female/7.webp', NULL, false),
-(19, 'تنورة جينز أزرق فاتح', 'نسائي', 'تنانير', 18, NULL, 'أزرق جينز فاتح', 'female/8.webp', NULL, false),
-(20, 'تنورة شيفون أخضر زيتي بطبقات', 'نسائي', 'تنانير', 15, NULL, 'أخضر زيتي', 'female/9.webp', NULL, false),
-(26, 'فستان ساتان موف بحزام سلسلة', 'نسائي', 'فساتين', 26, NULL, 'موف', 'female/10.webp', NULL, false),
-(27, 'طقم بلوزة سوداء وتنورة لفّة بيضاء', 'نسائي', 'أطقم منسقة', 27, NULL, 'أسود وأبيض', 'female/11.webp', NULL, false),
-(28, 'ملابس سباحه للمحجبين', 'نسائي', 'فساتين', 26, NULL, 'وردي مموّه', 'female/12.webp', NULL, false),
-(29, 'فستان سهرة نبيتي بترتر ودانتيل', 'نسائي', 'فساتين', 33, NULL, 'نبيتي', 'female/13.webp', NULL, false),
-(30, 'فستان دانتيل نبيتي بأكمام جرس', 'نسائي', 'فساتين', 24, NULL, 'نبيتي', 'female/14.webp', NULL, false),
-(31, 'طقم كحلي ببلوزة وتنورة شيفون وحزام', 'نسائي', 'أطقم منسقة', 28, NULL, 'كحلي', 'female/15.webp', NULL, false),
-(32, 'طقم بني دگراديه ببلوزة وتنورة شيفون', 'نسائي', 'أطقم منسقة', 26, NULL, 'بني دگراديه', 'female/16.webp', NULL, false),
-(33, 'فستان سهرة أخضر فستقي بياقة مرصعة', 'نسائي', 'فساتين', 26, NULL, 'أخضر فستقي', 'female/17.webp', NULL, false),
-(34, 'طقم كروب توب أسود وتنورة تاي داي', 'نسائي', 'أطقم منسقة', 21, NULL, 'أسود وبرتقالي', 'female/18.webp', NULL, false),
-(158, 'طقم بلوزة وبنطلون مطبوع أبيض وأسود', 'نسائي', 'أطقم منسقة', 16.52, NULL, NULL, 'female/19.webp', NULL, false),
-(159, 'بنطلون أسود واسع', 'نسائي', 'ملابس سفلية', 13.52, NULL, NULL, 'female/20.webp', NULL, false),
-(160, 'طقم بيج كارديجان وبنطلون', 'نسائي', 'أطقم منسقة', 19.79, NULL, NULL, 'female/21.webp', NULL, false),
-(161, 'كارديجان بيج', 'نسائي', 'ملابس علوية', 9.98, NULL, NULL, 'female/22.webp', NULL, false),
-(162, 'طقم بيج بنطلون وبلوزة', 'نسائي', 'أطقم منسقة', 15.7, NULL, NULL, 'female/23.webp', NULL, false),
-(164, 'تنورة سوداء طويلة', 'نسائي', 'تنانير', 16.25, NULL, NULL, 'female/25.webp', NULL, false),
-(165, 'طقم بني بلوزة وبنطلون', 'نسائي', 'أطقم منسقة', 18.15, NULL, NULL, 'female/26.webp', NULL, false),
-(166, 'فستان أبيض بأزرار', 'نسائي', 'فساتين', 15.43, NULL, NULL, 'female/27.webp', NULL, false),
-(167, 'طقم بلوزات أسود وليوبارد وبني', 'نسائي', 'ملابس علوية', 12.98, NULL, NULL, 'female/28.webp', NULL, false),
-(168, 'طقم بيج سترة وبنطلون وتوب', 'نسائي', 'أطقم منسقة', 16.25, NULL, NULL, 'female/29.webp', NULL, false),
-(169, 'طقم بيج توب وبنطلون', 'نسائي', 'أطقم منسقة', 14.61, NULL, NULL, 'female/30.webp', NULL, false),
-(170, 'طقم بلوزة وبنطلون زيتي', 'نسائي', 'أطقم منسقة', 15.97, NULL, NULL, 'female/31.webp', NULL, false),
-(171, 'طقم جاكيت جلد أسود وبنطلون وتنورة', 'نسائي', 'أطقم منسقة', 29.04, NULL, NULL, 'female/32.webp', NULL, false),
-(172, 'طقم تيشيرتات مخططة', 'نسائي', 'ملابس علوية', 6.72, NULL, NULL, 'female/33.webp', NULL, false),
-(173, 'جمبسوت بيج', 'نسائي', 'أطقم منسقة', 18.15, NULL, NULL, 'female/34.webp', NULL, false),
-(174, 'طقم بناطيل واسعة بألوان متعددة', 'نسائي', 'ملابس سفلية', 14.88, NULL, NULL, 'female/35.webp', NULL, false),
-(175, 'طقم بيجامة وردية منقطة', 'نسائي', 'أطقم منسقة', 14.89, NULL, NULL, 'female/36.webp', NULL, false),
-(176, 'طقم فستان مطبوع وكارديجان بنفسجي', 'نسائي', 'أطقم منسقة', 18.7, NULL, NULL, 'female/37.webp', NULL, false),
-(177, 'طقم رياضي كحلي هودي وبنطلون', 'نسائي', 'أطقم منسقة', 26.32, NULL, NULL, 'female/38.webp', NULL, false),
-(178, 'بنطلون جينز واسع نسائي', 'نسائي', 'ملابس سفلية', 23.87, NULL, NULL, 'female/39.webp', NULL, false),
-(179, 'جمبسوت أبيض', 'نسائي', 'أطقم منسقة', 25.77, NULL, NULL, 'female/40.webp', NULL, false),
-(180, 'بلوزة مخططة أبيض وأسود', 'نسائي', 'ملابس علوية', 6.99, NULL, NULL, 'female/41.webp', NULL, false),
-(181, 'طقم كارديجان بني وقميص', 'نسائي', 'أطقم منسقة', 13.52, NULL, NULL, 'female/42.webp', NULL, false),
-(182, 'معطف نسائي بني طويل', 'نسائي', 'ملابس علوية', 16.79, NULL, NULL, 'female/43.webp', NULL, false),
-(183, 'فستان أصفر طويل', 'نسائي', 'فساتين', 17.33, NULL, NULL, 'female/44.webp', NULL, false),
-(184, 'بلوزة مطرزة بيج وأزرق', 'نسائي', 'ملابس علوية', 8.09, NULL, NULL, 'female/45.webp', NULL, false),
-(185, 'جاكيت بليزر أسود', 'نسائي', 'ملابس علوية', 9.44, NULL, NULL, 'female/46.webp', NULL, false),
-(186, 'تنورة كاروهات بنية طويلة', 'نسائي', 'تنانير', 14.88, NULL, NULL, 'female/47.webp', NULL, false),
-(187, 'طقم بلوزات أساسية أبيض وأسود', 'نسائي', 'ملابس علوية', 12.98, NULL, NULL, 'female/48.webp', NULL, false),
-(188, 'طقم أبيض بلوزة وبنطلون', 'نسائي', 'أطقم منسقة', 18.7, NULL, NULL, 'female/49.webp', NULL, false),
-(189, 'بنطلون بني واسع', 'نسائي', 'ملابس سفلية', 13.91, NULL, NULL, 'female/50.webp', NULL, false),
-(190, 'جاكيت جلد بني', 'نسائي', 'ملابس علوية', 23.87, NULL, NULL, 'female/51.webp', NULL, false),
-(191, 'طقم تنانير كحلي وعنابي وبيج', 'نسائي', 'تنانير', 22.78, NULL, NULL, 'female/52.webp', NULL, false),
-(192, 'طقم ملابس منزلية أزرق مطبوع', 'نسائي', 'أطقم منسقة', 8.62, NULL, NULL, 'female/53.webp', NULL, false),
-(193, 'بنطلون جلد بني', 'نسائي', 'ملابس سفلية', 15.43, NULL, NULL, 'female/54.webp', NULL, false),
-(194, 'طقم توب وتنورة جينز بني', 'نسائي', 'أطقم منسقة', 6.44, NULL, NULL, 'female/55.webp', NULL, false),
-(195, 'بلوزة بولو بيضاء', 'نسائي', 'ملابس علوية', 15.43, NULL, NULL, 'female/56.webp', NULL, false),
-(196, 'بنطلون أسود واسع', 'نسائي', 'ملابس سفلية', 14.61, NULL, NULL, 'female/57.webp', NULL, false),
-(197, 'هودي أزرق NYC', 'نسائي', 'ملابس علوية', 16.52, NULL, NULL, 'female/58.webp', NULL, false),
-(198, 'بلوزة زرقاء بأكمام مطرزة', 'نسائي', 'ملابس علوية', 6.99, NULL, NULL, 'female/59.webp', NULL, false),
-(199, 'بنطلون أسود واسع', 'نسائي', 'ملابس سفلية', 14.61, NULL, NULL, 'female/60.webp', NULL, false),
-(200, 'تنورة سوداء طويلة', 'نسائي', 'تنانير', 17.06, NULL, NULL, 'female/61.webp', NULL, false),
-(201, 'بلوزة بيضاء واسعة', 'نسائي', 'ملابس علوية', 11.89, NULL, NULL, 'female/62.webp', NULL, false),
-(218, 'قميص أزرق مخطط فضفاض', 'نسائي', 'ملابس علوية', 11.35, NULL, NULL, 'female/63.webp', NULL, false),
-(219, 'تيشيرت أبيض بطبعة كرز', 'نسائي', 'ملابس علوية', 6.44, NULL, NULL, 'female/64.webp', NULL, false),
-(220, 'طقم رمادي توب وبنطلون واسع', 'نسائي', 'أطقم منسقة', 15.16, NULL, NULL, 'female/65.webp', NULL, false),
-(221, 'بنطلون أبيض واسع بحزام', 'نسائي', 'ملابس سفلية', 18.15, NULL, NULL, 'female/66.webp', NULL, false),
-(222, 'سترة بولو كحلية بياقة بيضاء', 'نسائي', 'ملابس علوية', 13.8, NULL, NULL, 'female/67.webp', NULL, false),
-(223, 'طقم بيج توب وبنطلون واسع', 'نسائي', 'أطقم منسقة', 14.89, NULL, NULL, 'female/68.webp', NULL, false),
-(224, 'طقم بيجامة وردية مخططة ستان', 'نسائي', 'أطقم منسقة', 15.43, NULL, NULL, 'female/69.webp', NULL, false),
-(225, 'طقم أزرق فاتح قميص وبنطلون', 'نسائي', 'أطقم منسقة', 20.6, NULL, NULL, 'female/70.webp', NULL, false),
-(226, 'فستان أصفر مزهر', 'نسائي', 'فساتين', 25.78, NULL, NULL, 'female/71.webp', NULL, false),
-(227, 'جاكيت دانتيل كريمي', 'نسائي', 'ملابس علوية', 16.25, NULL, NULL, 'female/72.webp', NULL, false),
-(228, 'فستان أخضر مزهر', 'نسائي', 'فساتين', 25.23, NULL, NULL, 'female/73.webp', NULL, false),
-(229, 'طقم عنابي بلوزة وبنطلون', 'نسائي', 'أطقم منسقة', 26.86, NULL, NULL, 'female/74.webp', NULL, false),
-(8, 'حذاء كلاسيك جلديشعر صناعي أحمر عنابي طويل', 'أحذية', 'كلاسيك', 9, NULL, NULL, 'shoes/1.webp', NULL, false),
-(21, 'صندل كعب نبيتي بفيونكة ساتان', 'أحذية', 'صنادل', 17, NULL, 'نبيتي', 'shoes/2.webp', NULL, false),
-(22, 'صندل كعب نبيتي بفيونكة كبيرة', 'أحذية', 'صنادل', 17, NULL, 'نبيتي', 'shoes/3.webp', NULL, false),
-(23, 'كعب مرصّع بالكريستال والورود', 'أحذية', 'كعوب', 17, NULL, 'وردي مرصّع', 'shoes/4.webp', NULL, false),
-(40, '     لشعر مستعار نبيتي', 'إكسسوارات', 'شعر مستعار', 9, NULL, 'لون خمري', 'accessories/1.webp', NULL, false),
-(41, 'شنطة يد سوداء كبيرة', 'إكسسوارات', 'جنط', 7.53, NULL, NULL, 'accessories/13.webp', NULL, false),
-(42, 'طقم مجوهرات وساعة في علبة هدية', 'إكسسوارات', 'مجوهرات', 4.54, NULL, NULL, 'accessories/34.webp', NULL, false),
-(63, 'ساعة يد نسائية كلاسيك بسوار ذهبي', 'إكسسوارات', 'ساعات', 4.54, NULL, NULL, 'accessories/2.webp', NULL, false),
-(64, 'كفر آيفون أبيض بنقشة ورد', 'إكسسوارات', 'اكسسوارات موبايل', 2.91, NULL, NULL, 'accessories/3.webp', NULL, false),
-(65, 'شنطة يد بيضاء بتفاصيل مطرزة', 'إكسسوارات', 'جنط', 14.7, NULL, NULL, 'accessories/4.webp', NULL, false),
-(72, 'كفر آيفون وردي مع حبل حمل', 'إكسسوارات', 'اكسسوارات موبايل', 5.8, NULL, NULL, 'accessories/5.webp', NULL, false),
-(73, 'كفر آيفون فوشيا', 'إكسسوارات', 'اكسسوارات موبايل', 5.8, NULL, NULL, 'accessories/6.webp', NULL, false),
-(76, 'قلادة شمس ', 'إكسسوارات', 'مجوهرات', 3.75, NULL, NULL, 'accessories/45.webp', 'جديد', false),
-(77, 'طقم جوارب 5 ازواج الوان متنوع رمادي و ابيض وأسود', 'إكسسوارات', 'جوارب', 5.08, NULL, NULL, 'accessories/8.webp', NULL, false),
-(78, 'طقم ساعة فضي وذهبي', 'إكسسوارات', 'ساعات', 19.24, NULL, NULL, 'accessories/9.webp', NULL, false),
-(79, 'طقم خواتم ذهبية معلقة (9) ', 'إكسسوارات', 'مجوهرات', 2.63, NULL, NULL, 'accessories/10.webp', NULL, false),
-(81, 'شنطة يد سوداء بتفصيل وشاح', 'إكسسوارات', 'جنط', 7.26, NULL, NULL, 'accessories/11.webp', NULL, false),
-(83, 'سوار انفينتي ذهبي', 'إكسسوارات', 'مجوهرات', 2.63, NULL, NULL, 'accessories/12.webp', NULL, false),
-(93, 'شنطة قش بيضاء بزهرة', 'إكسسوارات', 'جنط', 8.71, NULL, NULL, 'accessories/14.webp', NULL, false),
-(94, 'قلادة شمس ذهبية', 'إكسسوارات', 'مجوهرات', 11.9, NULL, NULL, 'accessories/46.webp', 'جديد', false),
-(98, 'شنطة كتف سوداء بفيونكة', 'إكسسوارات', 'جنط', 15.16, NULL, NULL, 'accessories/16.webp', NULL, false),
-(99, 'جوارب متوسطة الطول للأطفال/البنات 20', 'إكسسوارات', ' جوارب', 5.36, NULL, NULL, 'accessories/17.webp', NULL, false),
-(100, 'طقم أساور ذهبية 10 قطع', 'إكسسوارات', 'مجوهرات', 5.1, NULL, NULL, 'accessories/18.webp', NULL, false),
-(101, 'طقم نظارات شمسية 6 أزواج', 'إكسسوارات', 'نظارات', 7.35, NULL, NULL, 'accessories/19.webp', NULL, false),
-(107, 'طقم شنط قش قطعتين', 'إكسسوارات', 'جنط', 8.8, NULL, NULL, 'accessories/20.webp', NULL, false),
-(108, 'كفر آيفون أسود بقلب وسلسلة', 'إكسسوارات', 'اكسسوارات موبايل', 3.18, NULL, NULL, 'accessories/21.webp', NULL, false),
-(230, 'كفر آيفون أزرق بنقشة فراشات', 'إكسسوارات', 'اكسسوارات موبايل', 4.27, NULL, NULL, 'accessories/42.webp', NULL, false),
-(231, 'شنطة يد بيج بحزام أسود', 'إكسسوارات', 'جنط', 7.26, NULL, NULL, 'accessories/43.webp', NULL, false),
-(232, 'مجموعة ربطات شعر متنوعة 119', 'إكسسوارات', 'إكسسوارات شعر', 6.72, NULL, NULL, 'accessories/44.webp', NULL, false),
-(112, 'شنطة يد جلد بني', 'إكسسوارات', 'جنط', 8.36, NULL, NULL, 'accessories/22.webp', NULL, false),
-(119, 'بونيه ساتان للشعر', 'إكسسوارات', 'إكسسوارات شعر', 4.54, NULL, NULL, 'accessories/23.webp', NULL, false),
-(120, 'ساعة يد ذهبية', 'إكسسوارات', 'ساعات', 5.36, NULL, NULL, 'accessories/24.webp', NULL, false),
-(122, 'طقم نظارتين شمسيتين', 'إكسسوارات', 'نظارات', 4.27, NULL, NULL, 'accessories/25.webp', NULL, false),
-(126, 'طقم خرز DIY لصناعة الإكسسوارات', 'إكسسوارات', 'مجوهرات', 10.53, NULL, NULL, 'accessories/26.webp', NULL, false),
-(134, 'قطعة حامل هاتف سيليكون بكوب شفط', 'إكسسوارات', 'اكسسوارات موبايل', 2.36, NULL, NULL, 'accessories/27.webp', NULL, false),
-(135, 'حامل هاتف بتصميم أرنب', 'إكسسوارات', 'اكسسوارات موبايل', 11, NULL, NULL, 'accessories/28.webp', NULL, false),
-(139, 'طقم جوارب قصيرة 5 إلى 10 أزواج', 'إكسسوارات', 'جوارب', 4.81, NULL, NULL, 'accessories/29.webp', NULL, false),
-(140, 'طقم جوارب نسائية متنوعة', 'إكسسوارات', 'جوارب', 5.36, NULL, NULL, 'accessories/30.webp', NULL, false),
-(141, 'طقم جوارب بيضاء بتفاصيل دانتيل', 'إكسسوارات', 'جوارب', 6, NULL, NULL, 'accessories/31.webp', NULL, false),
-(142, 'طقم جوارب أسود وأبيض و رمادي 30 زوج', 'إكسسوارات', 'جوارب', 21.4, NULL, NULL, 'accessories/32.webp', NULL, false),
-(144, 'سوار خرز ملون', 'إكسسوارات', 'مجوهرات', 2.91, NULL, NULL, 'accessories/33.webp', NULL, false),
-(145, 'طقم جوارب أطفال 5 إلى 10 أزواج', 'إكسسوارات', 'جوارب', 7.53, NULL, NULL, 'accessories/35.webp', NULL, false),
-(147, 'طقم مشابك شعر ملونة 181 قطعة', 'إكسسوارات', 'إكسسوارات شعر', 4, NULL, NULL, 'accessories/36.webp', NULL, false),
-(148, 'حامل ربطات شعر دوار 183 قطع', 'إكسسوارات', 'إكسسوارات شعر', 4.54, NULL, NULL, 'accessories/37.webp', NULL, false),
-(150, 'طقم ساعة وسوار هدية', 'إكسسوارات', 'ساعات', 4.54, NULL, NULL, 'accessories/38.webp', NULL, false),
-(151, 'سوار خرز فضي وأزرق', 'إكسسوارات', 'مجوهرات', 2.09, NULL, NULL, 'accessories/39.webp', NULL, false),
-(153, 'طقم ساعة ومجوهرات 5 قطع', 'إكسسوارات', 'ساعات', 4.3, NULL, NULL, 'accessories/40.webp', NULL, false),
-(154, 'طقم مشابك شعر وردية 100 قطعة', 'إكسسوارات', 'إكسسوارات شعر', 3.18, NULL, NULL, 'accessories/41.webp', NULL, false),
-(234, 'قلادة شمس وقمر ذهبية', 'إكسسوارات', 'مجوهرات', 3.25, NULL, NULL, 'accessories/47.webp', 'جديد', false),
-(239, 'قلادة شمس فضية', 'إكسسوارات', 'مجوهرات', 3.75, NULL, NULL, 'accessories/48.webp', 'جديد', false),
-(66, 'طقم مكياج عيون مسكرا وآيلاينر 3 قطع ', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/1.webp', NULL, false),
-(67, 'لوس باودر ', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/2.webp', NULL, false),
-(68, 'شنطة تجميل مبطنة متعددة الأقسام', 'مكياج', 'أدوات تجميل', 6.17, NULL, NULL, 'makeup/3.webp', NULL, false),
-(69, 'ظل عيون كريمي بعلبتين بني وذهبي', 'مكياج', 'مكياج', 5.63, NULL, NULL, 'makeup/4.webp', NULL, false),
-(70, 'طقم عناية بالبشرة برايمر وبخاخ', 'مكياج', 'عناية بالبشرة', 15.7, NULL, NULL, 'makeup/5.webp', NULL, false),
-(71, 'اظافر زينة للقدم120 قطعة ', 'مكياج', 'عناية بالأظافر', 8.35, NULL, NULL, 'makeup/6.webp', NULL, false),
-(74, 'طقم فرش مكياج 8 قطع', 'مكياج', 'أدوات تجميل', 11.7, NULL, NULL, 'makeup/7.webp', NULL, false),
-(75, 'قلم آيلاينر مزدوج الرأس', 'مكياج', 'مكياج', 5.8, NULL, NULL, 'makeup/8.webp', NULL, false),
-(80, 'جهاز صنفرة أظافر كهربائي', 'مكياج', 'عناية بالأظافر', 4, NULL, NULL, 'makeup/9.webp', NULL, false),
-(82, 'طقم عناية بالأظافر أخضر', 'مكياج', 'عناية بالأظافر', 3.45, NULL, NULL, 'makeup/10.webp', NULL, false),
-(84, 'بالت تصحيح العيوب لتصحيح لون تصبغات', 'مكياج', 'مكياج', 8.62, NULL, NULL, 'makeup/11.webp', NULL, false),
-(85, 'بالت ظلال عيون ', 'مكياج', 'مكياج', 6.17, NULL, NULL, 'makeup/12.webp', NULL, false),
-(86, 'طلاء أظافر بغطاء ذهبي', 'مكياج', 'عناية بالأظافر', 4.54, NULL, NULL, 'makeup/13.webp', NULL, false),
-(87, 'طقم أقلام تحديد شفاه', 'مكياج', 'مكياج', 3.99, NULL, NULL, 'makeup/14.webp', NULL, false),
-(88, 'ملابس سباحه للمحجبين', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/15.webp', NULL, false),
-(89, 'قلم تصحيح كونسيلر', 'مكياج', 'مكياج', 7.52, NULL, NULL, 'makeup/16.webp', NULL, false),
-(90, 'كونسيلر تغطية عالية', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/17.webp', NULL, false),
-(91, 'مسكارا وآيلاينر ووتربروف أسود', 'مكياج', 'مكياج', 9.71, NULL, NULL, 'makeup/18.webp', NULL, false),
-(92, 'جهاز تجفيف جل و اكليرك', 'مكياج', 'عناية بالأظافر', 5.8, NULL, NULL, 'makeup/19.webp', NULL, false),
-(95, 'أظافر ضغط جاهزة تصاميم داكنة 10 قطع', 'مكياج', 'عناية بالأظافر', 3.18, NULL, NULL, 'makeup/20.webp', NULL, false),
-(96, 'أظافر ضغط جاهزة نيود ووردي', 'مكياج', 'عناية بالأظافر', 3.99, NULL, NULL, 'makeup/21.webp', NULL, false),
-(97, 'طلاء جل أظافر 288 قطعة', 'مكياج', 'عناية بالأظافر', 4.54, NULL, NULL, 'makeup/22.webp', NULL, false),
-(102, 'بالت ظلال عيون', 'مكياج', 'مكياج', 10.26, NULL, NULL, 'makeup/23.webp', NULL, false),
-(103, 'طلاء جل أظافر 36 لون', 'مكياج', 'عناية بالأظافر', 2.63, NULL, NULL, 'makeup/24.webp', NULL, false),
-(105, 'طقم مقص أظافر مغناطيسي', 'مكياج', 'عناية بالأظافر', 3.75, NULL, NULL, 'makeup/26.webp', NULL, false),
-(106, ' طقم قوالب أظافر مطبقة 120', 'مكياج', 'عناية بالأظافر', 3, NULL, NULL, 'makeup/27.webp', NULL, false),
-(109, 'طقم شفاه 2 في 1 لاينر ولمعان', 'مكياج', 'مكياج', 7.72, NULL, NULL, 'makeup/28.webp', NULL, false),
-(110, 'مجموعة بيوتي بلاندر 50 قطعة تشمل 10 اشكال', 'مكياج', 'أدوات تجميل', 4, NULL, NULL, 'makeup/29.webp', NULL, false),
-(111, 'عصا بلاش شفافة', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/30.webp', NULL, false),
-(113, 'طقم احمر شفاه لامع', 'مكياج', 'مكياج', 8.8, NULL, NULL, 'makeup/31.webp', NULL, false),
-(114, 'طقم فرش مكياج 15 قطعة مع حافظة', 'مكياج', 'أدوات تجميل', 9.44, NULL, NULL, 'makeup/32.webp', NULL, false),
-(115, 'عصا هايلايتر', 'مكياج', 'مكياج', 7.26, NULL, NULL, 'makeup/33.webp', NULL, false),
-(116, 'طقم مجموعة أنامل مكون من خواتم 22/68', 'إكسسوارات', 'مجوهرات', 6.5, NULL, NULL, 'makeup/34.webp', NULL, false),
-(117, 'طقم تينت قابل للتقشير', 'مكياج', 'مكياج', 5.8, NULL, NULL, 'makeup/35.webp', NULL, false),
-(118, 'مجموعة أدوات الرموش والحواجب', 'مكياج', 'أدوات تجميل', 9, NULL, NULL, 'makeup/36.webp', NULL, false),
-(121, 'جل تصفيف الحواجب', 'مكياج', 'مكياج', 5.8, NULL, NULL, 'makeup/37.webp', NULL, false),
-(123, 'منظم فرش مكياج للطاولة قطعة واحد', 'مكياج', 'أدوات تجميل', 3.72, NULL, NULL, 'makeup/38.webp', NULL, false),
-(128, 'قفازات حمام رقيقة مقشرة', 'مكياج', 'عناية بالبشرة', 2.91, NULL, NULL, 'makeup/40.webp', NULL, false),
-(130, 'قناع نوم على شكل باندا', 'مكياج', 'عناية بالبشرة', 2.91, NULL, NULL, 'makeup/41.webp', NULL, false),
-(132, 'مجوعة ادوات للعناية بالبشرة', 'مكياج', 'أدوات تجميل', 9.17, NULL, NULL, 'makeup/42.webp', NULL, false),
-(133, 'عبوة ماء بلاستيك و مقاوم للحارة', 'مكياج', 'عناية بالبشرة', 6.17, NULL, NULL, 'makeup/43.webp', NULL, false),
-(143, 'طقم فرش مكياج بحافظة فيونكة', 'مكياج', 'أدوات تجميل', 1.82, NULL, NULL, 'makeup/44.webp', NULL, false),
-(124, 'خفاقة حليب كهربائية للقهوة', 'أدوات منزلية', NULL, 3.72, NULL, NULL, 'home/1.webp', NULL, false),
-(127, 'طقم مناشف فاخرة 4 إلى 8 قطع', 'أدوات منزلية', NULL, 6.72, NULL, NULL, 'home/2.webp', NULL, false),
-(129, 'مرآة مكياج كبيرة بإضاءة', 'أدوات منزلية', NULL, 6.17, NULL, NULL, 'home/3.webp', NULL, false),
-(131, ' أكواب حرارية ملونة', 'أدوات منزلية', NULL, 16.8, NULL, NULL, 'home/4.webp', NULL, false),
-(136, 'صندوق تنظيم مكياج ', 'أدوات منزلية', NULL, 14.07, NULL, NULL, 'home/5.webp', NULL, false),
-(137, 'طقم حقائب تخزين ملابس', 'أدوات منزلية', NULL, 8.08, NULL, NULL, 'home/6.webp', NULL, false),
-(138, 'آلة خياطة محمولة صغيرة', 'أدوات منزلية', NULL, 4, NULL, NULL, 'home/7.webp', NULL, false),
-(146, 'حافظة اقلام أبداعية بسعة كبير', 'أدوات منزلية', NULL, 5.36, NULL, NULL, 'home/8.webp', NULL, false),
-(155, 'جهاز اغلاق حراري محمول', 'أدوات منزلية', NULL, 3.5, NULL, NULL, 'home/13.webp', NULL, false),
-(152, 'كوب حراري بتصميم كرز', 'أدوات منزلية', NULL, 14.88, NULL, NULL, 'home/9.webp', NULL, false),
-(156, 'طقم أغطية مخدات ساتان فاخرة', 'أدوات منزلية', NULL, 6, NULL, NULL, 'home/10.webp', NULL, false),
-(157, 'جهاز إزالة وبر الأقمشة قابل للشحن', 'أدوات منزلية', NULL, 7.26, NULL, NULL, 'home/11.webp', NULL, false),
-(233, 'منظم مكتبي متعدد الأدراج', 'أدوات منزلية', NULL, 4.86, NULL, NULL, 'home/12.webp', NULL, false),
-(149, 'طقم أحذية أطفال دونات 4 قطع', 'أحذية', 'أطفال', 6.17, NULL, NULL, 'shoes/17.webp', NULL, false)
-on conflict (id) do update set
-  name = excluded.name,
-  cat = excluded.cat,
-  sub = excluded.sub,
-  price = excluded.price,
-  old_price = excluded.old_price,
-  color = excluded.color,
-  img = excluded.img,
-  badge = excluded.badge,
-  sale = excluded.sale;
+-- بند: السماح بحفظ طلبات الزوار غير المسجلين (بدون customer_id) كمان،
+-- مشان تنحفظ الفاتورة بلوحة الأدمن حتى لو الزبون ما سجل حساب
+drop policy if exists "Guests can insert orders without account" on public.orders;
+create policy "Guests can insert orders without account"
+  on public.orders for insert
+  to anon
+  with check (customer_id is null);
 
+-- الزبون يشوف بس طلباته هو
+drop policy if exists "Customers can read their own orders" on public.orders;
+create policy "Customers can read their own orders"
+  on public.orders for select
+  to authenticated
+  using (customer_id = auth.uid());
+
+-- الأدمن (is_admin = true بجدول profiles) يشوف كل الطلبات
+drop policy if exists "Admins can read all orders" on public.orders;
+create policy "Admins can read all orders"
+  on public.orders for select
+  to authenticated
+  using (
+    exists (
+      select 1 from public.profiles
+      where profiles.id = auth.uid() and profiles.is_admin = true
+    )
+  );
+
+-- ========================================================
+-- ⚠️ خطوة أخيرة ضرورية: علّم حسابك انت كـ "أدمن"
+-- بدّل الإيميل تحت بالإيميل يلي تستخدمه لدخول admin.html
+-- ونفّذ السطر هذا لحاله بعد كل الكود يلي فوق
+-- ========================================================
+update public.profiles set is_admin = true
+where email = 'REPLACE_WITH_YOUR_ADMIN_EMAIL@example.com';
