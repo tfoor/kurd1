@@ -33,10 +33,33 @@
     </ul>
   </nav>
   <div class="header-actions">
-    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر">🌙</button>
-    <button class="cart-btn" onclick="openCart()">🛍️<span class="cart-count" id="cartCount">0</span></button>
-    <button class="search-fab" id="searchFab" onclick="toggleSearchBar()" title="بحث">🔍</button>
-    <button class="burger" onclick="toggleNav()">☰</button>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر" aria-label="تبديل المظهر">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 9 9 0 1 0 20.5 14.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.3" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M12 2.6v2.4M12 19v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.6 12H5M19 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="cart-btn" onclick="openCart()" aria-label="السلة">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6.5 8h11l-1 11.2a2 2 0 0 1-2 1.8H9.5a2 2 0 0 1-2-1.8L6.5 8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        <path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <button class="search-fab" id="searchFab" onclick="toggleSearchBar()" title="بحث" aria-label="بحث">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="10.8" cy="10.8" r="6.3" stroke="currentColor" stroke-width="1.8"/>
+        <path d="m19.5 19.5-3.9-3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="burger" onclick="toggleNav()" aria-label="القائمة">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -331,6 +354,40 @@
     btn.addEventListener("click", () => {
       btn.classList.remove("bnav-pop");
       void btn.offsetWidth; // إعادة تشغيل الأنيميشن
+      btn.classList.add("bnav-pop");
+    });
+    btn.addEventListener("animationend", (e) => {
+      if (e.target === btn) btn.classList.remove("bnav-pop");
+    });
+  });
+})();
+
+(function(){
+  /* نفس فكرة التصغير الناعم + التوهج عند الضغط لأزرار الهيدر العلوي */
+  const header = document.querySelector("header");
+  if (!header) return;
+
+  let lastY = window.scrollY;
+  let stopTimer = null;
+
+  function onScroll(){
+    const y = window.scrollY;
+    if (y > lastY && y > 40) {
+      header.classList.add("head-compact");
+    } else if (y < lastY || y <= 40) {
+      header.classList.remove("head-compact");
+    }
+    lastY = y;
+
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(() => header.classList.remove("head-compact"), 650);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  header.querySelectorAll(".theme-btn, .cart-btn, .search-fab, .burger, .settings-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.remove("bnav-pop");
+      void btn.offsetWidth;
       btn.classList.add("bnav-pop");
     });
     btn.addEventListener("animationend", (e) => {

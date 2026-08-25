@@ -239,8 +239,6 @@ function applyTheme(theme) {
   const th = theme === "dark" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", th);
   localStorage.setItem("boutique_theme", th);
-  const btn = document.getElementById("themeBtn");
-  if (btn) btn.textContent = th === "dark" ? "☀️" : "🌙";
 }
 function toggleTheme() {
   const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
