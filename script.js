@@ -476,7 +476,7 @@ const allProducts = [
   { id: 124, name: "خفاقة حليب كهربائية للقهوة", cat: "أدوات منزلية", sub: "", price: 3.72, img: "home/1.webp" },
   { id: 127, name: "طقم مناشف فاخرة 4 إلى 8 قطع", cat: "أدوات منزلية", sub: "", price: 6.72, img: "home/2.webp" },
   { id: 129, name: "مرآة مكياج كبيرة بإضاءة", cat: "أدوات منزلية", sub: "", price: 6.17, img: "home/3.webp" },
-  { id: 131, name: "طقم أكواب حرارية ملونة", cat: "أدوات منزلية", sub: "", price: 16.80, img: "home/4.webp" },
+  { id: 131, name: " أكواب حرارية ملونة", cat: "أدوات منزلية", sub: "", price: 16.80, img: "home/4.webp" },
   { id: 136, name: "صندوق تنظيم مكياج ", cat: "أدوات منزلية", sub: "", price: 14.07, img: "home/5.webp" },
   { id: 137, name: "طقم حقائب تخزين ملابس", cat: "أدوات منزلية", sub: "", price: 8.08, img: "home/6.webp" },
   { id: 138, name: "آلة خياطة محمولة صغيرة", cat: "أدوات منزلية", sub: "", price: 4.00, img: "home/7.webp" },
