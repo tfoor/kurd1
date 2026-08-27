@@ -623,52 +623,58 @@ async function deleteProduct(id) {
 
   if (!confirmed) return;
 
-  // حذف المنتج من قاعدة البيانات
+  // 1) حذف المنتج من جدول products
   const { error: dbError } = await sb
     .from("products")
     .delete()
     .eq("id", id);
 
   if (dbError) {
-    console.error(dbError);
+    console.error("DB DELETE ERROR:", dbError);
     showToast("❌ فشل حذف المنتج: " + dbError.message);
     return;
   }
 
-  // حذف صورة المنتج من Storage
+  // 2) حذف الصورة من Storage
   if (product.img) {
     try {
-      const marker = "/product-images/";
-      const markerIndex = product.img.indexOf(marker);
+      const url = new URL(product.img);
 
-      if (markerIndex !== -1) {
+      // نأخذ الجزء الموجود بعد /object/public/product-images/
+      const marker = "/object/public/product-images/";
+
+      const index = url.pathname.indexOf(marker);
+
+      if (index !== -1) {
         const filePath = decodeURIComponent(
-          product.img.substring(markerIndex + marker.length)
+          url.pathname.substring(index + marker.length)
         );
 
-        console.log("مسار الصورة:", filePath);
+        console.log("🗑️ حذف الصورة:", filePath);
 
         const { error: storageError } = await sb.storage
           .from("product-images")
           .remove([filePath]);
 
         if (storageError) {
-          console.error("فشل حذف الصورة:", storageError);
+          console.error("STORAGE DELETE ERROR:", storageError);
           showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
           return;
         }
 
-        console.log("✅ تم حذف الصورة");
+        console.log("✅ الصورة انحذفت من Storage");
       } else {
-        console.log("⚠️ رابط الصورة ليس من product-images:", product.img);
+        console.warn("⚠️ لم أستطع استخراج مسار الصورة:", product.img);
       }
+
     } catch (e) {
-      console.error("خطأ بحذف الصورة:", e);
+      console.error("STORAGE ERROR:", e);
       showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
       return;
     }
   }
 
+  // 3) تحديث الواجهة
   allProducts = allProducts.filter(
     p => Number(p.id) !== Number(id)
   );
