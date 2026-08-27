@@ -217,6 +217,23 @@
       border-radius:12px;
     "
   >
+  <div id="imageProcessStatus" style="
+  display:none;
+  margin-top:10px;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--bg);
+  font-size:12px;
+  line-height:1.9;
+">
+  <div id="imageProcessTitle" style="font-weight:800;">
+    🖼️ معالجة الصورة
+  </div>
+
+  <div id="imageProcessInfo"></div>
+</div>
+
 </div>
           <div class="field"><label>الشارة</label><input type="text" id="newBadge" placeholder="جديد / خصم"></div>
         </div>
@@ -422,7 +439,63 @@ function clearAddForm() {
     status.textContent = "اختر صورة من جهازك";
   }
 }
+async function compressImageToWebP(file) {
+  const MAX_SIZE = 1000;
+  const QUALITY = 0.78;
 
+  const img = new Image();
+
+  const imageUrl = URL.createObjectURL(file);
+
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = imageUrl;
+  });
+
+  URL.revokeObjectURL(imageUrl);
+
+  let width = img.naturalWidth;
+  let height = img.naturalHeight;
+
+  if (Math.max(width, height) > MAX_SIZE) {
+    const scale = MAX_SIZE / Math.max(width, height);
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, width, height);
+
+  const webpBlob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      blob => blob ? resolve(blob) : reject(new Error("فشل تحويل الصورة")),
+      "image/webp",
+      QUALITY
+    );
+  });
+
+  return new File(
+    [webpBlob],
+    file.name.replace(/\.[^/.]+$/, "") + ".webp",
+    { type: "image/webp" }
+  );
+}
+function formatFileSize(bytes) {
+  if (bytes < 1024) {
+    return bytes + " B";
+  }
+
+  if (bytes < 1024 * 1024) {
+    return (bytes / 1024).toFixed(1) + " KB";
+  }
+
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
 async function addProduct() {
   const btn = document.getElementById("addProductBtn");
 
@@ -443,7 +516,7 @@ async function addProduct() {
     : null;
 
   // الصورة المختارة من الجهاز
-  const imageFile = document.getElementById("newImgFile").files[0];
+  let imageFile = document.getElementById("newImgFile").files[0];
 
   if (
     !Number.isInteger(id) ||
@@ -478,6 +551,48 @@ async function addProduct() {
     showToast("⚠️ الملف المختار ليس صورة");
     return;
   }
+
+  btn.disabled = true;
+btn.textContent = "جاري ضغط الصورة...";
+
+try {
+  const originalSize = imageFile.size;
+
+  imageFile = await compressImageToWebP(imageFile);
+
+  const originalKB = Math.round(originalSize / 1024);
+  const compressedKB = Math.round(imageFile.size / 1024);
+  const savedPercent = originalSize
+  ? Math.max(0, (1 - imageFile.size / originalSize) * 100)
+  : 0;
+
+const processBox = document.getElementById("imageProcessStatus");
+const processInfo = document.getElementById("imageProcessInfo");
+
+if (processBox && processInfo) {
+  processBox.style.display = "block";
+
+  processInfo.innerHTML = `
+    ✅ الحجم الأصلي: ${formatFileSize(originalSize)}<br>
+    📉 بعد الضغط: ${formatFileSize(imageFile.size)}<br>
+    💾 التوفير: ${savedPercent.toFixed(1)}%<br>
+    🔄 جاري رفع WebP إلى Supabase...
+  `;
+}
+  console.log(
+    `📦 الحجم: ${originalKB} KB → ${compressedKB} KB`
+  );
+
+  btn.textContent = "جاري رفع الصورة...";
+} catch (e) {
+  console.error(e);
+
+  showToast("❌ فشل ضغط الصورة");
+
+  btn.disabled = false;
+  btn.textContent = "إضافة المنتج";
+  return;
+}
 
   btn.disabled = true;
   btn.textContent = "جاري رفع الصورة...";
