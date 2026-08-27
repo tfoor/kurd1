@@ -524,7 +524,16 @@ async function loadProducts() {
       oldPrice: row.old_price !== null && row.old_price !== undefined ? Number(row.old_price) : undefined,
       color: row.color || undefined,
       img: row.img,
-      badge: row.badge || undefined,
+      badge:
+  row.badge === "جديد" &&
+  row.new_until &&
+  new Date(row.new_until) > new Date()
+    ? "جديد"
+    : row.badge === "جديد"
+      ? undefined
+      : (row.badge || undefined),
+
+newUntil: row.new_until || null,
       sale: !!row.sale,
     }));
   } catch (e) {

@@ -437,6 +437,10 @@ async function addProduct() {
 
   const color = document.getElementById("newColor").value.trim() || null;
   const badge = document.getElementById("newBadge").value.trim() || null;
+  const newUntil =
+  badge === "جديد"
+    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    : null;
 
   // الصورة المختارة من الجهاز
   const imageFile = document.getElementById("newImgFile").files[0];
@@ -526,6 +530,7 @@ async function addProduct() {
         color,
         img,
         badge,
+        new_until: newUntil,
         sale: old_price !== null && old_price > price
       })
       .select()
