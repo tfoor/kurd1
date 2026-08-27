@@ -621,17 +621,45 @@ async function deleteProduct(id) {
 
   if (!confirmed) return;
 
-  const { error } = await sb
+  // أولاً نحذف المنتج من قاعدة البيانات
+  const { error: dbError } = await sb
     .from("products")
     .delete()
     .eq("id", id);
 
-  if (error) {
-    console.error(error);
-    showToast("❌ فشل حذف المنتج: " + error.message);
+  if (dbError) {
+    console.error(dbError);
+    showToast("❌ فشل حذف المنتج: " + dbError.message);
     return;
   }
 
+  // محاولة حذف صورة المنتج من Storage
+  if (product.img) {
+    try {
+      const marker = "/product-images/";
+      const markerIndex = product.img.indexOf(marker);
+
+      if (markerIndex !== -1) {
+        const filePath = decodeURIComponent(
+          product.img.substring(markerIndex + marker.length)
+        );
+
+        const { error: storageError } = await sb.storage
+          .from("product-images")
+          .remove([filePath]);
+
+        if (storageError) {
+          console.error("فشل حذف الصورة:", storageError);
+          showToast("⚠️ تم حذف المنتج لكن تعذر حذف الصورة");
+        }
+      }
+    } catch (e) {
+      console.error("خطأ بحذف الصورة:", e);
+      showToast("⚠️ تم حذف المنتج لكن تعذر حذف الصورة");
+    }
+  }
+
+  // تحديث القائمة مباشرة
   allProducts = allProducts.filter(
     p => Number(p.id) !== Number(id)
   );
@@ -642,7 +670,7 @@ async function deleteProduct(id) {
   buildCatTabs();
   renderProductList();
 
-  showToast("✅ تم حذف المنتج");
+  showToast("✅ تم حذف المنتج والصورة");
 }
 /* ============ سجلات الطلبات (الفواتير) ============ */
 async function loadOrders() {
