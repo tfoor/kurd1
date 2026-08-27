@@ -85,7 +85,28 @@
   .row-save-btn:hover{background:var(--accent);color:#fff;}
   .row-save-btn:disabled{opacity:.5;cursor:not-allowed;}
   .row-save-btn.saved{background:#1FAE7A;color:#fff;}
+.delete-product-btn{
+  padding:8px 10px;
+  border:none;
+  border-radius:9px;
+  background:#FFE1E8;
+  color:#D63D6E;
+  font-weight:700;
+  font-size:12.5px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:.2s;
+}
 
+.delete-product-btn:hover{
+  background:#D63D6E;
+  color:#fff;
+}
+
+.delete-product-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
   /* سجلات الطلبات (الفواتير) */
   .orders-list{display:flex;flex-direction:column;gap:12px;}
   .order-card{background:var(--surface);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);}
@@ -168,7 +189,35 @@
           <div class="field"><label>السعر *</label><input type="number" step="0.01" min="0" id="newPrice" placeholder="0.00"></div>
           <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="newOldPrice" placeholder="اختياري"></div>
           <div class="field"><label>اللون</label><input type="text" id="newColor" placeholder="اختياري"></div>
-          <div class="field"><label>رابط/مسار الصورة</label><input type="text" id="newImg" placeholder="images/product.jpg"></div>
+          <div class="field">
+  <label>صورة المنتج</label>
+
+  <input
+    type="file"
+    id="newImgFile"
+    accept="image/*"
+  >
+
+  <small
+    id="imageUploadStatus"
+    style="display:block;margin-top:6px;color:#726B7E;font-size:12px;">
+    اختر صورة من جهازك
+  </small>
+
+  <img
+    id="imagePreview"
+    src=""
+    alt="معاينة صورة المنتج"
+    style="
+      display:none;
+      margin-top:10px;
+      width:90px;
+      height:90px;
+      object-fit:cover;
+      border-radius:12px;
+    "
+  >
+</div>
           <div class="field"><label>الشارة</label><input type="text" id="newBadge" placeholder="جديد / خصم"></div>
         </div>
         <div class="add-actions">
@@ -335,66 +384,187 @@ function renderProductList() {
         <input type="number" step="0.01" value="${p.price}" id="price-${p.id}">
         <span>$</span>
       </div>
-      <button class="row-save-btn" id="save-${p.id}" onclick="saveProduct(${p.id})">حفظ</button>
+      <div style="display:flex;gap:6px;">
+  <button
+    class="row-save-btn"
+    id="save-${p.id}"
+    onclick="saveProduct(${p.id})">
+    حفظ
+  </button>
+
+  <button
+    class="delete-product-btn"
+    onclick="deleteProduct(${p.id})">
+    حذف
+  </button>
+</div>
     </div>
   `).join("");
 }
 
 /* ============ إضافة منتج جديد ============ */
 function clearAddForm() {
-  ["newId","newName","newCat","newSub","newPrice","newOldPrice","newColor","newImg","newBadge"]
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+  ["newId","newName","newCat","newSub","newPrice","newOldPrice","newColor","newImgFile","newBadge"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+
+  const preview = document.getElementById("imagePreview");
+  const status = document.getElementById("imageUploadStatus");
+
+  if (preview) {
+    preview.src = "";
+    preview.style.display = "none";
+  }
+
+  if (status) {
+    status.textContent = "اختر صورة من جهازك";
+  }
 }
 
 async function addProduct() {
   const btn = document.getElementById("addProductBtn");
+
   const id = parseInt(document.getElementById("newId").value, 10);
   const name = document.getElementById("newName").value.trim();
   const cat = document.getElementById("newCat").value.trim() || null;
   const sub = document.getElementById("newSub").value.trim() || null;
   const price = parseFloat(document.getElementById("newPrice").value);
+
   const oldPriceRaw = document.getElementById("newOldPrice").value;
   const old_price = oldPriceRaw === "" ? null : parseFloat(oldPriceRaw);
+
   const color = document.getElementById("newColor").value.trim() || null;
-  const img = document.getElementById("newImg").value.trim() || null;
   const badge = document.getElementById("newBadge").value.trim() || null;
 
-  if (!Number.isInteger(id) || id <= 0 || !name || Number.isNaN(price) || price < 0) {
+  // الصورة المختارة من الجهاز
+  const imageFile = document.getElementById("newImgFile").files[0];
+
+  if (
+    !Number.isInteger(id) ||
+    id <= 0 ||
+    !name ||
+    Number.isNaN(price) ||
+    price < 0
+  ) {
     showToast("⚠️ عبّي رقم المنتج والاسم والسعر بشكل صحيح");
     return;
   }
-  if (old_price !== null && (Number.isNaN(old_price) || old_price < 0)) {
+
+  if (
+    old_price !== null &&
+    (Number.isNaN(old_price) || old_price < 0)
+  ) {
     showToast("⚠️ السعر القديم غير صحيح");
     return;
   }
+
   if (allProducts.some(p => Number(p.id) === id)) {
     showToast("⚠️ رقم المنتج موجود مسبقًا");
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "جاري الإضافة...";
-
-  const { data, error } = await sb.from("products").insert({
-    id, name, cat, sub, price, old_price, color, img, badge,
-    sale: old_price !== null && old_price > price
-  }).select().single();
-
-  btn.disabled = false;
-  btn.textContent = "إضافة المنتج";
-
-  if (error) {
-    console.error(error);
-    showToast("❌ فشلت إضافة المنتج: " + error.message);
+  if (!imageFile) {
+    showToast("⚠️ اختر صورة للمنتج");
     return;
   }
 
-  allProducts.push(data);
-  document.getElementById("productsCount").textContent = allProducts.length;
-  buildCatTabs();
-  renderProductList();
-  clearAddForm();
-  showToast("✅ تم إضافة المنتج وحفظه في Supabase");
+  if (!imageFile.type.startsWith("image/")) {
+    showToast("⚠️ الملف المختار ليس صورة");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري رفع الصورة...";
+
+  try {
+    // امتداد الصورة
+    const fileExt = imageFile.name.split(".").pop().toLowerCase();
+
+    // اسم فريد للصورة
+    const fileName = `${id}-${Date.now()}.${fileExt}`;
+    const filePath = `products/${fileName}`;
+
+    // رفع الصورة إلى Supabase Storage
+    const { error: uploadError } = await sb.storage
+      .from("product-images")
+      .upload(filePath, imageFile, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: imageFile.type
+      });
+
+    if (uploadError) {
+      console.error(uploadError);
+      showToast("❌ فشل رفع الصورة: " + uploadError.message);
+
+      btn.disabled = false;
+      btn.textContent = "إضافة المنتج";
+      return;
+    }
+
+    // جلب الرابط العام للصورة
+    const { data: publicUrlData } = sb.storage
+      .from("product-images")
+      .getPublicUrl(filePath);
+
+    const img = publicUrlData.publicUrl;
+
+    btn.textContent = "جاري إضافة المنتج...";
+
+    // إضافة المنتج مع رابط الصورة
+    const { data, error } = await sb
+      .from("products")
+      .insert({
+        id,
+        name,
+        cat,
+        sub,
+        price,
+        old_price,
+        color,
+        img,
+        badge,
+        sale: old_price !== null && old_price > price
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error(error);
+
+      // إذا فشل إنشاء المنتج نحذف الصورة
+      await sb.storage
+        .from("product-images")
+        .remove([filePath]);
+
+      showToast("❌ فشلت إضافة المنتج: " + error.message);
+
+      btn.disabled = false;
+      btn.textContent = "إضافة المنتج";
+      return;
+    }
+
+    // تحديث القائمة
+    allProducts.push(data);
+
+    document.getElementById("productsCount").textContent =
+      allProducts.length;
+
+    buildCatTabs();
+    renderProductList();
+    clearAddForm();
+
+    showToast("✅ تم رفع الصورة وإضافة المنتج بنجاح");
+
+  } catch (e) {
+    console.error(e);
+    showToast("❌ صار خطأ أثناء رفع الصورة");
+  }
+
+  btn.disabled = false;
+  btn.textContent = "إضافة المنتج";
 }
 
 /* ============ حفظ تعديل منتج (اسم + سعر) ============ */
@@ -432,7 +602,43 @@ async function saveProduct(id) {
   showToast("✅ تم حفظ التعديل");
   setTimeout(() => { btn.classList.remove("saved"); btn.textContent = "حفظ"; }, 1500);
 }
+async function deleteProduct(id) {
+  const product = allProducts.find(p => Number(p.id) === Number(id));
 
+  if (!product) {
+    showToast("❌ المنتج غير موجود");
+    return;
+  }
+
+  const confirmed = confirm(
+    `⚠️ هل أنت متأكد من حذف المنتج؟\n\n#${product.id} — ${product.name}`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await sb
+    .from("products")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    showToast("❌ فشل حذف المنتج: " + error.message);
+    return;
+  }
+
+  allProducts = allProducts.filter(
+    p => Number(p.id) !== Number(id)
+  );
+
+  document.getElementById("productsCount").textContent =
+    allProducts.length;
+
+  buildCatTabs();
+  renderProductList();
+
+  showToast("✅ تم حذف المنتج");
+}
 /* ============ سجلات الطلبات (الفواتير) ============ */
 async function loadOrders() {
   const listEl = document.getElementById("ordersList");
@@ -484,6 +690,33 @@ async function loadOrders() {
 
 document.getElementById("loginPassword").addEventListener("keydown", e => {
   if (e.key === "Enter") handleLogin();
+});
+document.getElementById("newImgFile").addEventListener("change", function () {
+  const file = this.files[0];
+
+  const preview = document.getElementById("imagePreview");
+  const status = document.getElementById("imageUploadStatus");
+
+  if (!file) {
+    preview.style.display = "none";
+    preview.src = "";
+    status.textContent = "اختر صورة من جهازك";
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    preview.style.display = "none";
+    preview.src = "";
+    status.textContent = "⚠️ الملف ليس صورة";
+    return;
+  }
+
+  const imageURL = URL.createObjectURL(file);
+
+  preview.src = imageURL;
+  preview.style.display = "block";
+
+  status.textContent = `✅ تم اختيار الصورة: ${file.name}`;
 });
 </script>
 </body>

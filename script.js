@@ -910,13 +910,35 @@ async function handleCustomerLogin() {
   const email = document.getElementById("custLoginEmail").value.trim();
   const password = document.getElementById("custLoginPassword").value;
   const errEl = document.getElementById("accountError");
+
   errEl.style.color = "";
   errEl.textContent = "";
 
-  if (!email || !password) { errEl.textContent = "عبّي الإيميل وكلمة السر"; return; }
+  if (!email || !password) {
+    errEl.textContent = "عبّي الإيميل وكلمة السر";
+    return;
+  }
 
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { errEl.textContent = "الإيميل أو كلمة السر غير صحيحة"; return; }
+  const { data, error } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    errEl.textContent = "الإيميل أو كلمة السر غير صحيحة";
+    return;
+  }
+
+  // تسجيل الإيميل في سجل الاستخدام
+  try {
+    await sb.from("customer_email_logs").insert({
+      email: email,
+      user_id: data.user?.id || null,
+      action: "login"
+    });
+  } catch (e) {
+    console.warn("تعذّر تسجيل الإيميل:", e);
+  }
 
   refreshAccountModalView();
 }
@@ -1087,7 +1109,7 @@ function closeServiceModal() {
 }
 
 /* ============ إرسال الطلب عبر واتساب + حفظه كسجل فاتورة بقاعدة البيانات ============ */
-async function saveOrderRecord(items, total, customerName) {
+async function saveOrderRecord(items, total, customerName, customerEmail) {
   try {
     const orderItems = items.map(it => ({
       id: it.id,
@@ -1096,18 +1118,22 @@ async function saveOrderRecord(items, total, customerName) {
       price: it.price
     }));
 
-    const { error } = await sb.from("orders").insert({
-      customer_id: customerSession ? customerSession.user.id : null,
-      customer_name: customerName || (
-        customerSession
-          ? (customerSession.user.user_metadata?.full_name || null)
-          : null
-      ),
-      country: selectedCountry,
-      items: orderItems,
-      total: total
-    });
-
+const { error } = await sb.from("orders").insert({
+  customer_id: customerSession ? customerSession.user.id : null,
+  customer_name: customerName || (
+    customerSession
+      ? (customerSession.user.user_metadata?.full_name || null)
+      : null
+  ),
+  customer_email: customerEmail || (
+    customerSession
+      ? customerSession.user.email
+      : null
+  ),
+  country: selectedCountry,
+  items: orderItems,
+  total: total
+});
     if (error) {
       console.error("خطأ حفظ اسم الزبون:", error);
     }
@@ -1117,37 +1143,88 @@ async function saveOrderRecord(items, total, customerName) {
   }
 }
 
-function sendWhatsAppOrder() {
+async function sendWhatsAppOrder() {
   if (cart.length === 0) return;
-  if (!ORDERS_ENABLED) { openServiceModal(); return; }
-
-  const customerName = prompt("👤 اكتب اسمك:");
-
-  if (!customerName || !customerName.trim()) {
-    alert("⚠️ لازم تكتب اسمك قبل إرسال الطلب");
+  if (!ORDERS_ENABLED) {
+    openServiceModal();
     return;
+  }
+
+  // إذا الزبون مسجل دخول نستخدم إيميله من الحساب
+  let customerEmail = customerSession?.user?.email || "";
+
+  // إذا مو مسجل دخول، نطلب الإيميل
+  if (!customerEmail) {
+    customerEmail = prompt("📧 اكتب إيميلك:");
+
+    if (!customerEmail || !customerEmail.trim()) {
+      alert("⚠️ لازم تكتب إيميلك قبل إرسال الطلب");
+      return;
+    }
+
+    customerEmail = customerEmail.trim().toLowerCase();
+
+    // تحقق بسيط من صيغة الإيميل
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(customerEmail)) {
+      alert("⚠️ الإيميل غير صحيح");
+      return;
+    }
+
+    // تسجيل الإيميل
+    try {
+      await sb.from("customer_email_logs").insert({
+        email: customerEmail,
+        user_id: null,
+        action: "order"
+      });
+    } catch (e) {
+      console.warn("تعذّر تسجيل إيميل الطلب:", e);
+    }
   }
 
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
   const orderedItems = [];
+
   cart.forEach(c => {
     const p = products.find(pr => pr.id === c.id);
+
+    if (!p) return;
+
     const subtotal = p.price * c.qty;
     total += subtotal;
-    orderedItems.push({ id: p.id, name: p.name, qty: c.qty, price: p.price });
+
+    orderedItems.push({
+      id: p.id,
+      name: p.name,
+      qty: c.qty,
+      price: p.price
+    });
+
     message += `🔸 *${p.name}* (رقم المنتج: #${p.id} - ${p.cat})\n`;
     message += `   الكمية: ${c.qty} × ${p.price}${CURRENCY} = ${subtotal}${CURRENCY}\n`;
     message += `   📸 صورة القطعة: ${p.img}\n\n`;
   });
+
   message += "────────────────\n";
+  message += `👤 *الإيميل:* ${customerEmail}\n`;
   message += `💰 *الإجمالي: ${total}${CURRENCY}*\n`;
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
 
-saveOrderRecord(orderedItems, total, customerName.trim());
+  // حفظ الفاتورة مع الإيميل
+  await saveOrderRecord(
+    orderedItems,
+    total,
+    customerSession?.user?.user_metadata?.full_name || "",
+    customerEmail
+  );
 
-  const url = `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
+  const url =
+    `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
+
   window.open(url, "_blank");
 }
 
