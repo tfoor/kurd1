@@ -608,7 +608,9 @@ async function saveProduct(id) {
   setTimeout(() => { btn.classList.remove("saved"); btn.textContent = "حفظ"; }, 1500);
 }
 async function deleteProduct(id) {
-  const product = allProducts.find(p => Number(p.id) === Number(id));
+  const product = allProducts.find(
+    p => Number(p.id) === Number(id)
+  );
 
   if (!product) {
     showToast("❌ المنتج غير موجود");
@@ -621,7 +623,7 @@ async function deleteProduct(id) {
 
   if (!confirmed) return;
 
-  // أولاً نحذف المنتج من قاعدة البيانات
+  // حذف المنتج من قاعدة البيانات
   const { error: dbError } = await sb
     .from("products")
     .delete()
@@ -633,7 +635,7 @@ async function deleteProduct(id) {
     return;
   }
 
-  // محاولة حذف صورة المنتج من Storage
+  // حذف صورة المنتج من Storage
   if (product.img) {
     try {
       const marker = "/product-images/";
@@ -644,26 +646,29 @@ async function deleteProduct(id) {
           product.img.substring(markerIndex + marker.length)
         );
 
+        console.log("مسار الصورة:", filePath);
+
         const { error: storageError } = await sb.storage
           .from("product-images")
           .remove([filePath]);
 
         if (storageError) {
           console.error("فشل حذف الصورة:", storageError);
-          showToast("⚠️ تم حذف المنتج لكن تعذر حذف الصورة");
+          showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
+          return;
         }
+
+        console.log("✅ تم حذف الصورة");
+      } else {
+        console.log("⚠️ رابط الصورة ليس من product-images:", product.img);
       }
     } catch (e) {
       console.error("خطأ بحذف الصورة:", e);
-      showToast("⚠️ تم حذف المنتج لكن تعذر حذف الصورة");
+      showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
+      return;
     }
-    
   }
-  
-  
 
-
-  // تحديث قائمة المنتجات في لوحة التحكم
   allProducts = allProducts.filter(
     p => Number(p.id) !== Number(id)
   );
