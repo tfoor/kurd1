@@ -657,9 +657,13 @@ async function deleteProduct(id) {
       console.error("خطأ بحذف الصورة:", e);
       showToast("⚠️ تم حذف المنتج لكن تعذر حذف الصورة");
     }
+    
   }
+  
+  
 
-  // تحديث القائمة مباشرة
+
+  // تحديث قائمة المنتجات في لوحة التحكم
   allProducts = allProducts.filter(
     p => Number(p.id) !== Number(id)
   );
