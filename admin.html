@@ -186,6 +186,7 @@
           <div class="field"><label>اسم المنتج *</label><input type="text" id="newName" placeholder="اسم المنتج"></div>
           <div class="field">
   <label>الفئة</label>
+  
   <select id="newCat" onchange="updateNewSubcats()">
     <option value="">اختر الفئة</option>
     <option value="رجالي">رجالي</option>
@@ -291,6 +292,429 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let allProducts = [];
 let activeCat = "الكل";
+let editingProductId = null;
+
+function openEditProduct(id) {
+  const product = allProducts.find(
+    p => Number(p.id) === Number(id)
+  );
+
+  if (!product) {
+    showToast("❌ المنتج غير موجود");
+    return;
+  }
+
+  editingProductId = id;
+
+  document.getElementById("editId").value = product.id;
+  document.getElementById("editName").value = product.name || "";
+  document.getElementById("editPrice").value = product.price ?? "";
+  document.getElementById("editOldPrice").value = product.old_price ?? "";
+  document.getElementById("editColor").value = product.color || "";
+  document.getElementById("editBadge").value = product.badge || "";
+
+  const cat = document.getElementById("editCat");
+  cat.value = product.cat || "";
+
+  updateEditSubcats();
+
+  document.getElementById("editSub").value = product.sub || "";
+
+  const preview = document.getElementById("editPreview");
+  preview.src = product.img || "";
+
+  document.getElementById("editImgFile").value = "";
+
+  document.getElementById("editImageStatus").textContent =
+    "اختر صورة جديدة فقط إذا أردت استبدال الصورة الحالية.";
+
+  document.getElementById("editProductModal").style.display = "flex";
+}
+
+async function saveEditedProduct() {
+  if (editingProductId === null) {
+    showToast("❌ لم يتم تحديد المنتج");
+    return;
+  }
+
+  const btn = document.getElementById("editSaveBtn");
+
+  const oldId = Number(editingProductId);
+  const newId = parseInt(document.getElementById("editId").value, 10);
+  const name = document.getElementById("editName").value.trim();
+  const cat = document.getElementById("editCat").value.trim() || null;
+  const sub = document.getElementById("editSub").value.trim() || null;
+  const price = parseFloat(document.getElementById("editPrice").value);
+
+  const oldPriceRaw = document.getElementById("editOldPrice").value.trim();
+  const old_price = oldPriceRaw === "" ? null : parseFloat(oldPriceRaw);
+
+  const color = document.getElementById("editColor").value.trim() || null;
+  const badge = document.getElementById("editBadge").value.trim() || null;
+
+  const imageFile = document.getElementById("editImgFile").files[0];
+
+  if (!Number.isInteger(newId) || newId <= 0) {
+    showToast("⚠️ رقم المنتج غير صحيح");
+    return;
+  }
+
+  if (!name) {
+    showToast("⚠️ اكتب اسم المنتج");
+    return;
+  }
+
+  if (Number.isNaN(price) || price < 0) {
+    showToast("⚠️ السعر غير صحيح");
+    return;
+  }
+
+  if (
+    old_price !== null &&
+    (Number.isNaN(old_price) || old_price < 0)
+  ) {
+    showToast("⚠️ السعر القديم غير صحيح");
+    return;
+  }
+
+  if (
+    newId !== oldId &&
+    allProducts.some(p => Number(p.id) === newId)
+  ) {
+    showToast("⚠️ رقم المنتج الجديد مستخدم مسبقًا");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الحفظ...";
+
+  let newImageUrl = null;
+  let newImagePath = null;
+
+  try {
+    // إذا اخترت صورة جديدة
+    if (imageFile) {
+      if (!imageFile.type.startsWith("image/")) {
+        showToast("⚠️ الملف المختار ليس صورة");
+        btn.disabled = false;
+        btn.textContent = "حفظ التعديلات";
+        return;
+      }
+
+      btn.textContent = "جاري ضغط الصورة...";
+
+      const compressedImage =
+        await compressImageToWebP(imageFile);
+
+      btn.textContent = "جاري رفع الصورة...";
+
+      const fileName = `${newId}-${Date.now()}.webp`;
+      newImagePath = `products/${fileName}`;
+
+      const { error: uploadError } =
+        await sb.storage
+          .from("product-images")
+          .upload(
+            newImagePath,
+            compressedImage,
+            {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: "image/webp"
+            }
+          );
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: publicUrlData } =
+        sb.storage
+          .from("product-images")
+          .getPublicUrl(newImagePath);
+
+      newImageUrl = publicUrlData.publicUrl;
+    }
+
+    const updateData = {
+      id: newId,
+      name,
+      cat,
+      sub,
+      price,
+      old_price,
+      color,
+      badge,
+      new_until:
+        badge === "جديد"
+          ? new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000
+            ).toISOString()
+          : null,
+      sale:
+        old_price !== null &&
+        old_price > price
+    };
+
+    if (newImageUrl) {
+      updateData.img = newImageUrl;
+    }
+
+    btn.textContent = "جاري تحديث المنتج...";
+
+    const { error } = await sb
+      .from("products")
+      .update(updateData)
+      .eq("id", oldId);
+
+    if (error) {
+      if (newImagePath) {
+        await sb.storage
+          .from("product-images")
+          .remove([newImagePath]);
+      }
+
+      throw error;
+    }
+
+    // تحديث القائمة مباشرة
+    const index = allProducts.findIndex(
+      p => Number(p.id) === oldId
+    );
+
+    if (index !== -1) {
+      allProducts[index] = {
+        ...allProducts[index],
+        ...updateData
+      };
+    }
+
+    buildCatTabs();
+    renderProductList();
+
+    closeEditProduct();
+
+    showToast("✅ تم تعديل المنتج بالكامل");
+
+  } catch (error) {
+    console.error("EDIT PRODUCT ERROR:", error);
+
+    showToast(
+      "❌ فشل تعديل المنتج: " +
+      (error.message || "خطأ غير معروف")
+    );
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "حفظ التعديلات";
+  }
+}
+
+function updateEditSubcats() {
+  const cat = document.getElementById("editCat").value;
+  const sub = document.getElementById("editSub");
+
+  sub.innerHTML = "";
+
+  if (!cat) {
+    sub.disabled = true;
+    sub.innerHTML = `<option value="">اختر الفئة أولًا</option>`;
+    return;
+  }
+
+  const subs = adminSubcatsByCat[cat] || [];
+
+  if (!subs.length) {
+    sub.disabled = true;
+    sub.innerHTML = `<option value="">لا توجد فئات فرعية</option>`;
+    return;
+  }
+
+  sub.disabled = false;
+  sub.innerHTML = `<option value="">اختر الفئة الفرعية</option>`;
+
+  subs.forEach(item => {
+    sub.innerHTML += `<option value="${item}">${item}</option>`;
+  });
+}
+
+async function saveEditedProduct() {
+  if (editingProductId === null) {
+    showToast("❌ لم يتم تحديد المنتج");
+    return;
+  }
+
+  const btn = document.getElementById("editSaveBtn");
+
+  const oldId = Number(editingProductId);
+  const newId = parseInt(document.getElementById("editId").value, 10);
+  const name = document.getElementById("editName").value.trim();
+  const cat = document.getElementById("editCat").value.trim() || null;
+  const sub = document.getElementById("editSub").value.trim() || null;
+  const price = parseFloat(document.getElementById("editPrice").value);
+
+  const oldPriceRaw = document.getElementById("editOldPrice").value.trim();
+  const old_price =
+    oldPriceRaw === "" ? null : parseFloat(oldPriceRaw);
+
+  const color =
+    document.getElementById("editColor").value.trim() || null;
+
+  const badge =
+    document.getElementById("editBadge").value.trim() || null;
+
+  const imageFile =
+    document.getElementById("editImgFile").files[0];
+
+  if (!Number.isInteger(newId) || newId <= 0) {
+    showToast("⚠️ رقم المنتج غير صحيح");
+    return;
+  }
+
+  if (!name) {
+    showToast("⚠️ اكتب اسم المنتج");
+    return;
+  }
+
+  if (Number.isNaN(price) || price < 0) {
+    showToast("⚠️ السعر غير صحيح");
+    return;
+  }
+
+  if (
+    old_price !== null &&
+    (Number.isNaN(old_price) || old_price < 0)
+  ) {
+    showToast("⚠️ السعر القديم غير صحيح");
+    return;
+  }
+
+  if (
+    newId !== oldId &&
+    allProducts.some(p => Number(p.id) === newId)
+  ) {
+    showToast("⚠️ رقم المنتج الجديد مستخدم مسبقًا");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الحفظ...";
+
+  let newImageUrl = null;
+  let newImagePath = null;
+
+  try {
+    if (imageFile) {
+      if (!imageFile.type.startsWith("image/")) {
+        showToast("⚠️ الملف المختار ليس صورة");
+        return;
+      }
+
+      btn.textContent = "جاري ضغط الصورة...";
+
+      const compressedImage =
+        await compressImageToWebP(imageFile);
+
+      btn.textContent = "جاري رفع الصورة...";
+
+      newImagePath =
+        `products/${newId}-${Date.now()}.webp`;
+
+      const { error: uploadError } =
+        await sb.storage
+          .from("product-images")
+          .upload(
+            newImagePath,
+            compressedImage,
+            {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: "image/webp"
+            }
+          );
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: publicUrlData } =
+        sb.storage
+          .from("product-images")
+          .getPublicUrl(newImagePath);
+
+      newImageUrl = publicUrlData.publicUrl;
+    }
+
+    const updateData = {
+      id: newId,
+      name,
+      cat,
+      sub,
+      price,
+      old_price,
+      color,
+      badge,
+      new_until:
+        badge === "جديد"
+          ? new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000
+            ).toISOString()
+          : null,
+      sale:
+        old_price !== null &&
+        old_price > price
+    };
+
+    if (newImageUrl) {
+      updateData.img = newImageUrl;
+    }
+
+    btn.textContent = "جاري تحديث المنتج...";
+
+    const { error } = await sb
+      .from("products")
+      .update(updateData)
+      .eq("id", oldId);
+
+    if (error) {
+      if (newImagePath) {
+        await sb.storage
+          .from("product-images")
+          .remove([newImagePath]);
+      }
+
+      throw error;
+    }
+
+    const index = allProducts.findIndex(
+      p => Number(p.id) === oldId
+    );
+
+    if (index !== -1) {
+      allProducts[index] = {
+        ...allProducts[index],
+        ...updateData
+      };
+    }
+
+    buildCatTabs();
+    renderProductList();
+    closeEditProduct();
+
+    showToast("✅ تم تعديل المنتج بالكامل");
+
+  } catch (error) {
+    console.error("EDIT PRODUCT ERROR:", error);
+
+    showToast(
+      "❌ فشل تعديل المنتج: " +
+      (error.message || "خطأ غير معروف")
+    );
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "حفظ التعديلات";
+  }
+}
 
 function showToast(msg) {
   const el = document.getElementById("saveToast");
@@ -425,6 +849,12 @@ function renderProductList() {
     onclick="saveProduct(${p.id})">
     حفظ
   </button>
+
+  <button
+  class="row-save-btn"
+  onclick="openEditProduct(${p.id})">
+  ✏️ تعديل
+</button>
 
   <button
     class="delete-product-btn"
@@ -937,5 +1367,140 @@ document.getElementById("newImgFile").addEventListener("change", function () {
   status.textContent = `✅ تم اختيار الصورة: ${file.name}`;
 });
 </script>
+<div id="editProductModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+
+  <div style="
+    width:min(700px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  ">
+
+    <h2 style="margin-bottom:16px;">✏️ تعديل المنتج</h2>
+
+    <div class="add-grid">
+
+      <div class="field">
+        <label>رقم المنتج</label>
+        <input type="number" id="editId">
+      </div>
+
+      <div class="field">
+        <label>اسم المنتج</label>
+        <input type="text" id="editName">
+      </div>
+
+      <div class="field">
+        <label>الفئة</label>
+        <select id="editCat" onchange="updateEditSubcats()">
+          <option value="">اختر الفئة</option>
+          <option value="رجالي">رجالي</option>
+          <option value="نسائي">نسائي</option>
+          <option value="أطفال">أطفال</option>
+          <option value="أحذية">أحذية</option>
+          <option value="إكسسوارات">إكسسوارات</option>
+          <option value="مكياج">مكياج</option>
+          <option value="أدوات منزلية">أدوات منزلية</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>الفئة الفرعية</label>
+        <select id="editSub" disabled>
+          <option value="">اختر الفئة أولًا</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>السعر</label>
+        <input type="number" step="0.01" min="0" id="editPrice">
+      </div>
+
+      <div class="field">
+        <label>السعر القديم</label>
+        <input type="number" step="0.01" min="0" id="editOldPrice">
+      </div>
+
+      <div class="field">
+        <label>اللون</label>
+        <input type="text" id="editColor">
+      </div>
+
+      <div class="field">
+        <label>الشارة</label>
+        <input type="text" id="editBadge">
+      </div>
+
+    </div>
+
+    <div style="margin-top:15px;">
+      <label>الصورة الحالية</label>
+      <br>
+
+      <img
+        id="editPreview"
+        src=""
+        style="
+          width:100px;
+          height:100px;
+          object-fit:cover;
+          border-radius:12px;
+          margin-top:8px;
+          display:block;
+        "
+      >
+    </div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>استبدال الصورة</label>
+      <input
+        type="file"
+        id="editImgFile"
+        accept="image/*"
+      >
+    </div>
+
+    <div id="editImageStatus" style="
+      margin-top:8px;
+      font-size:12px;
+      color:var(--ink-soft);
+    "></div>
+
+    <div style="
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:18px;
+    ">
+
+      <button
+        class="btn btn-ghost"
+        onclick="closeEditProduct()">
+        إلغاء
+      </button>
+
+      <button
+        class="btn"
+        id="editSaveBtn"
+        onclick="saveEditedProduct()">
+        حفظ التعديلات
+      </button>
+
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
