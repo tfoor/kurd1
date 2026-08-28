@@ -738,16 +738,18 @@ function renderGallery() {
         <img src="${p.img}" alt="${p.name}" ${p.fallback ? `onerror="this.onerror=null;this.src='${p.fallback}'"` : ""} onclick="openLightbox(this.src,'${p.name.replace(/'/g, "\\'")}')">
         <span class="product-id">#${p.id}</span>
         ${p.badge ? `<span class="badge ${p.sale ? 'sale' : ''} ${p.best ? 'best' : ''}">${p.badge}</span>` : ""}
-        <button class="add-btn" data-id="${p.id}" title="${t("add_btn")}">
-          <span class="add-btn-icon">🛒</span>
-        </button>
       </div>
       <div class="card-body">
         <div class="card-cat">${t(catKeyMap[p.cat] || p.cat)}</div>
         <h3>${p.name}</h3>
         <div class="price-row">
-          <span class="price-display">${p.price}${CURRENCY}</span>
-          ${p.oldPrice ? `<span class="price-old">${p.oldPrice}${CURRENCY}</span>` : ""}
+          <div class="price-info">
+            <span class="price-display">${p.price}${CURRENCY}</span>
+            ${p.oldPrice ? `<span class="price-old">${p.oldPrice}${CURRENCY}</span>` : ""}
+          </div>
+          <button class="add-btn" data-id="${p.id}" title="${t("add_btn")}">
+            <span class="add-btn-icon">🛒</span>
+          </button>
         </div>
       </div>`;
     galleryEl.appendChild(card);
