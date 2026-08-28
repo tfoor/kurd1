@@ -986,6 +986,123 @@
         sub.innerHTML += `<option value="${item}">${item}</option>`;
       });
     }
+    async function saveEditedProduct() {
+  if (editingProductId === null) {
+    showToast("❌ لم يتم تحديد المنتج");
+    return;
+  }
+
+  const btn = document.getElementById("editSaveBtn");
+
+  const oldId = Number(editingProductId);
+  const newId = parseInt(document.getElementById("editId").value, 10);
+  const name = document.getElementById("editName").value.trim();
+  const cat = document.getElementById("editCat").value || null;
+  const sub = document.getElementById("editSub").value || null;
+  const price = parseFloat(document.getElementById("editPrice").value);
+
+  const oldPriceValue =
+    document.getElementById("editOldPrice").value.trim();
+
+  const old_price =
+    oldPriceValue === "" ? null : parseFloat(oldPriceValue);
+
+  const color =
+    document.getElementById("editColor").value.trim() || null;
+
+  const badge =
+    document.getElementById("editBadge").value.trim() || null;
+
+  if (!Number.isInteger(newId) || newId <= 0) {
+    showToast("⚠️ رقم المنتج غير صحيح");
+    return;
+  }
+
+  if (!name) {
+    showToast("⚠️ اكتب اسم المنتج");
+    return;
+  }
+
+  if (Number.isNaN(price) || price < 0) {
+    showToast("⚠️ السعر غير صحيح");
+    return;
+  }
+
+  if (
+    old_price !== null &&
+    (Number.isNaN(old_price) || old_price < 0)
+  ) {
+    showToast("⚠️ السعر القديم غير صحيح");
+    return;
+  }
+
+  if (
+    newId !== oldId &&
+    allProducts.some(p => Number(p.id) === newId)
+  ) {
+    showToast("⚠️ رقم المنتج الجديد مستخدم مسبقًا");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جاري الحفظ...";
+
+  try {
+    const updateData = {
+      id: newId,
+      name,
+      cat,
+      sub,
+      price,
+      old_price,
+      color,
+      badge,
+      new_until:
+        badge === "جديد"
+          ? new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000
+            ).toISOString()
+          : null,
+      sale:
+        old_price !== null &&
+        old_price > price
+    };
+
+    const { error } = await sb
+      .from("products")
+      .update(updateData)
+      .eq("id", oldId);
+
+    if (error) {
+      throw error;
+    }
+
+    const index = allProducts.findIndex(
+      p => Number(p.id) === oldId
+    );
+
+    if (index !== -1) {
+      allProducts[index] = {
+        ...allProducts[index],
+        ...updateData
+      };
+    }
+
+    buildCatTabs();
+    renderProductList();
+
+    closeEditProduct();
+
+    showToast("✅ تم حفظ التعديلات");
+
+  } catch (error) {
+    console.error(error);
+    showToast("❌ فشل حفظ التعديلات: " + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "حفظ التعديلات";
+  }
+}
 
     async function saveEditedProduct() {
       if (editingProductId === null) {
