@@ -253,6 +253,18 @@ const SUPABASE_URL = "https://gzhgokztibcctmmljorf.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7bfT9JW5Y7aMRR211n0GVA_Blfp1UDx";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/* مفتاح يحفظ إشارة إنه في طلب فاتورة معلّق بانتظار تسجيل الدخول (يستخدم خصوصاً
+   مع تسجيل الدخول عبر Google، لأنه بيعمل تحويل كامل للصفحة ورجوع منها) */
+const PENDING_CHECKOUT_KEY = "boutique_pending_checkout";
+
+/* يراقب حالة تسجيل الدخول باستمرار (بما فيها الرجوع من تسجيل الدخول عبر Google) */
+sb.auth.onAuthStateChange((event, session) => {
+  customerSession = session || null;
+  if (event === "SIGNED_IN") {
+    completePendingCheckoutIfAny();
+  }
+});
+
 /* ============ بيانات المنتجات (تُجلب من Supabase) ============ */
 // كل التعديلات على الأسماء والأسعار وإضافة/حذف منتجات تصير من لوحة Supabase (Table Editor)
 // أو من صفحة admin.html الخاصة، مو من هالملف.
@@ -570,7 +582,20 @@ const subKeyMap = {
 };
 let activeCat = "الكل";
 let activeSub = "الكل";
-let cart = []; // {id, qty}
+
+/* السلة تُحفظ بالمتصفح (localStorage) حتى ما تضيع لو المستخدم عمل تسجيل دخول عبر Google
+   (اللي بيعمل تحويل كامل للصفحة ورجوع منها)، أو لو بسّط الصفحة بالغلط */
+function loadCartFromStorage() {
+  try {
+    const raw = localStorage.getItem("boutique_cart");
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) { return []; }
+}
+function saveCartToStorage() {
+  try { localStorage.setItem("boutique_cart", JSON.stringify(cart)); } catch (e) {}
+}
+let cart = loadCartFromStorage(); // {id, qty}
 
 /* ============ عرض الفلاتر (رئيسية + فرعية) ============ */
 const filtersEl = document.getElementById("filters");
@@ -717,6 +742,7 @@ function observeCards() {
 function addToCart(id) {
   const existing = cart.find(c => c.id === id);
   if (existing) { existing.qty++; } else { cart.push({ id, qty: 1 }); }
+  saveCartToStorage();
   updateCartUI();
 }
 function changeQty(id, delta) {
@@ -724,10 +750,12 @@ function changeQty(id, delta) {
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) { cart = cart.filter(c => c.id !== id); }
+  saveCartToStorage();
   updateCartUI();
 }
 function removeFromCart(id) {
   cart = cart.filter(c => c.id !== id);
+  saveCartToStorage();
   updateCartUI();
 }
 function updateCartUI() {
@@ -859,8 +887,26 @@ function selectLanguageOption(lang) {
 
 /* ============ نافذة "حسابي" (تسجيل دخول / حساب جديد / طلباتي) ============ */
 let customerSession = null;
+// سياق فتح النافذة: null = فتح عادي من زر "حسابي"، "checkout" = فُتحت إجبارياً لإتمام إرسال الفاتورة
+let accountModalContext = null;
 
-function openAccountModal() {
+function openAccountModal(context) {
+  accountModalContext = context || null;
+
+  const subtitleEl = document.getElementById("accountModalSubtitle");
+  const titleEl = document.getElementById("accountModalTitle");
+  if (subtitleEl) {
+    if (accountModalContext === "checkout") {
+      subtitleEl.style.display = "block";
+      subtitleEl.textContent = "🛍️ لازم تسجّل دخولك أو تنشئ حساب بثواني حتى نقدر نحفظ الفاتورة باسمك ونرسلها لك";
+      if (titleEl) titleEl.textContent = "سجّل دخولك لإتمام الطلب";
+    } else {
+      subtitleEl.style.display = "none";
+      subtitleEl.textContent = "";
+      if (titleEl) titleEl.textContent = "أهلاً فيك 👋";
+    }
+  }
+
   document.getElementById("accountModal").classList.add("show");
   refreshAccountModalView();
 }
@@ -875,6 +921,15 @@ function switchAuthTab(tab) {
   document.getElementById("signupPane").style.display = tab === "signup" ? "block" : "none";
 }
 
+/* إظهار / إخفاء كلمة السر بالضغط على أيقونة العين */
+function toggleAccPassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const showing = input.type === "text";
+  input.type = showing ? "password" : "text";
+  btn.style.color = showing ? "" : "var(--accent-deep)";
+}
+
 async function refreshAccountModalView() {
   const { data } = await sb.auth.getSession();
   customerSession = data && data.session ? data.session : null;
@@ -882,8 +937,13 @@ async function refreshAccountModalView() {
   if (customerSession) {
     document.getElementById("authForms").style.display = "none";
     document.getElementById("accountLoggedIn").style.display = "block";
-    document.getElementById("accWelcomeText").textContent = "👋 أهلاً " + (customerSession.user.email || "");
+    const displayName = customerSession.user.user_metadata?.full_name
+      || customerSession.user.user_metadata?.name
+      || customerSession.user.email || "";
+    document.getElementById("accWelcomeText").textContent = "👋 أهلاً " + displayName;
     loadMyOrders();
+    // إذا كانت النافذة انفتحت إجبارياً لإتمام طلب، كمّل الإرسال تلقائياً بعد تسجيل الدخول
+    completePendingCheckoutIfAny();
   } else {
     document.getElementById("authForms").style.display = "block";
     document.getElementById("accountLoggedIn").style.display = "none";
@@ -895,6 +955,7 @@ async function handleCustomerSignup() {
   const email = document.getElementById("custSignupEmail").value.trim();
   const password = document.getElementById("custSignupPassword").value;
   const errEl = document.getElementById("accountError");
+  errEl.style.color = "";
   errEl.textContent = "";
 
   if (!name || !email || !password) { errEl.textContent = "عبّي كل الحقول"; return; }
@@ -952,10 +1013,80 @@ async function handleCustomerLogin() {
   refreshAccountModalView();
 }
 
+/* تسجيل الدخول / إنشاء حساب تلقائي عبر Google (نفس الزر يخدم الحالتين) */
+async function handleGoogleAuth() {
+  const errEl = document.getElementById("accountError");
+  if (errEl) { errEl.style.color = ""; errEl.textContent = ""; }
+
+  // نحفظ إشارة إنه في طلب معلّق، لأنه تسجيل الدخول عبر Google بيعمل تحويل كامل لخارج الصفحة ورجوع منها
+  if (accountModalContext === "checkout") {
+    try { localStorage.setItem(PENDING_CHECKOUT_KEY, "1"); } catch (e) {}
+  }
+  saveCartToStorage();
+
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.href.split("#")[0].split("?")[0] }
+  });
+
+  if (error && errEl) {
+    errEl.textContent = "تعذّر تسجيل الدخول عبر Google، حاول لاحقاً";
+  }
+}
+
+/* إرسال رابط إعادة تعيين كلمة السر على الإيميل */
+async function handleForgotPassword() {
+  const errEl = document.getElementById("accountError");
+  const email = document.getElementById("custLoginEmail").value.trim();
+  errEl.style.color = "";
+  errEl.textContent = "";
+
+  if (!email) {
+    errEl.textContent = "اكتب إيميلك بالأول حتى نرسلّك رابط تغيير كلمة السر";
+    return;
+  }
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href.split("#")[0].split("?")[0]
+  });
+
+  if (error) {
+    errEl.textContent = "صار خطأ، جرّب مرة ثانية";
+    return;
+  }
+  errEl.style.color = "#1FAE7A";
+  errEl.textContent = "تم إرسال رابط تغيير كلمة السر لإيميلك ✅";
+}
+
 async function handleCustomerLogout() {
   await sb.auth.signOut();
   customerSession = null;
   refreshAccountModalView();
+}
+
+/* ينتظر تحميل قائمة المنتجات (لازمة لتجهيز نص رسالة الفاتورة) */
+async function waitForProducts(timeoutMs) {
+  const limit = timeoutMs || 8000;
+  const start = Date.now();
+  while ((!products || !products.length) && Date.now() - start < limit) {
+    await new Promise(r => setTimeout(r, 150));
+  }
+}
+
+/* إذا كان في طلب فاتورة معلّق بانتظار تسجيل الدخول (مثلاً بعد الرجوع من Google)، نكمّل إرساله تلقائياً */
+async function completePendingCheckoutIfAny() {
+  let pending;
+  try { pending = localStorage.getItem(PENDING_CHECKOUT_KEY); } catch (e) { pending = null; }
+  if (!pending || !customerSession) return;
+
+  try { localStorage.removeItem(PENDING_CHECKOUT_KEY); } catch (e) {}
+  accountModalContext = null;
+
+  await waitForProducts();
+  if (!cart.length) return;
+
+  closeAccountModal();
+  await sendWhatsAppOrder();
 }
 
 async function loadMyOrders() {
@@ -1159,39 +1290,23 @@ async function sendWhatsAppOrder() {
     return;
   }
 
-  // إذا الزبون مسجل دخول نستخدم إيميله من الحساب
-  let customerEmail = customerSession?.user?.email || "";
+  // نتأكد من حالة تسجيل الدخول الفعلية من Supabase قبل أي شي
+  const { data: sessData } = await sb.auth.getSession();
+  customerSession = sessData && sessData.session ? sessData.session : null;
 
-  // إذا مو مسجل دخول، نطلب الإيميل
-  if (!customerEmail) {
-    customerEmail = prompt("📧 اكتب إيميلك:");
-
-    if (!customerEmail || !customerEmail.trim()) {
-      alert("⚠️ لازم تكتب إيميلك قبل إرسال الطلب");
-      return;
-    }
-
-    customerEmail = customerEmail.trim().toLowerCase();
-
-    // تحقق بسيط من صيغة الإيميل
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(customerEmail)) {
-      alert("⚠️ الإيميل غير صحيح");
-      return;
-    }
-
-    // تسجيل الإيميل
-    try {
-      await sb.from("customer_email_logs").insert({
-        email: customerEmail,
-        user_id: null,
-        action: "order"
-      });
-    } catch (e) {
-      console.warn("تعذّر تسجيل إيميل الطلب:", e);
-    }
+  // لازم يكون الزبون مسجل دخول قبل إرسال الفاتورة، حتى يظهر اسمه وإيميله تلقائياً بالفاتورة
+  // ونقدر نحفظها بحسابه ليشوفها لاحقاً بـ"طلباتي السابقة"
+  if (!customerSession) {
+    saveCartToStorage(); // نحافظ على السلة قبل ما نفتح نافذة تسجيل الدخول
+    openAccountModal("checkout");
+    return;
   }
+
+  const customerEmail = customerSession.user.email || "";
+  const customerName =
+    customerSession.user.user_metadata?.full_name ||
+    customerSession.user.user_metadata?.name ||
+    "";
 
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
@@ -1218,18 +1333,14 @@ async function sendWhatsAppOrder() {
   });
 
   message += "────────────────\n";
-  message += `👤 *الإيميل:* ${customerEmail}\n`;
+  if (customerName) message += `👤 *الاسم:* ${customerName}\n`;
+  message += `📧 *الإيميل:* ${customerEmail}\n`;
   message += `💰 *الإجمالي: ${total}${CURRENCY}*\n`;
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
 
-  // حفظ الفاتورة مع الإيميل
-  await saveOrderRecord(
-    orderedItems,
-    total,
-    customerSession?.user?.user_metadata?.full_name || "",
-    customerEmail
-  );
+  // حفظ الفاتورة مع الاسم والإيميل
+  await saveOrderRecord(orderedItems, total, customerName, customerEmail);
 
   const url =
     `https://wa.me/${WHATSAPP_NUMBERS[selectedCountry]}?text=${encodeURIComponent(message)}`;
