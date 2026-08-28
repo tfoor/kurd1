@@ -187,10 +187,10 @@
       <button class="lightbox-close cam-close" onclick="closeAccountModal()">✕</button>
     </div>
 
+    <div class="acc-modal-subtitle" id="accountModalSubtitle"></div>
+
     <!-- حالة: غير مسجل دخول -->
     <div id="authForms">
-      <div class="acc-modal-subtitle" id="accountModalSubtitle"></div>
-
       <div class="account-tabs">
         <button class="account-tab active" id="tabLoginBtn" onclick="switchAuthTab('login')">تسجيل الدخول</button>
         <button class="account-tab" id="tabSignupBtn" onclick="switchAuthTab('signup')">حساب جديد</button>
@@ -248,6 +248,7 @@
     <!-- حالة: مسجل دخول -->
     <div id="accountLoggedIn" style="display:none;">
       <div class="acc-welcome" id="accWelcomeText"></div>
+
       <div class="acc-section-title">طلباتي السابقة</div>
       <div class="acc-orders-list" id="accOrdersList"><div class="acc-empty">جاري التحميل...</div></div>
       <button class="btn-ghost-acc acc-btn" onclick="handleCustomerLogout()">تسجيل الخروج</button>

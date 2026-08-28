@@ -921,7 +921,7 @@ function openAccountModal(context) {
   if (subtitleEl) {
     if (accountModalContext === "checkout") {
       subtitleEl.style.display = "block";
-      subtitleEl.textContent = "🛍️ لازم تسجّل دخولك أو تنشئ حساب بثواني حتى نقدر نحفظ الفاتورة باسمك ونرسلها لك";
+      subtitleEl.textContent = "🛍️ سجّل دخولك أو أنشئ حساب بثواني حتى نقدر نحفظ الفاتورة باسمك ونرسلها لك";
       if (titleEl) titleEl.textContent = "سجّل دخولك لإتمام الطلب";
     } else {
       subtitleEl.style.display = "none";
@@ -953,6 +953,12 @@ function toggleAccPassword(inputId, btn) {
   btn.style.color = showing ? "" : "var(--accent-deep)";
 }
 
+/* اسم الزبون المعروض (من بيانات الحساب — Google بيعبيه تلقائي، وحساب الإيميل بياخذه من نموذج التسجيل) */
+function getCustomerFullName(session) {
+  if (!session || !session.user) return "";
+  return session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+}
+
 async function refreshAccountModalView() {
   const { data } = await sb.auth.getSession();
   customerSession = data && data.session ? data.session : null;
@@ -960,10 +966,10 @@ async function refreshAccountModalView() {
   if (customerSession) {
     document.getElementById("authForms").style.display = "none";
     document.getElementById("accountLoggedIn").style.display = "block";
-    const displayName = customerSession.user.user_metadata?.full_name
-      || customerSession.user.user_metadata?.name
-      || customerSession.user.email || "";
-    document.getElementById("accWelcomeText").textContent = "👋 أهلاً " + displayName;
+
+    const fullName = getCustomerFullName(customerSession);
+    document.getElementById("accWelcomeText").textContent = "👋 أهلاً " + (fullName || customerSession.user.email || "");
+
     loadMyOrders();
     // إذا كانت النافذة انفتحت إجبارياً لإتمام طلب، كمّل الإرسال تلقائياً بعد تسجيل الدخول
     completePendingCheckoutIfAny();
@@ -1321,15 +1327,13 @@ async function sendWhatsAppOrder() {
   // ونقدر نحفظها بحسابه ليشوفها لاحقاً بـ"طلباتي السابقة"
   if (!customerSession) {
     saveCartToStorage(); // نحافظ على السلة قبل ما نفتح نافذة تسجيل الدخول
+    try { localStorage.setItem(PENDING_CHECKOUT_KEY, "1"); } catch (e) {}
     openAccountModal("checkout");
     return;
   }
 
   const customerEmail = customerSession.user.email || "";
-  const customerName =
-    customerSession.user.user_metadata?.full_name ||
-    customerSession.user.user_metadata?.name ||
-    "";
+  const customerName = getCustomerFullName(customerSession);
 
   let total = 0;
   let message = "🛍️ *طلب جديد من ستايل روج*\n\n";
@@ -1356,8 +1360,7 @@ async function sendWhatsAppOrder() {
   });
 
   message += "────────────────\n";
-  if (customerName) message += `👤 *الاسم:* ${customerName}\n`;
-  message += `📧 *الإيميل:* ${customerEmail}\n`;
+  message += `👤 *الاسم:* ${customerName || "زبون"}\n`;
   message += `💰 *الإجمالي: ${total}${CURRENCY}*\n`;
   message += `عدد القطع: ${cart.reduce((s, c) => s + c.qty, 0)}\n\n`;
   message += "يرجى تأكيد الطلب وإرسال العنوان لإتمام التوصيل 🙏";
