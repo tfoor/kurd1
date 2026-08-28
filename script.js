@@ -1247,8 +1247,8 @@ async function initApp() {
   logVisit();
   await loadProducts();
   buildShuffleRank();
-  renderGallery();
-  updateCartUI();
+  // applyLanguage() بحالها بترسم الفلاتر + المعرض + السلة، فما في داعي نرسمهم قبلها
+  // (كان الرسم يصير مرتين ورا بعض هون، وهاد يلي كان يسبب اختفاء/وميض الصور لحظة فتح الموقع)
   applyLanguage(currentLang);
 }
 initApp();
