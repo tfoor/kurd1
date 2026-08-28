@@ -184,8 +184,25 @@
         <div class="add-grid">
           <div class="field"><label>رقم المنتج *</label><input type="number" id="newId" placeholder="مثال: 240"></div>
           <div class="field"><label>اسم المنتج *</label><input type="text" id="newName" placeholder="اسم المنتج"></div>
-          <div class="field"><label>الفئة</label><input type="text" id="newCat" placeholder="مثال: ملابس"></div>
-          <div class="field"><label>الفئة الفرعية</label><input type="text" id="newSub" placeholder="مثال: بنات"></div>
+          <div class="field">
+  <label>الفئة</label>
+  <select id="newCat" onchange="updateNewSubcats()">
+    <option value="">اختر الفئة</option>
+    <option value="رجالي">رجالي</option>
+    <option value="نسائي">نسائي</option>
+    <option value="أطفال">أطفال</option>
+    <option value="أحذية">أحذية</option>
+    <option value="إكسسوارات">إكسسوارات</option>
+    <option value="مكياج">مكياج</option>
+    <option value="أدوات منزلية">أدوات منزلية</option>
+  </select>
+</div>
+          <div class="field">
+  <label>الفئة الفرعية</label>
+  <select id="newSub" disabled>
+    <option value="">اختر الفئة أولًا</option>
+  </select>
+</div>
           <div class="field"><label>السعر *</label><input type="number" step="0.01" min="0" id="newPrice" placeholder="0.00"></div>
           <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="newOldPrice" placeholder="اختياري"></div>
           <div class="field"><label>اللون</label><input type="text" id="newColor" placeholder="اختياري"></div>
@@ -439,6 +456,7 @@ function clearAddForm() {
     status.textContent = "اختر صورة من جهازك";
   }
 }
+
 async function compressImageToWebP(file) {
   const MAX_SIZE = 1000;
   const QUALITY = 0.78;
@@ -495,6 +513,43 @@ function formatFileSize(bytes) {
   }
 
   return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+const adminSubcatsByCat = {
+  "رجالي": ["ملابس علوية", "أطقم منسقة", "ملابس سفلية", "ملابس دينيم"],
+  "نسائي": ["تنانير", "فساتين", "أطقم منسقة", "ملابس علوية", "ملابس سفلية"],
+  "أطفال": ["بناتي", "أولادي"],
+  "أحذية": ["صنادل", "كعوب", "كلاسيك", "أطفال"],
+  "إكسسوارات": ["جنط", "مجوهرات", "ساعات", "اكسسوارات موبايل", "نظارات", "جوارب", "إكسسوارات شعر", "شعر مستعار"],
+  "مكياج": ["مكياج", "عناية بالأظافر", "أدوات تجميل", "عناية بالبشرة"],
+  "أدوات منزلية": []
+};
+
+function updateNewSubcats() {
+  const cat = document.getElementById("newCat").value;
+  const sub = document.getElementById("newSub");
+
+  sub.innerHTML = "";
+
+  if (!cat) {
+    sub.disabled = true;
+    sub.innerHTML = `<option value="">اختر الفئة أولًا</option>`;
+    return;
+  }
+
+  const subs = adminSubcatsByCat[cat] || [];
+
+  if (!subs.length) {
+    sub.disabled = true;
+    sub.innerHTML = `<option value="">لا توجد فئات فرعية</option>`;
+    return;
+  }
+
+  sub.disabled = false;
+  sub.innerHTML = `<option value="">اختر الفئة الفرعية</option>`;
+
+  subs.forEach(item => {
+    sub.innerHTML += `<option value="${item}">${item}</option>`;
+  });
 }
 async function addProduct() {
   const btn = document.getElementById("addProductBtn");
