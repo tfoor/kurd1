@@ -120,19 +120,24 @@ nav a{font-weight:700;font-size:15px;position:relative;padding-bottom:6px;transi
 nav a::after{content:"";position:absolute;bottom:0;right:0;width:0;height:2px;background:var(--accent);transition:.3s;}
 nav a:hover{color:var(--accent-deep);}
 nav a:hover::after{width:100%;}
-.header-actions{display:flex;align-items:center;gap:8px;}
+.header-actions{display:flex;align-items:center;gap:9px;}
 
-/* أزرار الهيدر الدائرية (نفس هوية الشريط السفلي) */
+/* أزرار الهيدر الدائرية الزجاجية — شكل موحّد وواضح دايماً (مو بس بالـ hover)
+   حتى ما تختفي على بعض الأجهزة يلي ما بتدعم بعض تأثيرات الشفافية */
 .settings-btn,.theme-btn,.cart-btn,.burger{
-  width:40px;height:40px;border-radius:50%;
+  width:41px;height:41px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  color:var(--ink-soft);background:transparent;position:relative;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .25s ease, color .25s ease;
+  color:var(--ink);background:var(--nav-glass);
+  border:1.5px solid var(--nav-border);
+  box-shadow:0 3px 10px rgba(36,30,46,0.10);
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.settings-btn svg,.theme-btn svg,.cart-btn svg,.burger svg{width:20px;height:20px;display:block;}
+.settings-btn svg,.theme-btn svg,.cart-btn svg,.burger svg{width:19px;height:19px;display:block;}
 .settings-btn:hover,.theme-btn:hover,.cart-btn:hover,.burger:hover,
 .settings-btn:focus-visible,.theme-btn:focus-visible,.cart-btn:focus-visible,.burger:focus-visible{
-  color:var(--accent-deep);background:var(--accent-soft);
+  color:#fff;background:linear-gradient(145deg,var(--accent),var(--accent-deep));border-color:transparent;
+  box-shadow:0 8px 18px rgba(214,61,110,0.35);
 }
 .settings-btn:active,.theme-btn:active,.cart-btn:active,.burger:active{transform:scale(.88);}
 
@@ -140,23 +145,26 @@ nav a:hover::after{width:100%;}
 [data-theme="dark"] .theme-btn .icon-moon{display:none;}
 [data-theme="dark"] .theme-btn .icon-sun{display:block;}
 
-.cart-count{position:absolute;top:2px;left:2px;background:var(--accent-deep);color:#fff;font-size:10px;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--nav-glass);}
+/* زر السلة أكبر شوي وأوضح، لأنه أهم زر بالهيدر */
+.cart-btn{width:46px;height:46px;}
+.cart-btn svg{width:22px;height:22px;}
+.cart-count{position:absolute;top:-3px;left:-3px;background:var(--accent-deep);color:#fff;font-size:11px;font-weight:800;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2.5px var(--surface);}
 .burger{display:none;}
 .nav-close{display:none;}
 
 /* نبضة/توهج عند الضغط، بنفس أسلوب الشريط السفلي */
-.settings-btn.bnav-pop,.theme-btn.bnav-pop,.cart-btn.bnav-pop,.burger.bnav-pop,.search-fab.bnav-pop{animation:bnavPop .45s cubic-bezier(.34,1.56,.64,1);}
-.settings-btn.bnav-pop svg,.theme-btn.bnav-pop svg,.cart-btn.bnav-pop svg,.burger.bnav-pop svg,.search-fab.bnav-pop svg{animation:bnavIconPop .45s cubic-bezier(.34,1.56,.64,1);}
-.settings-btn.bnav-pop::after,.theme-btn.bnav-pop::after,.cart-btn.bnav-pop::after,.burger.bnav-pop::after{
+.settings-btn.bnav-pop,.theme-btn.bnav-pop,.cart-btn.bnav-pop,.account-btn.bnav-pop,.burger.bnav-pop,.search-fab.bnav-pop{animation:bnavPop .45s cubic-bezier(.34,1.56,.64,1);}
+.settings-btn.bnav-pop svg,.theme-btn.bnav-pop svg,.cart-btn.bnav-pop svg,.account-btn.bnav-pop svg,.burger.bnav-pop svg,.search-fab.bnav-pop svg{animation:bnavIconPop .45s cubic-bezier(.34,1.56,.64,1);}
+.settings-btn.bnav-pop::after,.theme-btn.bnav-pop::after,.cart-btn.bnav-pop::after,.account-btn.bnav-pop::after,.burger.bnav-pop::after{
   content:'';position:absolute;inset:-4px;border-radius:50%;
   background:radial-gradient(circle,rgba(214,61,110,0.38),rgba(214,61,110,0) 70%);
   animation:bnavGlow .5s ease-out;pointer-events:none;
 }
 
 /* ===== SEARCH FAB + SLIDE-DOWN SEARCH BAR ===== */
-.search-fab{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,var(--accent),var(--accent-deep));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(214,61,110,0.4), inset 0 1px 0 rgba(255,255,255,0.35);transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;}
-.search-fab svg{width:19px;height:19px;display:block;}
-.search-fab:hover{transform:scale(1.08);}
+.search-fab{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,var(--accent),var(--accent-deep));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(214,61,110,0.45), inset 0 1px 0 rgba(255,255,255,0.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;position:relative;border:1.5px solid rgba(255,255,255,0.3);}
+.search-fab svg{width:20px;height:20px;display:block;}
+.search-fab:hover{transform:scale(1.08);box-shadow:0 10px 24px rgba(214,61,110,0.55), inset 0 1px 0 rgba(255,255,255,0.4);}
 .search-fab:active{transform:scale(.9);}
 .search-fab::after{content:'';position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(255,92,138,0.55),rgba(255,92,138,0) 70%);opacity:0;pointer-events:none;}
 .search-fab.bnav-pop::after{animation:bnavGlow .5s ease-out;opacity:1;}
@@ -354,10 +362,23 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
 
 /* ===== ACCOUNT MODAL (حسابي) ===== */
 .account-btn{
-  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:var(--nav-glass);color:var(--ink);border:1px solid var(--nav-border);transition:.2s;
+  width:41px;height:41px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--nav-glass);color:var(--ink);border:1.5px solid var(--nav-border);
+  box-shadow:0 3px 10px rgba(36,30,46,0.10);
+  overflow:hidden;position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.account-btn:hover{color:var(--accent-deep);background:var(--accent-soft);}
+.account-btn svg{width:19px;height:19px;display:block;}
+.account-btn:hover,.account-btn:focus-visible{
+  color:#fff;background:linear-gradient(145deg,var(--accent),var(--accent-deep));border-color:transparent;
+  box-shadow:0 8px 18px rgba(214,61,110,0.35);
+}
+.account-btn:active{transform:scale(.88);}
+/* صورة حساب Google لما تكون متوفّرة (بدل الأيقونة الافتراضية) */
+.account-avatar-img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;}
+.account-btn.has-avatar #accountDefaultIcon{display:none;}
+.account-btn.has-avatar .account-avatar-img{display:block;}
+.account-btn.has-avatar:hover{background:var(--nav-glass);box-shadow:0 0 0 2.5px var(--accent), 0 8px 18px rgba(214,61,110,0.3);}
 .account-modal{
   position:fixed;inset:0;z-index:141;background:rgba(20,16,26,0.62);backdrop-filter:blur(3px);
   display:flex;align-items:center;justify-content:center;
@@ -695,8 +716,10 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   .logo-image{height:38px;}
   .logo-image img{max-width:90px;}
   .header-actions{gap:6px;}
-  .settings-btn,.theme-btn,.search-fab,.cart-btn,.burger{width:34px;height:34px;}
-  .settings-btn svg,.theme-btn svg,.cart-btn svg,.burger svg{width:17px;height:17px;}
+  .settings-btn,.theme-btn,.search-fab,.account-btn,.burger{width:34px;height:34px;}
+  .cart-btn{width:38px;height:38px;}
+  .settings-btn svg,.theme-btn svg,.account-btn svg,.burger svg{width:17px;height:17px;}
+  .cart-btn svg{width:19px;height:19px;}
   .search-fab svg{width:16px;height:16px;}
   .search-bar-inner{padding:12px 4%;gap:8px;}
   .hero{padding:34px 5% 36px;gap:24px;}

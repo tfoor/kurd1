@@ -260,10 +260,28 @@ const PENDING_CHECKOUT_KEY = "boutique_pending_checkout";
 /* يراقب حالة تسجيل الدخول باستمرار (بما فيها الرجوع من تسجيل الدخول عبر Google) */
 sb.auth.onAuthStateChange((event, session) => {
   customerSession = session || null;
+  updateAccountButtonAvatar(customerSession);
   if (event === "SIGNED_IN") {
     completePendingCheckoutIfAny();
   }
 });
+// نعكس حالة تسجيل الدخول على زر الحساب بالهيدر فوراً عند فتح الصفحة (لو الجلسة محفوظة من زيارة سابقة)
+sb.auth.getSession().then(({ data }) => updateAccountButtonAvatar(data && data.session ? data.session : null));
+
+/* يحدّث شكل زر الحساب بالهيدر: يعرض صورة حساب Google إذا كانت متوفرة، وإلا الأيقونة الافتراضية */
+function updateAccountButtonAvatar(session) {
+  const btn = document.getElementById("accountBtn");
+  const img = document.getElementById("accountAvatarImg");
+  if (!btn || !img) return;
+  const avatarUrl = session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture || "";
+  if (avatarUrl) {
+    img.src = avatarUrl;
+    btn.classList.add("has-avatar");
+  } else {
+    img.removeAttribute("src");
+    btn.classList.remove("has-avatar");
+  }
+}
 
 /* ============ بيانات المنتجات (تُجلب من Supabase) ============ */
 // كل التعديلات على الأسماء والأسعار وإضافة/حذف منتجات تصير من لوحة Supabase (Table Editor)
@@ -962,6 +980,7 @@ function getCustomerFullName(session) {
 async function refreshAccountModalView() {
   const { data } = await sb.auth.getSession();
   customerSession = data && data.session ? data.session : null;
+  updateAccountButtonAvatar(customerSession);
 
   if (customerSession) {
     document.getElementById("authForms").style.display = "none";
