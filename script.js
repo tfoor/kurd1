@@ -556,8 +556,31 @@ newUntil: row.new_until || null,
 }
 
 /* يسجّل زيارة جديدة بجدول visits (بدون ما يوقف تحميل الموقع لو صار خطأ) */
-function logVisit() {
-  sb.from("visits").insert({}).then(() => {}).catch(() => {});
+async function logVisit() {
+  try {
+    const {
+      data: { user }
+    } = await sb.auth.getUser();
+
+    const visitData = {
+      user_id: user?.id || null,
+      user_email: user?.email || null,
+      visitor_name:
+        user?.user_metadata?.full_name ||
+        user?.user_metadata?.name ||
+        null
+    };
+
+    const { error } = await sb
+      .from("visits")
+      .insert(visitData);
+
+    if (error) {
+      console.error("VISIT ERROR:", error);
+    }
+  } catch (error) {
+    console.error("VISIT ERROR:", error);
+  }
 }
 
 const categories = ["الكل", "رجالي", "نسائي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
