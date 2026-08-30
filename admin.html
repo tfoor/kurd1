@@ -8,7 +8,8 @@
   <title>لوحة التحكم | ستايل روج</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #F5F3F7;
@@ -57,7 +58,12 @@
       color: var(--accent-deep);
     }
 
-    h1, h2, h3 { font-weight: 800; letter-spacing: -.2px; }
+    h1,
+    h2,
+    h3 {
+      font-weight: 800;
+      letter-spacing: -.2px;
+    }
 
     /* ================= شاشة تسجيل الدخول ================= */
     #loginScreen {
@@ -107,7 +113,9 @@
       margin-bottom: 26px;
     }
 
-    .field { margin-bottom: 14px; }
+    .field {
+      margin-bottom: 14px;
+    }
 
     .field label {
       display: block;
@@ -156,18 +164,39 @@
       gap: 6px;
     }
 
-    .btn:hover { background: var(--accent-deep); transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn:hover {
+      background: var(--accent-deep);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     .btn-ghost {
       background: transparent;
       border: 1.5px solid var(--border);
       color: var(--ink-soft);
     }
-    .btn-ghost:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
 
-    .btn-sm { width: auto; padding: 9px 16px; font-size: 13px; border-radius: 9px; }
+    .btn-ghost:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .btn-sm {
+      width: auto;
+      padding: 9px 16px;
+      font-size: 13px;
+      border-radius: 9px;
+    }
 
     .error-msg {
       color: var(--danger);
@@ -181,7 +210,9 @@
     }
 
     /* ================= هيكل اللوحة ================= */
-    #dashboard { display: none; }
+    #dashboard {
+      display: none;
+    }
 
     .shell {
       display: flex;
@@ -207,7 +238,7 @@
       align-items: center;
       gap: 11px;
       padding: 6px 8px 22px;
-      border-bottom: 1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
       margin-bottom: 18px;
     }
 
@@ -223,8 +254,16 @@
       flex-shrink: 0;
     }
 
-    .sidebar-brand .name { font-size: 14.5px; font-weight: 800; color: #fff; }
-    .sidebar-brand .role { font-size: 11.5px; color: var(--sidebar-ink-dim); }
+    .sidebar-brand .name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .sidebar-brand .role {
+      font-size: 11.5px;
+      color: var(--sidebar-ink-dim);
+    }
 
     .nav-label {
       font-size: 11px;
@@ -264,26 +303,33 @@
     .nav-item .count {
       margin-right: auto;
       font-size: 11px;
-      background: rgba(255,255,255,.08);
+      background: rgba(255, 255, 255, .08);
       color: var(--sidebar-ink-dim);
       padding: 2px 8px;
       border-radius: 20px;
       font-weight: 700;
     }
 
-    .nav-item:hover { background: var(--sidebar-soft); color: #fff; }
+    .nav-item:hover {
+      background: var(--sidebar-soft);
+      color: #fff;
+    }
 
     .nav-item.active {
       background: linear-gradient(135deg, var(--accent), var(--accent-deep));
       color: #fff;
       box-shadow: 0 8px 20px rgba(214, 61, 110, .35);
     }
-    .nav-item.active .count { background: rgba(255,255,255,.22); color: #fff; }
+
+    .nav-item.active .count {
+      background: rgba(255, 255, 255, .22);
+      color: #fff;
+    }
 
     .sidebar-footer {
       margin-top: auto;
       padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.07);
+      border-top: 1px solid rgba(255, 255, 255, .07);
     }
 
     .logout-btn {
@@ -303,10 +349,18 @@
       transition: .15s;
       text-align: right;
     }
-    .logout-btn:hover { background: rgba(225, 72, 104, .15); color: #ff8fa3; }
+
+    .logout-btn:hover {
+      background: rgba(225, 72, 104, .15);
+      color: #ff8fa3;
+    }
 
     /* ---- المحتوى الرئيسي ---- */
-    .main { flex: 1; min-width: 0; padding: 28px 32px 60px; }
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 28px 32px 60px;
+    }
 
     .page-head {
       display: flex;
@@ -317,10 +371,19 @@
       margin-bottom: 22px;
     }
 
-    .page-head h1 { font-size: 23px; }
-    .page-head .sub { color: var(--ink-soft); font-size: 13.5px; margin-top: 3px; }
+    .page-head h1 {
+      font-size: 23px;
+    }
 
-    .mobile-topbar { display: none; }
+    .page-head .sub {
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      margin-top: 3px;
+    }
+
+    .mobile-topbar {
+      display: none;
+    }
 
     /* ---- بطاقات الإحصائيات ---- */
     .stats-row {
@@ -352,12 +415,29 @@
       flex-shrink: 0;
     }
 
-    .stat-card.c-pink .icon { background: var(--accent-soft); }
-    .stat-card.c-purple .icon { background: #EDE7FA; }
-    .stat-card.c-green .icon { background: var(--success-soft); }
+    .stat-card.c-pink .icon {
+      background: var(--accent-soft);
+    }
 
-    .stat-card .num { font-size: 24px; font-weight: 800; line-height: 1.1; }
-    .stat-card .label { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+    .stat-card.c-purple .icon {
+      background: #EDE7FA;
+    }
+
+    .stat-card.c-green .icon {
+      background: var(--success-soft);
+    }
+
+    .stat-card .num {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-card .label {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
 
     /* ---- قسم بطاقة عامة ---- */
     .panel {
@@ -379,9 +459,22 @@
       flex-wrap: wrap;
     }
 
-    .panel-head h3 { font-size: 15.5px; display: flex; align-items: center; gap: 8px; }
-    .panel-head .hint { font-size: 12px; color: var(--ink-faint); font-weight: 600; }
-    .panel-body { padding: 20px 22px; }
+    .panel-head h3 {
+      font-size: 15.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-head .hint {
+      font-size: 12px;
+      color: var(--ink-faint);
+      font-weight: 600;
+    }
+
+    .panel-body {
+      padding: 20px 22px;
+    }
 
     .toggle-form-btn {
       background: var(--accent-tint);
@@ -395,7 +488,10 @@
       cursor: pointer;
       transition: .15s;
     }
-    .toggle-form-btn:hover { background: var(--accent-soft); }
+
+    .toggle-form-btn:hover {
+      background: var(--accent-soft);
+    }
 
     /* ---- نموذج إضافة منتج ---- */
     .add-grid {
@@ -404,9 +500,13 @@
       gap: 12px;
     }
 
-    .add-grid .field { margin: 0; }
+    .add-grid .field {
+      margin: 0;
+    }
 
-    .field-wide { grid-column: span 3; }
+    .field-wide {
+      grid-column: span 3;
+    }
 
     .upload-zone {
       border: 1.5px dashed var(--border);
@@ -419,7 +519,9 @@
       transition: .15s;
     }
 
-    .upload-zone:hover { border-color: var(--accent); }
+    .upload-zone:hover {
+      border-color: var(--accent);
+    }
 
     .upload-zone input[type=file] {
       font-family: inherit;
@@ -437,16 +539,35 @@
       flex-shrink: 0;
     }
 
-    .add-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .add-actions .btn { width: auto; padding: 11px 22px; }
+    .add-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .add-actions .btn {
+      width: auto;
+      padding: 11px 22px;
+    }
 
     @media (max-width: 760px) {
-      .add-grid { grid-template-columns: repeat(2, 1fr); }
-      .field-wide { grid-column: span 2; }
+      .add-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .field-wide {
+        grid-column: span 2;
+      }
     }
+
     @media (max-width: 520px) {
-      .add-grid { grid-template-columns: 1fr; }
-      .field-wide { grid-column: span 1; }
+      .add-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field-wide {
+        grid-column: span 1;
+      }
     }
 
     /* ---- تبويبات الفئات + البحث ---- */
@@ -482,8 +603,16 @@
       white-space: nowrap;
     }
 
-    .cat-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .cat-tab:not(.active):hover { border-color: var(--accent-deep); color: var(--accent-deep); }
+    .cat-tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .cat-tab:not(.active):hover {
+      border-color: var(--accent-deep);
+      color: var(--accent-deep);
+    }
 
     .search-box {
       position: relative;
@@ -501,7 +630,10 @@
       color: var(--ink);
       outline: none;
     }
-    .search-box input:focus { border-color: var(--accent); }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
 
     /* ---- قائمة المنتجات ---- */
     .list-head {
@@ -514,7 +646,11 @@
       color: var(--ink-faint);
     }
 
-    .product-list { display: flex; flex-direction: column; gap: 8px; }
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     .prod-row {
       background: var(--surface-soft);
@@ -528,7 +664,11 @@
       transition: .15s;
     }
 
-    .prod-row:hover { border-color: #DDD3E0; background: var(--surface); box-shadow: var(--shadow-sm); }
+    .prod-row:hover {
+      border-color: #DDD3E0;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
 
     .prod-row img {
       width: 48px;
@@ -538,7 +678,13 @@
       background: var(--accent-soft);
     }
 
-    .prod-id { font-size: 11px; color: var(--ink-faint); font-weight: 700; margin-bottom: 3px; }
+    .prod-id {
+      font-size: 11px;
+      color: var(--ink-faint);
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
     .prod-id .cat-chip {
       background: var(--accent-tint);
       color: var(--accent-deep);
@@ -559,9 +705,16 @@
       color: var(--ink);
       outline: none;
     }
-    .prod-row input.name-input:focus { border-color: var(--accent); }
 
-    .price-field { display: flex; align-items: center; gap: 6px; }
+    .prod-row input.name-input:focus {
+      border-color: var(--accent);
+    }
+
+    .price-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
     .price-field input {
       width: 100%;
@@ -576,10 +729,21 @@
       outline: none;
       text-align: center;
     }
-    .price-field input:focus { border-color: var(--accent); }
-    .price-field span { color: var(--ink-faint); font-size: 12.5px; font-weight: 700; }
 
-    .row-actions { display: flex; gap: 6px; }
+    .price-field input:focus {
+      border-color: var(--accent);
+    }
+
+    .price-field span {
+      color: var(--ink-faint);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+    }
 
     .row-save-btn,
     .row-edit-btn,
@@ -596,31 +760,79 @@
       white-space: nowrap;
     }
 
-    .row-save-btn { background: var(--accent-soft); color: var(--accent-deep); }
-    .row-save-btn:hover { background: var(--accent); color: #fff; }
-    .row-save-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .row-save-btn.saved { background: var(--success); color: #fff; }
+    .row-save-btn {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+    }
 
-    .row-edit-btn { background: #EDE7FA; color: #6B4FBE; }
-    .row-edit-btn:hover { background: #6B4FBE; color: #fff; }
+    .row-save-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
 
-    .delete-product-btn { background: var(--danger-soft); color: var(--danger); }
-    .delete-product-btn:hover { background: var(--danger); color: #fff; }
-    .delete-product-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .row-save-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .row-save-btn.saved {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .row-edit-btn {
+      background: #EDE7FA;
+      color: #6B4FBE;
+    }
+
+    .row-edit-btn:hover {
+      background: #6B4FBE;
+      color: #fff;
+    }
+
+    .delete-product-btn {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .delete-product-btn:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .delete-product-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
 
     @media (max-width: 720px) {
-      .list-head { display: none; }
+      .list-head {
+        display: none;
+      }
+
       .prod-row {
         grid-template-columns: 48px 1fr;
         grid-template-rows: auto auto;
         row-gap: 8px;
       }
-      .prod-row img { width: 44px; height: 44px; }
-      .price-field, .row-actions { grid-column: 2 / 3; }
+
+      .prod-row img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .price-field,
+      .row-actions {
+        grid-column: 2 / 3;
+      }
     }
 
     /* ---- الطلبات ---- */
-    .orders-list { display: flex; flex-direction: column; gap: 12px; }
+    .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
     .order-card {
       background: var(--surface-soft);
@@ -629,7 +841,10 @@
       padding: 16px 18px;
       transition: .15s;
     }
-    .order-card:hover { border-color: #DDD3E0; }
+
+    .order-card:hover {
+      border-color: #DDD3E0;
+    }
 
     .order-head {
       display: flex;
@@ -640,7 +855,11 @@
       gap: 6px;
     }
 
-    .order-head .order-id { font-weight: 800; font-size: 14.5px; }
+    .order-head .order-id {
+      font-weight: 800;
+      font-size: 14.5px;
+    }
+
     .order-head .order-total {
       font-weight: 800;
       font-size: 15.5px;
@@ -682,9 +901,14 @@
       color: var(--ink);
       font-weight: 600;
     }
-    .order-item-row span:last-child { color: var(--ink-soft); font-weight: 700; }
 
-    .loading-state, .empty-state {
+    .order-item-row span:last-child {
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+
+    .loading-state,
+    .empty-state {
       text-align: center;
       padding: 50px 20px;
       color: var(--ink-soft);
@@ -708,7 +932,11 @@
       z-index: 200;
       box-shadow: var(--shadow-lg);
     }
-    .save-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .save-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* ---- نافذة تعديل المنتج ---- */
     .modal-overlay {
@@ -739,7 +967,13 @@
       padding: 20px 24px;
       border-bottom: 1px solid var(--border);
     }
-    .modal-head h2 { font-size: 17px; display: flex; align-items: center; gap: 8px; }
+
+    .modal-head h2 {
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .modal-close {
       width: 32px;
@@ -751,9 +985,15 @@
       font-size: 15px;
       cursor: pointer;
     }
-    .modal-close:hover { background: var(--danger-soft); color: var(--danger); }
 
-    .modal-body { padding: 22px 24px; }
+    .modal-close:hover {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 22px 24px;
+    }
 
     .modal-foot {
       display: flex;
@@ -763,7 +1003,11 @@
       border-top: 1px solid var(--border);
       background: var(--surface-soft);
     }
-    .modal-foot .btn { width: auto; padding: 11px 22px; }
+
+    .modal-foot .btn {
+      width: auto;
+      padding: 11px 22px;
+    }
 
     .current-img-preview {
       width: 90px;
@@ -776,8 +1020,13 @@
     }
 
     @media (max-width: 900px) {
-      .sidebar { display: none; }
-      .main { padding: 16px 14px 70px; }
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 16px 14px 70px;
+      }
 
       .mobile-topbar {
         display: flex;
@@ -787,11 +1036,23 @@
         margin-bottom: 16px;
       }
 
-      .mobile-topbar .brand { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 14.5px; }
+      .mobile-topbar .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 800;
+        font-size: 14.5px;
+      }
+
       .mobile-topbar .mark {
-        width: 32px; height: 32px; border-radius: 9px;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
         background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-        display: flex; align-items: center; justify-content: center; font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
       }
 
       .mobile-nav {
@@ -809,8 +1070,15 @@
         justify-content: center;
         flex: 1;
       }
-      .mobile-nav .nav-item:hover { background: var(--accent-tint); color: var(--accent-deep); }
-      .mobile-nav .nav-item.active { color: #fff; }
+
+      .mobile-nav .nav-item:hover {
+        background: var(--accent-tint);
+        color: var(--accent-deep);
+      }
+
+      .mobile-nav .nav-item.active {
+        color: #fff;
+      }
     }
   </style>
 </head>
@@ -876,7 +1144,8 @@
           <button class="btn btn-ghost btn-sm" onclick="handleLogout()">خروج</button>
         </div>
         <div class="mobile-nav">
-          <button class="nav-item active" id="mainTabProductsMobile" onclick="switchMainTab('products')">🧺 المنتجات</button>
+          <button class="nav-item active" id="mainTabProductsMobile" onclick="switchMainTab('products')">🧺
+            المنتجات</button>
           <button class="nav-item" id="mainTabOrdersMobile" onclick="switchMainTab('orders')">🧾 الطلبات</button>
         </div>
 
@@ -884,6 +1153,18 @@
           <div>
             <h1>مرحبًا 👋</h1>
             <div class="sub">إدارة المنتجات، الأسعار، والطلبات الواردة من المتجر</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>👥 الزوار</h3>
+            <span class="hint">آخر 50 زيارة</span>
+          </div>
+
+          <div class="panel-body">
+            <div id="visitorsList">
+              <div class="loading-state">جاري تحميل الزوار...</div>
+            </div>
           </div>
         </div>
 
@@ -921,9 +1202,12 @@
             </div>
             <div class="panel-body">
               <div class="add-grid">
-                <div class="field"><label>رقم المنتج *</label><input type="number" id="newId" placeholder="مثال: 240"></div>
-                <div class="field"><label>اسم المنتج *</label><input type="text" id="newName" placeholder="اسم المنتج"></div>
-                <div class="field"><label>السعر *</label><input type="number" step="0.01" min="0" id="newPrice" placeholder="0.00"></div>
+                <div class="field"><label>رقم المنتج *</label><input type="number" id="newId" placeholder="مثال: 240">
+                </div>
+                <div class="field"><label>اسم المنتج *</label><input type="text" id="newName" placeholder="اسم المنتج">
+                </div>
+                <div class="field"><label>السعر *</label><input type="number" step="0.01" min="0" id="newPrice"
+                    placeholder="0.00"></div>
 
                 <div class="field">
                   <label>الفئة</label>
@@ -944,7 +1228,8 @@
                     <option value="">اختر الفئة أولًا</option>
                   </select>
                 </div>
-                <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="newOldPrice" placeholder="اختياري"></div>
+                <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="newOldPrice"
+                    placeholder="اختياري"></div>
 
                 <div class="field"><label>اللون</label><input type="text" id="newColor" placeholder="اختياري"></div>
                 <div class="field"><label>الشارة</label><input type="text" id="newBadge" placeholder="جديد / خصم"></div>
@@ -956,10 +1241,12 @@
                     <img id="imagePreview" src="" alt="معاينة صورة المنتج" style="display:none;">
                     <input type="file" id="newImgFile" accept="image/*">
                   </div>
-                  <small id="imageUploadStatus" style="display:block;margin-top:6px;color:var(--ink-soft);font-size:12px;">
+                  <small id="imageUploadStatus"
+                    style="display:block;margin-top:6px;color:var(--ink-soft);font-size:12px;">
                     اختر صورة من جهازك
                   </small>
-                  <div id="imageProcessStatus" style="display:none;margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:12px;line-height:1.9;">
+                  <div id="imageProcessStatus"
+                    style="display:none;margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-soft);font-size:12px;line-height:1.9;">
                     <div id="imageProcessTitle" style="font-weight:800;">🖼️ معالجة الصورة</div>
                     <div id="imageProcessInfo"></div>
                   </div>
@@ -967,7 +1254,8 @@
               </div>
 
               <div class="add-actions">
-                <button class="btn" id="addProductBtn" onclick="addProduct()" style="width:auto;">➕ إضافة المنتج</button>
+                <button class="btn" id="addProductBtn" onclick="addProduct()" style="width:auto;">➕ إضافة
+                  المنتج</button>
                 <button class="btn btn-ghost" onclick="clearAddForm()" style="width:auto;">مسح الحقول</button>
               </div>
             </div>
@@ -978,7 +1266,8 @@
               <div class="toolbar">
                 <div class="cat-tabs" id="catTabs"></div>
                 <div class="search-box">
-                  <input type="text" id="adminSearch" placeholder="🔍 دوّر برقم المنتج أو الاسم" oninput="renderProductList()">
+                  <input type="text" id="adminSearch" placeholder="🔍 دوّر برقم المنتج أو الاسم"
+                    oninput="renderProductList()">
                 </div>
               </div>
 
@@ -1050,7 +1339,8 @@
               <option value="">اختر الفئة أولًا</option>
             </select>
           </div>
-          <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="editOldPrice"></div>
+          <div class="field"><label>السعر القديم</label><input type="number" step="0.01" min="0" id="editOldPrice">
+          </div>
 
           <div class="field"><label>اللون</label><input type="text" id="editColor"></div>
           <div class="field"><label>الشارة</label><input type="text" id="editBadge"></div>
@@ -1058,7 +1348,8 @@
         </div>
 
         <div style="margin-top:16px;">
-          <label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">الصورة الحالية</label>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">الصورة
+            الحالية</label>
           <img id="editPreview" src="" class="current-img-preview">
         </div>
 
@@ -1079,11 +1370,74 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
   <script>
-    const SUPABASE_URL = "https://gzhgokztibcctmmljorf.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_7bfT9JW5Y7aMRR211n0GVA_Blfp1UDx";
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Appwrite: كل شي (منتجات + صور + تسجيل دخول الأدمن + طلبات + زيارات)
+    const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
+    const APPWRITE_PROJECT_ID = "6a9321f3002b6c1004a9";
+    const APPWRITE_DATABASE_ID = "6a93224c002e35f858b8";
+    const APPWRITE_TABLE_ID = "Products";
+    const APPWRITE_BUCKET_ID = "6a933a1d001e12834551";
+    // ⚠️ عدّلي هاي الـ IDs الثلاثة إذا كانت مختلفة عندك بلوحة Appwrite (Databases → اسم الجدول الفعلي)
+    const APPWRITE_ORDERS_TABLE_ID = "orders";
+    const APPWRITE_VISITS_TABLE_ID = "visits";
+
+    const awClient = new Appwrite.Client()
+      .setEndpoint(APPWRITE_ENDPOINT)
+      .setProject(APPWRITE_PROJECT_ID);
+    const awTablesDB = new Appwrite.TablesDB(awClient);
+    const awStorage = new Appwrite.Storage(awClient);
+    const awAccount = new Appwrite.Account(awClient);
+    const AppwriteQuery = Appwrite.Query;
+    const AppwritePermission = Appwrite.Permission;
+    const AppwriteRole = Appwrite.Role;
+
+    /* يبني رابط عرض الصورة من Appwrite Storage لملف معيّن */
+    function appwriteFileViewUrl(fileId) {
+      return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${encodeURIComponent(APPWRITE_PROJECT_ID)}`;
+    }
+
+    /* يحوّل صف من جدول Products بـ Appwrite لشكل المنتج المستخدم بهاي الصفحة */
+    function productFromAppwriteRow(row) {
+      return {
+        id: row.product_id,
+        name: row.name,
+        price: Number(row.price),
+        old_price: row.old_price !== null && row.old_price !== undefined ? Number(row.old_price) : null,
+        cat: row.category,
+        sub: row.subcategory,
+        color: row.color || "",
+        badge: row.badge || "",
+        img: row.image,
+        new_until: row.new_until || null,
+        sale: !!row.sale,
+        _rowId: row.$id,
+      };
+    }
+
+    /* يجيب كل صفوف المنتجات من Appwrite (بصفحات) */
+    async function fetchAllAppwriteProducts() {
+      const step = 500;
+      let offset = 0;
+      const rows = [];
+      while (true) {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_TABLE_ID,
+          queries: [
+            AppwriteQuery.orderAsc("product_id"),
+            AppwriteQuery.limit(step),
+            AppwriteQuery.offset(offset),
+          ],
+        });
+        const batch = res.rows || res.documents || [];
+        if (!batch.length) break;
+        rows.push(...batch);
+        if (batch.length < step) break;
+        offset += step;
+      }
+      return rows;
+    }
 
     let allProducts = [];
     let activeCat = "الكل";
@@ -1124,7 +1478,12 @@
       btn.disabled = true;
       btn.textContent = "جاري الدخول...";
 
-      const { error } = await sb.auth.signInWithPassword({ email, password });
+      let error = null;
+      try {
+        await awAccount.createEmailPasswordSession({ email, password });
+      } catch (e) {
+        error = e;
+      }
 
       btn.disabled = false;
       btn.textContent = "تسجيل الدخول";
@@ -1139,7 +1498,7 @@
     }
 
     async function handleLogout() {
-      await sb.auth.signOut();
+      try { await awAccount.deleteSession({ sessionId: "current" }); } catch (e) {}
       document.getElementById("dashboard").style.display = "none";
       document.getElementById("loginScreen").style.display = "flex";
       document.getElementById("loginPassword").value = "";
@@ -1148,7 +1507,13 @@
     async function showDashboard() {
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
-      await Promise.all([loadProducts(), loadVisitsCount(), loadOrdersCount()]);
+
+      await Promise.all([
+        loadProducts(),
+        loadVisitsCount(),
+        loadVisitors(),
+        loadOrdersCount()
+      ]);
     }
 
     /* ============ التبويبات الرئيسية: المنتجات / الطلبات ============ */
@@ -1163,12 +1528,13 @@
 
     /* ============ جلب المنتجات ============ */
     async function loadProducts() {
-      const { data, error } = await sb.from("products").select("*").order("id", { ascending: true });
-      if (error) {
-        document.getElementById("productList").innerHTML = `<div class="empty-state">صار خطأ بجلب المنتجات: ${error.message}</div>`;
+      try {
+        const rows = await fetchAllAppwriteProducts();
+        allProducts = rows.map(productFromAppwriteRow);
+      } catch (error) {
+        document.getElementById("productList").innerHTML = `<div class="empty-state">صار خطأ بجلب المنتجات: ${error.message || error}</div>`;
         return;
       }
-      allProducts = data || [];
       document.getElementById("productsCount").textContent = allProducts.length;
       document.getElementById("navProductsCount").textContent = allProducts.length;
       buildCatTabs();
@@ -1191,14 +1557,121 @@
 
     /* ============ جلب عدد الزيارات ============ */
     async function loadVisitsCount() {
-      const { count, error } = await sb.from("visits").select("*", { count: "exact", head: true });
-      document.getElementById("visitsCount").textContent = error ? "—" : (count ?? 0);
+      let count = 0;
+      try {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_VISITS_TABLE_ID,
+          queries: [AppwriteQuery.limit(1)],
+        });
+        count = res.total ?? 0;
+      } catch (e) {
+        count = null;
+      }
+      document.getElementById("visitsCount").textContent = count === null ? "—" : count;
+    }
+    async function loadVisitors() {
+      const listEl = document.getElementById("visitorsList");
+
+      if (!listEl) return;
+
+      listEl.innerHTML =
+        `<div class="loading-state">جاري تحميل الزوار...</div>`;
+
+      let data = [];
+      try {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_VISITS_TABLE_ID,
+          queries: [AppwriteQuery.orderDesc("$createdAt"), AppwriteQuery.limit(50)],
+        });
+        data = res.rows || res.documents || [];
+      } catch (error) {
+        console.error("VISITORS ERROR:", error);
+
+        listEl.innerHTML =
+          `<div class="empty-state">❌ فشل تحميل الزوار: ${error.message || error}</div>`;
+
+        return;
+      }
+
+      if (!data || !data.length) {
+        listEl.innerHTML =
+          `<div class="empty-state">لا توجد زيارات بعد</div>`;
+
+        return;
+      }
+
+      listEl.innerHTML = data.map(v => {
+        const name =
+          v.visitor_name ||
+          v.user_email ||
+          `زائر #${v.$id}`;
+
+        const status = v.user_id
+          ? "🟢 مسجل دخول"
+          : "👤 زائر";
+
+        const date = new Date(v.$createdAt).toLocaleString(
+          "ar-IQ",
+          {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+        return `
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        padding:12px 0;
+        border-bottom:1px solid var(--border);
+        flex-wrap:wrap;
+      ">
+        <div>
+          <div style="font-weight:800;">
+            👤 ${name}
+          </div>
+
+          ${v.user_email
+            ? `<div style="font-size:12px;color:var(--ink-soft);">
+                   ${v.user_email}
+                 </div>`
+            : ""
+          }
+        </div>
+
+        <div style="
+          text-align:left;
+          font-size:12px;
+          color:var(--ink-soft);
+        ">
+          <div>${status}</div>
+          <div>${date}</div>
+        </div>
+      </div>
+    `;
+      }).join("");
     }
 
     /* ============ جلب عدد الطلبات ============ */
     async function loadOrdersCount() {
-      const { count, error } = await sb.from("orders").select("*", { count: "exact", head: true });
-      const val = error ? "—" : (count ?? 0);
+      let val = "—";
+      try {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_ORDERS_TABLE_ID,
+          queries: [AppwriteQuery.limit(1)],
+        });
+        val = res.total ?? 0;
+      } catch (e) {
+        val = "—";
+      }
       document.getElementById("ordersCount").textContent = val;
       document.getElementById("navOrdersCount").textContent = val;
     }
@@ -1254,7 +1727,17 @@
       btn.disabled = true;
       btn.textContent = "...";
 
-      const { error } = await sb.from("products").update({ name: newName, price: newPrice }).eq("id", id);
+      let error = null;
+      try {
+        await awTablesDB.updateRow({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_TABLE_ID,
+          rowId: String(id),
+          data: { name: newName, price: newPrice },
+        });
+      } catch (e) {
+        error = e;
+      }
 
       btn.disabled = false;
 
@@ -1286,36 +1769,29 @@
       const confirmed = confirm(`⚠️ هل أنت متأكد من حذف المنتج؟\n\n#${product.id} — ${product.name}`);
       if (!confirmed) return;
 
-      const { error: dbError } = await sb.from("products").delete().eq("id", id);
-
-      if (dbError) {
+      try {
+        await awTablesDB.deleteRow({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_TABLE_ID,
+          rowId: String(id),
+        });
+      } catch (dbError) {
         console.error("DB DELETE ERROR:", dbError);
-        showToast("❌ فشل حذف المنتج: " + dbError.message);
+        showToast("❌ فشل حذف المنتج: " + (dbError.message || dbError));
         return;
       }
 
       if (product.img) {
         try {
-          const url = new URL(product.img);
-          const marker = "/object/public/product-images/";
-          const index = url.pathname.indexOf(marker);
-
-          if (index !== -1) {
-            const filePath = decodeURIComponent(url.pathname.substring(index + marker.length));
-            const { error: storageError } = await sb.storage.from("product-images").remove([filePath]);
-
-            if (storageError) {
-              console.error("STORAGE DELETE ERROR:", storageError);
-              showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
-              return;
-            }
-          } else {
-            console.warn("⚠️ لم أستطع استخراج مسار الصورة:", product.img);
+          const fileId = `product-${id}`;
+          await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId });
+        } catch (storageError) {
+          // كود 404 يعني الملف مو موجود أصلاً (مثلاً منتج بلا صورة حقيقية) - نتجاهله
+          if (Number(storageError?.code) !== 404) {
+            console.error("STORAGE DELETE ERROR:", storageError);
+            showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
+            return;
           }
-        } catch (e) {
-          console.error("STORAGE ERROR:", e);
-          showToast("⚠️ المنتج انحذف لكن الصورة بقيت");
-          return;
         }
       }
 
@@ -1483,7 +1959,7 @@
     ✅ الحجم الأصلي: ${formatFileSize(originalSize)}<br>
     📉 بعد الضغط: ${formatFileSize(imageFile.size)}<br>
     💾 التوفير: ${savedPercent.toFixed(1)}%<br>
-    🔄 جاري رفع WebP إلى Supabase...
+    🔄 جاري رفع WebP إلى Appwrite...
   `;
         }
 
@@ -1496,44 +1972,60 @@
         return;
       }
 
+      const fileId = `product-${id}`;
+      let uploadedFileId = null;
+
       try {
-        const fileExt = imageFile.name.split(".").pop().toLowerCase();
-        const fileName = `${id}-${Date.now()}.${fileExt}`;
-        const filePath = `products/${fileName}`;
-
-        const { error: uploadError } = await sb.storage
-          .from("product-images")
-          .upload(filePath, imageFile, { cacheControl: "3600", upsert: false, contentType: imageFile.type });
-
-        if (uploadError) {
+        try {
+          await awStorage.createFile({
+            bucketId: APPWRITE_BUCKET_ID,
+            fileId,
+            file: imageFile,
+            permissions: [AppwritePermission.read(AppwriteRole.any())],
+          });
+          uploadedFileId = fileId;
+        } catch (uploadError) {
           console.error(uploadError);
-          showToast("❌ فشل رفع الصورة: " + uploadError.message);
+          showToast("❌ فشل رفع الصورة: " + (uploadError.message || uploadError));
           btn.disabled = false;
           btn.textContent = "➕ إضافة المنتج";
           return;
         }
 
-        const { data: publicUrlData } = sb.storage.from("product-images").getPublicUrl(filePath);
-        const img = publicUrlData.publicUrl;
+        const img = appwriteFileViewUrl(fileId);
 
         btn.textContent = "جاري إضافة المنتج...";
 
-        const { data, error } = await sb
-          .from("products")
-          .insert({ id, name, cat, sub, price, old_price, color, img, badge, new_until: newUntil, sale: old_price !== null && old_price > price })
-          .select()
-          .single();
-
-        if (error) {
+        let newRow;
+        try {
+          newRow = await awTablesDB.createRow({
+            databaseId: APPWRITE_DATABASE_ID,
+            tableId: APPWRITE_TABLE_ID,
+            rowId: String(id),
+            data: {
+              product_id: id,
+              name,
+              price,
+              old_price,
+              category: cat,
+              subcategory: sub,
+              color: color || null,
+              badge: badge || null,
+              image: img,
+              new_until: newUntil,
+              sale: old_price !== null && old_price > price,
+            },
+          });
+        } catch (error) {
           console.error(error);
-          await sb.storage.from("product-images").remove([filePath]);
-          showToast("❌ فشلت إضافة المنتج: " + error.message);
+          if (uploadedFileId) await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: uploadedFileId });
+          showToast("❌ فشلت إضافة المنتج: " + (error.message || error));
           btn.disabled = false;
           btn.textContent = "➕ إضافة المنتج";
           return;
         }
 
-        allProducts.push(data);
+        allProducts.push(productFromAppwriteRow(newRow));
         document.getElementById("productsCount").textContent = allProducts.length;
         document.getElementById("navProductsCount").textContent = allProducts.length;
 
@@ -1665,7 +2157,8 @@
       btn.textContent = "جاري الحفظ...";
 
       let newImageUrl = null;
-      let newImagePath = null;
+      let uploadedNewFileId = null;
+      const oldFileId = `product-${oldId}`;
 
       try {
         if (imageFile) {
@@ -1680,44 +2173,89 @@
           const compressedImage = await compressImageToWebP(imageFile);
 
           btn.textContent = "جاري رفع الصورة...";
-          newImagePath = `products/${newId}-${Date.now()}.webp`;
+          const newFileId = `product-${newId}`;
 
-          const { error: uploadError } = await sb.storage
-            .from("product-images")
-            .upload(newImagePath, compressedImage, { cacheControl: "3600", upsert: false, contentType: "image/webp" });
+          // إذا رقم المنتج ما تغيّر، لازم نحذف ملف الصورة القديم أول (نفس الـ fileId) قبل رفع الجديد
+          if (newFileId === oldFileId) {
+            try {
+              await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: oldFileId });
+            } catch (e) {
+              if (Number(e?.code) !== 404) throw e;
+            }
+          }
 
-          if (uploadError) throw uploadError;
+          await awStorage.createFile({
+            bucketId: APPWRITE_BUCKET_ID,
+            fileId: newFileId,
+            file: compressedImage,
+            permissions: [AppwritePermission.read(AppwriteRole.any())],
+          });
 
-          const { data: publicUrlData } = sb.storage.from("product-images").getPublicUrl(newImagePath);
-          newImageUrl = publicUrlData.publicUrl;
+          uploadedNewFileId = newFileId;
+          newImageUrl = appwriteFileViewUrl(newFileId);
         }
 
-        const updateData = {
-          id: newId,
+        const existingProduct = allProducts.find(p => Number(p.id) === oldId);
+
+        const rowData = {
+          product_id: newId,
           name,
-          cat,
-          sub,
           price,
           old_price,
+          category: cat,
+          subcategory: sub,
           color,
           badge,
           new_until: badge === "جديد" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null,
-          sale: old_price !== null && old_price > price
+          sale: old_price !== null && old_price > price,
+          image: newImageUrl || existingProduct?.img || null,
         };
-
-        if (newImageUrl) updateData.img = newImageUrl;
 
         btn.textContent = "جاري تحديث المنتج...";
 
-        const { error } = await sb.from("products").update(updateData).eq("id", oldId);
+        let savedRow;
+        try {
+          if (newId === oldId) {
+            savedRow = await awTablesDB.updateRow({
+              databaseId: APPWRITE_DATABASE_ID,
+              tableId: APPWRITE_TABLE_ID,
+              rowId: String(oldId),
+              data: rowData,
+            });
+          } else {
+            // Appwrite ما بيدعم تغيير معرّف الصف (rowId) مباشرة: منعمل صف جديد بالرقم الجديد ومنحذف القديم
+            savedRow = await awTablesDB.createRow({
+              databaseId: APPWRITE_DATABASE_ID,
+              tableId: APPWRITE_TABLE_ID,
+              rowId: String(newId),
+              data: rowData,
+            });
 
-        if (error) {
-          if (newImagePath) await sb.storage.from("product-images").remove([newImagePath]);
+            try {
+              await awTablesDB.deleteRow({ databaseId: APPWRITE_DATABASE_ID, tableId: APPWRITE_TABLE_ID, rowId: String(oldId) });
+            } catch (e) {
+              console.warn("تعذّر حذف الصف القديم بعد تغيير رقم المنتج:", e);
+            }
+
+            // إذا انرفعت صورة جديدة برقم المنتج الجديد، منحذف ملف الصورة القديم (برقم المنتج القديم)
+            if (uploadedNewFileId) {
+              try {
+                await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: oldFileId });
+              } catch (e) {
+                if (Number(e?.code) !== 404) console.warn("تعذّر حذف صورة المنتج القديمة:", e);
+              }
+            }
+          }
+        } catch (error) {
+          if (uploadedNewFileId) {
+            try { await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: uploadedNewFileId }); } catch (_) {}
+          }
           throw error;
         }
 
         const index = allProducts.findIndex(p => Number(p.id) === oldId);
-        if (index !== -1) allProducts[index] = { ...allProducts[index], ...updateData };
+        const updatedProduct = productFromAppwriteRow(savedRow);
+        if (index !== -1) allProducts[index] = updatedProduct; else allProducts.push(updatedProduct);
 
         buildCatTabs();
         renderProductList();
@@ -1738,10 +2276,16 @@
       const listEl = document.getElementById("ordersList");
       listEl.innerHTML = `<div class="loading-state">جاري التحميل...</div>`;
 
-      const { data, error } = await sb.from("orders").select("*").order("created_at", { ascending: false });
-
-      if (error) {
-        listEl.innerHTML = `<div class="empty-state">صار خطأ بجلب الطلبات: ${error.message}<br>(تأكد إنك نفّذت migration_accounts_orders.sql وحطيت is_admin = true لحسابك)</div>`;
+      let data = [];
+      try {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_ORDERS_TABLE_ID,
+          queries: [AppwriteQuery.orderDesc("$createdAt"), AppwriteQuery.limit(500)],
+        });
+        data = res.rows || res.documents || [];
+      } catch (error) {
+        listEl.innerHTML = `<div class="empty-state">صار خطأ بجلب الطلبات: ${error.message || error}<br>(تأكد إنك مضاف لفريق الأدمن وإنه صلاحيات جدول orders معمولة صح بلوحة Appwrite)</div>`;
         return;
       }
 
@@ -1754,12 +2298,12 @@
       document.getElementById("navOrdersCount").textContent = data.length;
 
       listEl.innerHTML = data.map(o => {
-        const date = new Date(o.created_at).toLocaleString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-        const items = o.items || [];
+        const date = new Date(o.$createdAt).toLocaleString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        const items = typeof o.items === "string" ? JSON.parse(o.items || "[]") : (o.items || []);
         return `
       <div class="order-card">
         <div class="order-head">
-          <span class="order-id">🧾 طلب #${o.id}</span>
+          <span class="order-id">🧾 طلب #${o.$id}</span>
           <span class="order-total">${o.total}$</span>
         </div>
         <div class="order-meta">
@@ -1777,8 +2321,12 @@
 
     /* ============ التحقق من الجلسة عند فتح الصفحة ============ */
     (async function checkSession() {
-      const { data } = await sb.auth.getSession();
-      if (data && data.session) showDashboard();
+      try {
+        await awAccount.get();
+        showDashboard();
+      } catch (e) {
+        // ما في جلسة محفوظة، تضل شاشة تسجيل الدخول ظاهرة
+      }
     })();
 
     document.getElementById("loginPassword").addEventListener("keydown", e => {
