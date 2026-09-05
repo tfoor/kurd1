@@ -1246,33 +1246,13 @@ function getCustomerFullName(session) {
 
 async function refreshAccountModalView() {
   try {
-    const response = await fetch(
-      `${APPWRITE_ENDPOINT}/account`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Accept": "application/json",
-          "X-Appwrite-Project": APPWRITE_PROJECT_ID
-        }
-      }
-    );
+    const userData = await account.get();
 
-    const userData =
-      await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      window.appwriteCustomerSession = null;
-
-      document.getElementById("authForms").style.display = "block";
-      document.getElementById("accountLoggedIn").style.display = "none";
-
-      return;
-    }
-
-    window.appwriteCustomerSession = {
+    customerSession = {
       user: userData
     };
+
+    window.appwriteCustomerSession = customerSession;
 
     document.getElementById("authForms").style.display = "none";
     document.getElementById("accountLoggedIn").style.display = "block";
@@ -1293,6 +1273,7 @@ async function refreshAccountModalView() {
 
     const avatarUrl =
       userData.prefs?.avatar_url ||
+      userData.prefs?.picture ||
       "";
 
     const accountAvatarImg =
@@ -1323,6 +1304,7 @@ async function refreshAccountModalView() {
       error
     );
 
+    customerSession = null;
     window.appwriteCustomerSession = null;
 
     document.getElementById("authForms").style.display = "block";
