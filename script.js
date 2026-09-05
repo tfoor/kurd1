@@ -298,13 +298,16 @@ async function syncAppwriteSession() {
       user: user
     };
 
+    window.appwriteCustomerSession = customerSession;
+
     updateAccountButtonAvatar(customerSession);
 
     return customerSession;
 
   } catch (error) {
-    // عدم وجود جلسة تسجيل دخول = حالة طبيعية
     customerSession = null;
+    window.appwriteCustomerSession = null;
+
     updateAccountButtonAvatar(null);
 
     return null;
@@ -1311,7 +1314,7 @@ async function refreshAccountModalView() {
 
     if (ordersList) {
       ordersList.innerHTML =
-        `<div class="acc-empty">سيتم نقل الطلبات إلى Appwrite لاحقًا</div>`;
+        `<div class="acc-empty"> جميع فواتير رح يبين هون</div>`;
     }
 
   } catch (error) {
