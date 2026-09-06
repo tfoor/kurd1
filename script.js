@@ -259,6 +259,11 @@ const APPWRITE_DATABASE_ID =
 
 const APPWRITE_TABLE_ID =
   "Products";
+
+/* Table ID الحقيقي لجدول orders — الاسم المعروض بالكونسول "orders"،
+   بس الـ ID الداخلي الفعلي مختلف (شوفه بصفحة الجدول جنب اسمه) */
+const APPWRITE_ORDERS_TABLE_ID =
+  "6a95b38700155bc15eb7";
 /* ============ Appwrite Web SDK ============ */
 // ⚠️ مهم: إذا فشل تحميل مكتبة Appwrite (بسبب انقطاع إنترنت، حجب CDN، أو أدبلوكر)
 // فـ "Appwrite" ما تكون معرّفة، وأي كود يحاول يستخدمها مباشرة بدون try/catch
@@ -1881,7 +1886,7 @@ async function handleForgotPassword() {
          حتى ما توصل فواتير غير زبائن لجهاز الزبون أصلًا */
       const result = await tablesDB.listRows({
         databaseId: APPWRITE_DATABASE_ID,
-        tableId: "orders",
+        tableId: APPWRITE_ORDERS_TABLE_ID,
         queries: [
           Appwrite.Query.equal("customer_id", user.$id),
           Appwrite.Query.orderDesc("$createdAt"),
@@ -2145,7 +2150,7 @@ async function saveOrderRecord(items, total, customerName) {
 
     const response = await fetch(
       `${APPWRITE_ENDPOINT}/tablesdb/` +
-      `${APPWRITE_DATABASE_ID}/tables/orders/rows`,
+      `${APPWRITE_DATABASE_ID}/tables/${APPWRITE_ORDERS_TABLE_ID}/rows`,
       {
         method: "POST",
         credentials: "include",
