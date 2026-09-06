@@ -1932,7 +1932,12 @@ async function handleForgotPassword() {
         const itemsText = Array.isArray(items)
           ? items.map(it => {
             if (typeof it === "string") {
-              return it;
+              try {
+                const parsed = JSON.parse(it);
+                return `${parsed.name || ""} × ${parsed.qty || 1}`;
+              } catch (e) {
+                return it;
+              }
             }
 
             return `${it.name || ""} × ${it.qty || 1}`;

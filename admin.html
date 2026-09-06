@@ -2349,7 +2349,15 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
 
       listEl.innerHTML = data.map(o => {
         const date = new Date(o.$createdAt).toLocaleString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-        const items = typeof o.items === "string" ? JSON.parse(o.items || "[]") : (o.items || []);
+        /* items يوصل كمصفوفة (Array) لكن كل عنصر فيها نص JSON منفرد
+           (مو مصفوفة واحدة محوّلة لنص كامل) — لازم نفك كل عنصر لحاله */
+        const rawItems = Array.isArray(o.items) ? o.items : (typeof o.items === "string" ? JSON.parse(o.items || "[]") : []);
+        const items = rawItems.map(it => {
+          if (typeof it === "string") {
+            try { return JSON.parse(it); } catch (e) { return null; }
+          }
+          return it;
+        }).filter(Boolean);
         return `
       <div class="order-card">
         <div class="order-head">
