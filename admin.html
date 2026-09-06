@@ -1131,6 +1131,9 @@
           <span class="ico">👥</span> الزوار
           <span class="count" id="navVisitsCount">—</span>
         </button>
+        <button class="nav-item" id="mainTabLogs" onclick="switchMainTab('logs')">
+          <span class="ico">📋</span> سجلات الأدمن
+        </button>
 
         <div class="sidebar-footer">
           <button class="logout-btn" onclick="handleLogout()">
@@ -1152,6 +1155,7 @@
             المنتجات</button>
           <button class="nav-item" id="mainTabOrdersMobile" onclick="switchMainTab('orders')">🧾 الطلبات</button>
           <button class="nav-item" id="mainTabVisitorsMobile" onclick="switchMainTab('visitors')">👥 الزوار</button>
+          <button class="nav-item" id="mainTabLogsMobile" onclick="switchMainTab('logs')">📋 السجلات</button>
         </div>
 
         <div class="page-head">
@@ -1169,6 +1173,19 @@
           <div class="panel-body">
             <div id="visitorsList">
               <div class="loading-state">جاري تحميل الزوار...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="logsSection" style="display:none;">
+          <div class="panel-head">
+            <h3>📋 سجلات نشاط الأدمن</h3>
+            <span class="hint">آخر 100 عملية</span>
+          </div>
+
+          <div class="panel-body">
+            <div id="logsList">
+              <div class="loading-state">جاري تحميل السجلات...</div>
             </div>
           </div>
         </div>
@@ -1554,18 +1571,72 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       ]);
     }
 
-    /* ============ التبويبات الرئيسية: المنتجات / الطلبات / الزوار ============ */
+    /* ============ التبويبات الرئيسية: المنتجات / الطلبات / الزوار / السجلات ============ */
     function switchMainTab(tab) {
       ["mainTabProducts", "mainTabProductsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "products"));
       ["mainTabOrders", "mainTabOrdersMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "orders"));
       ["mainTabVisitors", "mainTabVisitorsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "visitors"));
+      ["mainTabLogs", "mainTabLogsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "logs"));
 
       document.getElementById("productsSection").style.display = tab === "products" ? "block" : "none";
       document.getElementById("ordersSection").style.display = tab === "orders" ? "block" : "none";
       document.getElementById("visitorsSection").style.display = tab === "visitors" ? "block" : "none";
+      document.getElementById("logsSection").style.display = tab === "logs" ? "block" : "none";
 
       if (tab === "orders") loadOrders();
       if (tab === "visitors") loadVisitors();
+      if (tab === "logs") loadAdminLogs();
+    }
+
+    /* ============ عرض سجلات نشاط الأدمن ============ */
+    async function loadAdminLogs() {
+      const listEl = document.getElementById("logsList");
+      if (!listEl) return;
+
+      listEl.innerHTML = `<div class="loading-state">جاري تحميل السجلات...</div>`;
+
+      let data = [];
+      try {
+        const res = await awTablesDB.listRows({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_LOGS_TABLE_ID,
+          queries: [AppwriteQuery.orderDesc("$createdAt"), AppwriteQuery.limit(100)],
+        });
+        data = res.rows || res.documents || [];
+      } catch (error) {
+        listEl.innerHTML = `<div class="empty-state">❌ تعذر تحميل السجلات: ${error.message || error}<br>(تأكد إنك أنشأت جدول admin_logs بـ Appwrite بالمعرف الصحيح، وفعّلت صلاحية Read لـ label:admin عليه)</div>`;
+        return;
+      }
+
+      if (!data.length) {
+        listEl.innerHTML = `<div class="empty-state">ما في نشاط مسجّل بعد</div>`;
+        return;
+      }
+
+      const actionIcon = {
+        "إضافة": "🟢",
+        "تعديل سريع": "🟡",
+        "تعديل كامل": "🟡",
+        "حذف": "🔴",
+      };
+
+      listEl.innerHTML = data.map(log => {
+        const date = new Date(log.$createdAt).toLocaleString("ar-EG", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        const icon = actionIcon[log.action] || "⚪";
+        return `
+      <div class="order-card">
+        <div class="order-head">
+          <span class="order-id">${icon} ${log.action} — ${log.entity} #${log.entity_id}</span>
+          <span class="order-total" style="font-size:13px;">${date}</span>
+        </div>
+        <div class="order-meta">
+          <span>👤 ${log.admin_email || "غير معروف"}</span>
+        </div>
+        <div class="order-items">
+          <div class="order-item-row"><span>${log.details || ""}</span></div>
+        </div>
+      </div>`;
+      }).join("");
     }
 
     /* ============ جلب المنتجات ============ */
@@ -2306,6 +2377,15 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
         const index = allProducts.findIndex(p => Number(p.id) === oldId);
         const updatedProduct = productFromAppwriteRow(savedRow);
         if (index !== -1) allProducts[index] = updatedProduct; else allProducts.push(updatedProduct);
+
+        logAdminAction(
+          "تعديل كامل",
+          "منتج",
+          newId,
+          newId !== oldId
+            ? `${name} — تغيّر الرقم من #${oldId} إلى #${newId}، السعر: ${price}$`
+            : `${name} — السعر: ${price}$`
+        );
 
         buildCatTabs();
         renderProductList();
