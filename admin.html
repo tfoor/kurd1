@@ -1127,6 +1127,10 @@
           <span class="ico">🧾</span> الطلبات
           <span class="count" id="navOrdersCount">—</span>
         </button>
+        <button class="nav-item" id="mainTabVisitors" onclick="switchMainTab('visitors')">
+          <span class="ico">👥</span> الزوار
+          <span class="count" id="navVisitsCount">—</span>
+        </button>
 
         <div class="sidebar-footer">
           <button class="logout-btn" onclick="handleLogout()">
@@ -1147,6 +1151,7 @@
           <button class="nav-item active" id="mainTabProductsMobile" onclick="switchMainTab('products')">🧺
             المنتجات</button>
           <button class="nav-item" id="mainTabOrdersMobile" onclick="switchMainTab('orders')">🧾 الطلبات</button>
+          <button class="nav-item" id="mainTabVisitorsMobile" onclick="switchMainTab('visitors')">👥 الزوار</button>
         </div>
 
         <div class="page-head">
@@ -1155,7 +1160,7 @@
             <div class="sub">إدارة المنتجات، الأسعار، والطلبات الواردة من المتجر</div>
           </div>
         </div>
-        <div class="panel">
+        <div class="panel" id="visitorsSection" style="display:none;">
           <div class="panel-head">
             <h3>👥 الزوار</h3>
             <span class="hint">آخر 50 زيارة</span>
@@ -1220,6 +1225,7 @@
                     <option value="إكسسوارات">إكسسوارات</option>
                     <option value="مكياج">مكياج</option>
                     <option value="أدوات منزلية">أدوات منزلية</option>
+                    <option value="مدرسة">مدرسة</option>
                   </select>
                 </div>
                 <div class="field">
@@ -1331,6 +1337,7 @@
               <option value="إكسسوارات">إكسسوارات</option>
               <option value="مكياج">مكياج</option>
               <option value="أدوات منزلية">أدوات منزلية</option>
+              <option value="مدرسة">مدرسة</option>
             </select>
           </div>
           <div class="field">
@@ -1381,6 +1388,11 @@
     // ⚠️ عدّلي هاي الـ IDs الثلاثة إذا كانت مختلفة عندك بلوحة Appwrite (Databases → اسم الجدول الفعلي)
     const APPWRITE_ORDERS_TABLE_ID = "orders";
     const APPWRITE_VISITS_TABLE_ID = "visits";
+    // ⚠️ لازم تنشئ هذا الجدول يدوياً بـ Appwrite Console (Databases → جدول جديد بالمعرف admin_logs)
+    // بأربع خصائص نصية (string): action, entity, entity_id, details, admin_email
+    const APPWRITE_LOGS_TABLE_ID = "admin_logs";
+
+    let currentAdminEmail = null;
 
     const awClient = new Appwrite.Client()
       .setEndpoint(APPWRITE_ENDPOINT)
@@ -1395,6 +1407,27 @@
     /* يبني رابط عرض الصورة من Appwrite Storage لملف معيّن */
     function appwriteFileViewUrl(fileId) {
       return `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${encodeURIComponent(APPWRITE_PROJECT_ID)}`;
+    }
+
+    /* ============ سجل نشاط الأدمن: يسجل كل إضافة/تعديل/حذف ============
+       فشل هذا التسجيل ما يوقف العملية الأصلية أبداً (add/edit/delete) — بس محاولة توثيق */
+    async function logAdminAction(action, entity, entityId, details) {
+      try {
+        await awTablesDB.createRow({
+          databaseId: APPWRITE_DATABASE_ID,
+          tableId: APPWRITE_LOGS_TABLE_ID,
+          rowId: crypto.randomUUID(),
+          data: {
+            action,
+            entity,
+            entity_id: String(entityId ?? ""),
+            details: details || "",
+            admin_email: currentAdminEmail || "غير معروف"
+          }
+        });
+      } catch (e) {
+        console.warn("تعذر تسجيل نشاط الأدمن (لا يؤثر على العملية نفسها):", e);
+      }
     }
 
     /* يحوّل صف من جدول Products بـ Appwrite لشكل المنتج المستخدم بهاي الصفحة */
@@ -1450,7 +1483,8 @@
       "أحذية": ["صنادل", "كعوب", "كلاسيك", "أطفال"],
       "إكسسوارات": ["جنط", "مجوهرات", "ساعات", "اكسسوارات موبايل", "نظارات", "جوارب", "إكسسوارات شعر", "شعر مستعار"],
       "مكياج": ["مكياج", "عناية بالأظافر", "أدوات تجميل", "عناية بالبشرة"],
-      "أدوات منزلية": []
+      "أدوات منزلية": [],
+      "مدرسة": []
     };
 
     /* ============ عام: توست تنبيه ============ */
@@ -1494,6 +1528,7 @@
         return;
       }
 
+      currentAdminEmail = email;
       showDashboard();
     }
 
@@ -1516,14 +1551,18 @@
       ]);
     }
 
-    /* ============ التبويبات الرئيسية: المنتجات / الطلبات ============ */
+    /* ============ التبويبات الرئيسية: المنتجات / الطلبات / الزوار ============ */
     function switchMainTab(tab) {
-      const isProducts = tab === "products";
-      ["mainTabProducts", "mainTabProductsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", isProducts));
-      ["mainTabOrders", "mainTabOrdersMobile"].forEach(id => document.getElementById(id).classList.toggle("active", !isProducts));
-      document.getElementById("productsSection").style.display = isProducts ? "block" : "none";
-      document.getElementById("ordersSection").style.display = isProducts ? "none" : "block";
-      if (!isProducts) loadOrders();
+      ["mainTabProducts", "mainTabProductsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "products"));
+      ["mainTabOrders", "mainTabOrdersMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "orders"));
+      ["mainTabVisitors", "mainTabVisitorsMobile"].forEach(id => document.getElementById(id).classList.toggle("active", tab === "visitors"));
+
+      document.getElementById("productsSection").style.display = tab === "products" ? "block" : "none";
+      document.getElementById("ordersSection").style.display = tab === "orders" ? "block" : "none";
+      document.getElementById("visitorsSection").style.display = tab === "visitors" ? "block" : "none";
+
+      if (tab === "orders") loadOrders();
+      if (tab === "visitors") loadVisitors();
     }
 
     /* ============ جلب المنتجات ============ */
@@ -1569,6 +1608,8 @@
         count = null;
       }
       document.getElementById("visitsCount").textContent = count === null ? "—" : count;
+      const navVisits = document.getElementById("navVisitsCount");
+      if (navVisits) navVisits.textContent = count === null ? "—" : count;
     }
     async function loadVisitors() {
       const listEl = document.getElementById("visitorsList");
@@ -1606,7 +1647,7 @@
         const name =
           v.visitor_name ||
           v.user_email ||
-          `زائر #${v.$id}`;
+          "زائر غير مسجل";
 
         const status = v.user_id
           ? "🟢 مسجل دخول"
@@ -1751,6 +1792,8 @@
       const p = allProducts.find(pr => pr.id === id);
       if (p) { p.name = newName; p.price = newPrice; }
 
+      logAdminAction("تعديل سريع", "منتج", id, `${newName} — السعر الجديد: ${newPrice}$`);
+
       btn.classList.add("saved");
       btn.textContent = "تم ✓";
       showToast("✅ تم حفظ التعديل");
@@ -1798,6 +1841,8 @@
       allProducts = allProducts.filter(p => Number(p.id) !== Number(id));
       document.getElementById("productsCount").textContent = allProducts.length;
       document.getElementById("navProductsCount").textContent = allProducts.length;
+
+      logAdminAction("حذف", "منتج", id, product.name);
 
       buildCatTabs();
       renderProductList();
@@ -2028,6 +2073,8 @@
         allProducts.push(productFromAppwriteRow(newRow));
         document.getElementById("productsCount").textContent = allProducts.length;
         document.getElementById("navProductsCount").textContent = allProducts.length;
+
+        logAdminAction("إضافة", "منتج", id, `${name} — ${price}$`);
 
         buildCatTabs();
         renderProductList();
@@ -2322,7 +2369,8 @@
     /* ============ التحقق من الجلسة عند فتح الصفحة ============ */
     (async function checkSession() {
       try {
-        await awAccount.get();
+        const user = await awAccount.get();
+        currentAdminEmail = user?.email || null;
         showDashboard();
       } catch (e) {
         // ما في جلسة محفوظة، تضل شاشة تسجيل الدخول ظاهرة

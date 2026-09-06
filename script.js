@@ -32,7 +32,7 @@ const translations = {
     hero_desc: "مئات القطع المختارة بعناية بأسعار تناسبك، وطلب سهل عبر واتساب بضغطة واحدة.",
     hero_cta1: "تسوّق الآن", hero_cta2: "شاهد العروض", hero_tag: "الأكثر طلباً 🔥",
     cat_men: "رجالي", cat_women: "نسائي", cat_girls: "بناتي", cat_acc: "إكسسوارات", cat_all: "الكل",
-    cat_kids: "أطفال", cat_shoes: "أحذية", cat_makeup: "مكياج", cat_home: "أدوات منزلية",
+    cat_kids: "أطفال", cat_shoes: "أحذية", cat_makeup: "مكياج", cat_home: "أدوات منزلية", cat_school: "مدرسة",
     sub_top: "ملابس علوية", sub_sets: "أطقم منسقة", sub_bottom: "ملابس سفلية", sub_denim: "ملابس دينيم",
     sub_dresses: "فساتين", sub_skirts: "تنانير", sub_girls: "بناتي", sub_boys: "أولادي",
     sub_sandals: "صنادل", sub_heels: "كعوب", sub_classic: "كلاسيك", sub_kidshoes: "أطفال",
@@ -76,7 +76,7 @@ const translations = {
     hero_desc: "Hundreds of carefully picked pieces at prices that suit you, with easy ordering via WhatsApp in one tap.",
     hero_cta1: "Shop Now", hero_cta2: "View Deals", hero_tag: "Best Seller 🔥",
     cat_men: "Men", cat_women: "Women", cat_girls: "Girls", cat_acc: "Accessories", cat_all: "All",
-    cat_kids: "Kids", cat_shoes: "Shoes", cat_makeup: "Makeup", cat_home: "Home & Tools",
+    cat_kids: "Kids", cat_shoes: "Shoes", cat_makeup: "Makeup", cat_home: "Home & Tools", cat_school: "School",
     sub_top: "Tops", sub_sets: "Matching Sets", sub_bottom: "Bottoms", sub_denim: "Denim",
     sub_dresses: "Dresses", sub_skirts: "Skirts", sub_girls: "Girls", sub_boys: "Boys",
     sub_sandals: "Sandals", sub_heels: "Heels", sub_classic: "Classic", sub_kidshoes: "Kids",
@@ -120,7 +120,7 @@ const translations = {
     hero_desc: "Bi sedan perçeyên bi baldarî hilbijartî bi rexneyên li gorî te, û siparîşkirin bi hêsanî bi rêya WhatsApp bi yek pêl.",
     hero_cta1: "Niha Bikire", hero_cta2: "Pêşkêşiyan Bibîne", hero_tag: "Herî Zêde Tê Xwestin 🔥",
     cat_men: "Mêr", cat_women: "Jin", cat_girls: "Keç", cat_acc: "Aksesûar", cat_all: "Hemû",
-    cat_kids: "Zarok", cat_shoes: "Sol", cat_makeup: "Make-up", cat_home: "Malzemeyên Malê",
+    cat_kids: "Zarok", cat_shoes: "Sol", cat_makeup: "Make-up", cat_home: "Malzemeyên Malê", cat_school: "Dibistan",
     sub_top: "Kincên Jorîn", sub_sets: "Setên Hevgirtî", sub_bottom: "Kincên Jêrîn", sub_denim: "Cins",
     sub_dresses: "Fistan", sub_skirts: "Îtek", sub_girls: "Keç", sub_boys: "Kur",
     sub_sandals: "Sandal", sub_heels: "Sole Bilind", sub_classic: "Klasîk", sub_kidshoes: "Zarok",
@@ -164,7 +164,7 @@ const translations = {
     hero_desc: "Sana uygun fiyatlarla özenle seçilmiş yüzlerce parça, tek dokunuşla WhatsApp üzerinden kolay sipariş.",
     hero_cta1: "Şimdi Alışveriş Yap", hero_cta2: "Fırsatları Gör", hero_tag: "En Çok Satan 🔥",
     cat_men: "Erkek", cat_women: "Kadın", cat_girls: "Kız Çocuk", cat_acc: "Aksesuar", cat_all: "Tümü",
-    cat_kids: "Çocuk", cat_shoes: "Ayakkabı", cat_makeup: "Makyaj", cat_home: "Ev & Aletler",
+    cat_kids: "Çocuk", cat_shoes: "Ayakkabı", cat_makeup: "Makyaj", cat_home: "Ev & Aletler", cat_school: "Okul",
     sub_top: "Üst Giyim", sub_sets: "Takımlar", sub_bottom: "Alt Giyim", sub_denim: "Kot",
     sub_dresses: "Elbiseler", sub_skirts: "Etekler", sub_girls: "Kız Çocuk", sub_boys: "Erkek Çocuk",
     sub_sandals: "Sandalet", sub_heels: "Topuklu", sub_classic: "Klasik", sub_kidshoes: "Çocuk",
@@ -774,13 +774,40 @@ console.log(
 
 async function logVisit() {
   try {
+    /* نجيب بيانات الزبون الحالي (إذا مسجل دخول) حتى تظهر زيارته باسمه
+       الحقيقي بلوحة التحكم بدل رقم عشوائي طويل */
+    let visitorName = null;
+    let visitorId = null;
+
+    try {
+      const userResponse = await fetch(
+        `${APPWRITE_ENDPOINT}/account`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "X-Appwrite-Project": APPWRITE_PROJECT_ID
+          }
+        }
+      );
+
+      if (userResponse.ok) {
+        const user = await userResponse.json();
+        visitorId = user?.$id || null;
+        visitorName = user?.name || user?.email || null;
+      }
+    } catch (e) {
+      // زائر غير مسجل، طبيعي
+    }
+
     await tablesDB.createRow({
       databaseId: APPWRITE_DATABASE_ID,
       tableId: "visits",
       rowId: crypto.randomUUID(),
       data: {
-        user_id: null,
-        visitor_name: null
+        user_id: visitorId,
+        visitor_name: visitorName
       }
     });
 
@@ -793,8 +820,8 @@ async function logVisit() {
     );
   }
 }
-const categories = ["الكل", "رجالي", "نسائي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية"];
-const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "نسائي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home" };
+const categories = ["الكل", "رجالي", "نسائي", "أطفال", "أحذية", "إكسسوارات", "مكياج", "أدوات منزلية", "مدرسة"];
+const catKeyMap = { "الكل": "cat_all", "رجالي": "cat_men", "نسائي": "cat_women", "أطفال": "cat_kids", "أحذية": "cat_shoes", "إكسسوارات": "cat_acc", "مكياج": "cat_makeup", "أدوات منزلية": "cat_home", "مدرسة": "cat_school" };
 
 /* ============ التصنيفات الفرعية لكل فئة رئيسية ============ */
 const subcatsByCat = {
@@ -2134,7 +2161,13 @@ async function saveOrderRecord(items, total, customerName) {
             customer_name: finalCustomerName,
             items: finalItems,
             total: String(total)
-          }
+          },
+          /* صلاحية قراءة هذا الطلب بالذات: لصاحبه (إذا كان زبون مسجل) + للأدمن دايماً.
+             هذا يخلي كل زبون يشوف طلباته هو بس (مو كل الطلبات)، بشرط تفعيل
+             "Document Security" لجدول orders من إعدادات Appwrite */
+          permissions: customerId
+            ? [`read("user:${customerId}")`, `read("label:admin")`]
+            : [`read("label:admin")`]
         })
       }
     );
