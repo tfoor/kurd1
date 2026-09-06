@@ -293,6 +293,46 @@ try {
    مع تسجيل الدخول عبر Google، لأنه بيعمل تحويل كامل للصفحة ورجوع منها) */
 const PENDING_CHECKOUT_KEY = "boutique_pending_checkout";
 
+/* ============ آلية احتياطية للجلسة (Cookie Fallback) ============
+   بما إن موقعنا (github.io) ودومين Appwrite مختلفين، بعض المتصفحات (خصوصاً
+   Safari على آيفون، وبعض نسخ فايرفوكس/أندرويد) تحجب "كوكيز الطرف الثالث"
+   افتراضياً، فجلسة الدخول ما تنحفظ عندهم رغم إنها تنجح بالبداية. Appwrite
+   يوفر حل احتياطي رسمي: يرجع هيدر X-Fallback-Cookies، نخزنه بـ localStorage
+   ونرسله بكل طلب جاي، وهيك الجلسة تضل شغالة حتى لو الكوكي العادي محجوب. */
+function getFallbackCookieHeader() {
+  try {
+    return localStorage.getItem("cookieFallback") || "";
+  } catch (e) {
+    return "";
+  }
+}
+
+function saveFallbackCookieFromResponse(response) {
+  try {
+    const value = response.headers.get("X-Fallback-Cookies");
+    if (value) localStorage.setItem("cookieFallback", value);
+  } catch (e) { }
+}
+
+/* طلب موحّد لكل نداءات Appwrite REST (account/...) — يضيف الهيدر الاحتياطي
+   تلقائياً ويحفظ أي هيدر جديد يرجع بالرد */
+async function appwriteAuthFetch(path, options = {}) {
+  const response = await fetch(`${APPWRITE_ENDPOINT}${path}`, {
+    credentials: "include",
+    ...options,
+    headers: {
+      Accept: "application/json",
+      "X-Appwrite-Project": APPWRITE_PROJECT_ID,
+      "X-Fallback-Cookies": getFallbackCookieHeader(),
+      ...(options.headers || {})
+    }
+  });
+
+  saveFallbackCookieFromResponse(response);
+
+  return response;
+}
+
 /* ============ مراقبة جلسة Appwrite ============ */
 
 async function syncAppwriteSession() {
@@ -785,17 +825,7 @@ async function logVisit() {
     let visitorId = null;
 
     try {
-      const userResponse = await fetch(
-        `${APPWRITE_ENDPOINT}/account`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-Appwrite-Project": APPWRITE_PROJECT_ID
-          }
-        }
-      );
+      const userResponse = await appwriteAuthFetch("/account");
 
       if (userResponse.ok) {
         const user = await userResponse.json();
@@ -1277,17 +1307,7 @@ function getCustomerFullName(session) {
 
 async function refreshAccountModalView() {
   try {
-    const response = await fetch(
-      `${APPWRITE_ENDPOINT}/account`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Accept": "application/json",
-          "X-Appwrite-Project": APPWRITE_PROJECT_ID
-        }
-      }
-    );
+    const response = await appwriteAuthFetch("/account");
 
     const userData =
       await response.json().catch(() => ({}));
@@ -1405,30 +1425,16 @@ async function handleCustomerSignup() {
         .slice(2, 10);
 
     const createUserResponse =
-      await fetch(
-        `${APPWRITE_ENDPOINT}/account`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Accept":
-              "application/json",
-
-            "X-Appwrite-Project":
-              APPWRITE_PROJECT_ID
-          },
-
-          body: JSON.stringify({
-            userId: userId,
-            email: email,
-            password: password,
-            name: name
-          })
-        }
-      );
+      await appwriteAuthFetch("/account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: userId,
+          email: email,
+          password: password,
+          name: name
+        })
+      });
 
     if (!createUserResponse.ok) {
       const errorData =
@@ -1445,28 +1451,14 @@ async function handleCustomerSignup() {
     /* ================= تسجيل الدخول مباشرة ================= */
 
     const loginResponse =
-      await fetch(
-        `${APPWRITE_ENDPOINT}/account/sessions/email`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Accept":
-              "application/json",
-
-            "X-Appwrite-Project":
-              APPWRITE_PROJECT_ID
-          },
-
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-        }
-      );
+      await appwriteAuthFetch("/account/sessions/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
 
     if (!loginResponse.ok) {
       const loginError =
@@ -1567,25 +1559,14 @@ async function handleCustomerLogin() {
   try {
     /* ================= تسجيل الدخول في Appwrite ================= */
 
-    const response = await fetch(
-      `${APPWRITE_ENDPOINT}/account/sessions/email`,
-      {
-        method: "POST",
-        credentials: "include",
-
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "X-Appwrite-Project":
-            APPWRITE_PROJECT_ID
-        },
-
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      }
-    );
+    const response = await appwriteAuthFetch("/account/sessions/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    });
 
     const result =
       await response.json().catch(() => ({}));
@@ -1599,19 +1580,7 @@ async function handleCustomerLogin() {
 
     /* ================= جلب بيانات المستخدم من Appwrite ================= */
 
-    const userResponse = await fetch(
-      `${APPWRITE_ENDPOINT}/account`,
-      {
-        method: "GET",
-        credentials: "include",
-
-        headers: {
-          "Accept": "application/json",
-          "X-Appwrite-Project":
-            APPWRITE_PROJECT_ID
-        }
-      }
-    );
+    const userResponse = await appwriteAuthFetch("/account");
 
     const userData =
       await userResponse.json().catch(() => ({}));
@@ -1723,24 +1692,14 @@ async function handleForgotPassword() {
         window.location.origin +
         window.location.pathname;
 
-      const response = await fetch(
-        `${APPWRITE_ENDPOINT}/account/recovery`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-Appwrite-Project":
-              APPWRITE_PROJECT_ID
-          },
-
-          body: JSON.stringify({
-            email: email,
-            url: recoveryUrl
-          })
-        }
-      );
+      const response = await appwriteAuthFetch("/account/recovery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          url: recoveryUrl
+        })
+      });
 
       const result =
         await response.json().catch(() => ({}));
@@ -1771,18 +1730,9 @@ async function handleForgotPassword() {
 
   async function handleCustomerLogout() {
     try {
-      const response = await fetch(
-        `${APPWRITE_ENDPOINT}/account/sessions/current`,
-        {
-          method: "DELETE",
-          credentials: "include",
-
-          headers: {
-            "Accept": "application/json",
-            "X-Appwrite-Project": APPWRITE_PROJECT_ID
-          }
-        }
-      );
+      const response = await appwriteAuthFetch("/account/sessions/current", {
+        method: "DELETE"
+      });
 
       if (!response.ok && response.status !== 401) {
         const errorData =
@@ -1863,17 +1813,7 @@ async function handleForgotPassword() {
 
     try {
       /* الحصول على المستخدم الحالي من Appwrite */
-      const userResponse = await fetch(
-        `${APPWRITE_ENDPOINT}/account`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-Appwrite-Project": APPWRITE_PROJECT_ID
-          }
-        }
-      );
+      const userResponse = await appwriteAuthFetch("/account");
 
       if (!userResponse.ok) {
         listEl.innerHTML =
@@ -2122,17 +2062,7 @@ async function saveOrderRecord(items, total, customerName) {
     let user = null;
 
     try {
-      const userResponse = await fetch(
-        `${APPWRITE_ENDPOINT}/account`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-Appwrite-Project": APPWRITE_PROJECT_ID
-          }
-        }
-      );
+      const userResponse = await appwriteAuthFetch("/account");
 
       if (userResponse.ok) {
         user = await userResponse.json();
@@ -2155,17 +2085,11 @@ async function saveOrderRecord(items, total, customerName) {
       ? orderItems.map(item => JSON.stringify(item))
       : [];
 
-    const response = await fetch(
-      `${APPWRITE_ENDPOINT}/tablesdb/` +
-      `${APPWRITE_DATABASE_ID}/tables/${APPWRITE_ORDERS_TABLE_ID}/rows`,
+    const response = await appwriteAuthFetch(
+      `/tablesdb/${APPWRITE_DATABASE_ID}/tables/${APPWRITE_ORDERS_TABLE_ID}/rows`,
       {
         method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "X-Appwrite-Project": APPWRITE_PROJECT_ID
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           rowId: crypto.randomUUID(),
           data: {
@@ -2217,17 +2141,7 @@ async function sendWhatsAppOrder() {
   // نتأكد من حالة تسجيل الدخول الفعلية من Appwrite قبل إرسال الطلب
 
   try {
-    const response = await fetch(
-      `${APPWRITE_ENDPOINT}/account`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Accept": "application/json",
-          "X-Appwrite-Project": APPWRITE_PROJECT_ID
-        }
-      }
-    );
+    const response = await appwriteAuthFetch("/account");
 
     if (response.ok) {
       const user = await response.json();
