@@ -246,6 +246,24 @@ function toggleTheme() {
 }
 applyTheme(localStorage.getItem("boutique_theme") || "light");
 
+/* ============ إخفاء زر "المتابعة عبر Google" جوة تطبيق الجوال ============
+   جوجل يمنع تسجيل الدخول بحسابه من جوة أي WebView (تطبيق) لأسباب أمنية —
+   لما المستخدم يضغطه هناك بيفتح بمتصفح خارجي وتضيع الجلسة. بما إن تطبيق
+   الجوال يضيف علامة خاصة لهوية المتصفح (StyleRojApp)، نخفي الزر بس هناك،
+   ونخلي الزبون يستخدم الإيميل العادي (شغّال صح جوة التطبيق) */
+function isInsideMobileApp() {
+  return navigator.userAgent.includes("StyleRojApp");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (isInsideMobileApp()) {
+    const divider = document.getElementById("googleDivider");
+    const row = document.getElementById("googleSocialRow");
+    if (divider) divider.style.display = "none";
+    if (row) row.style.display = "none";
+  }
+});
+
 /* ============ Appwrite التجريبي ============ */
 
 const APPWRITE_ENDPOINT =
@@ -1412,6 +1430,9 @@ async function handleCustomerSignup() {
   }
 
   try {
+    /* نمسح أي جلسة قديمة شغالة قبل إنشاء الحساب، لنفس سبب تسجيل الدخول */
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+
     /* ================= إنشاء الحساب في Appwrite ================= */
 
     const userId =
@@ -1555,6 +1576,11 @@ async function handleCustomerLogin() {
   }
 
   try {
+    /* إذا كان بالمتصفح جلسة قديمة شغالة (حتى لو منتهية الصلاحية أو تخص حساب
+       ثاني)، Appwrite يرفض إنشاء جلسة جديدة فوقها برسالة "session is active" —
+       نمسحها أول قبل أي محاولة دخول جديدة حتى ما يصير هذا الخطأ */
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+
     /* ================= تسجيل الدخول في Appwrite ================= */
 
     const response = await appwriteAuthFetch("/account/sessions/email", {
