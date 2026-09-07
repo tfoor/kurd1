@@ -1360,12 +1360,10 @@ async function refreshAccountModalView() {
       accountBtn.classList.remove("has-avatar");
     }
 
-    const ordersList =
-      document.getElementById("accOrdersList");
-
-    if (ordersList) {
-      ordersList.innerHTML =
-        `<div class="acc-empty"> جميع فواتير رح يبين هون</div>`;
+    /* هذا كان مكانه نص ثابت بدل ما يستدعي الدالة الحقيقية اللي تجيب الفواتير
+       الفعلية من Appwrite — كانت الفواتير ما تظهر أبداً حتى لو كل شي ثاني صحيح */
+    if (typeof loadMyOrders === "function") {
+      loadMyOrders();
     }
 
   } catch (error) {
