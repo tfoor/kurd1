@@ -246,6 +246,24 @@ function toggleTheme() {
 }
 applyTheme(localStorage.getItem("boutique_theme") || "light");
 
+/* ============ إخفاء زر "المتابعة عبر Google" جوة تطبيق الجوال ============
+   جوجل يمنع تسجيل الدخول بحسابه من جوة أي WebView (تطبيق) لأسباب أمنية —
+   لما المستخدم يضغطه هناك بيفتح بمتصفح خارجي وتضيع الجلسة. بما إن تطبيق
+   الجوال يضيف علامة خاصة لهوية المتصفح (StyleRojApp)، نخفي الزر بس هناك،
+   ونخلي الزبون يستخدم الإيميل العادي (شغّال صح جوة التطبيق) */
+function isInsideMobileApp() {
+  return navigator.userAgent.includes("StyleRojApp");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (isInsideMobileApp()) {
+    const divider = document.getElementById("googleDivider");
+    const row = document.getElementById("googleSocialRow");
+    if (divider) divider.style.display = "none";
+    if (row) row.style.display = "none";
+  }
+});
+
 /* ============ Appwrite التجريبي ============ */
 
 const APPWRITE_ENDPOINT =
@@ -970,6 +988,143 @@ function getDisplayBadge(p) {
   return p.badge || "";
 }
 
+/* ============ بانرات إعلانية متقلبة أعلى الصفحة ============
+   نظام عام يشتغل لأي بانر (وصل حديثاً، إكسسوارات، ملابس...) — كل بانر
+   إله حالة منفصلة (المؤقت + السلايد الحالي) حتى ما يتعارضوا مع بعض */
+const bannerStates = {};
+
+function isProductStillNew(p) {
+  return !!(p.newUntil && new Date(p.newUntil).getTime() > Date.now());
+}
+
+/* يبني بانر واحد. id = بادئة عناصر الـ HTML (مثلاً "new" لـ #newBanner)،
+   items = قائمة المنتجات المطلوب عرضها بهذا البانر */
+function renderBanner(id, items) {
+  const banner = document.getElementById(id + "Banner");
+  const track = document.getElementById(id + "BannerTrack");
+  const dotsEl = document.getElementById(id + "BannerDots");
+  if (!banner || !track || !dotsEl) return;
+
+  if (!bannerStates[id]) bannerStates[id] = { interval: null, index: 0 };
+  const state = bannerStates[id];
+
+  if (state.interval) {
+    clearInterval(state.interval);
+    state.interval = null;
+  }
+
+  if (!items.length) {
+    banner.style.display = "none";
+    return;
+  }
+
+  banner.style.display = "block";
+  state.index = 0;
+
+  track.innerHTML = items.map((p, i) => `
+    <div class="new-banner-slide ${i === 0 ? "active" : ""}" data-idx="${i}" onclick="goToProduct(${p.id})">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="new-banner-slide-info">
+        <h4>${p.name}</h4>
+        <span class="new-banner-price-pill">${p.price}${CURRENCY}</span>
+      </div>
+    </div>
+  `).join("");
+
+  /* لو المنتجات كثيرة (أكثر من 6)، النقط تصير مزدحمة — نعرض بدالها
+     عداد بسيط "٢ / ١٣" أنظف وأوضح */
+  const useCounter = items.length > 6;
+  const counterId = id + "BannerCounter";
+
+  if (useCounter) {
+    dotsEl.style.display = "none";
+    let counterEl = document.getElementById(counterId);
+    if (!counterEl) {
+      counterEl = document.createElement("div");
+      counterEl.id = counterId;
+      counterEl.className = "new-banner-counter";
+      banner.appendChild(counterEl);
+    }
+    counterEl.style.display = "block";
+    counterEl.textContent = `1 / ${items.length}`;
+  } else {
+    dotsEl.style.display = "flex";
+    const counterEl = document.getElementById(counterId);
+    if (counterEl) counterEl.style.display = "none";
+
+    dotsEl.innerHTML = items.map((p, i) =>
+      `<span class="new-banner-dot ${i === 0 ? "active" : ""}" data-idx="${i}"></span>`
+    ).join("");
+
+    dotsEl.querySelectorAll(".new-banner-dot").forEach(dot => {
+      dot.onclick = (e) => {
+        e.stopPropagation();
+        showBannerSlide(id, Number(dot.dataset.idx), items.length);
+        restartBannerAutoplay(id, items.length);
+      };
+    });
+  }
+
+  if (items.length > 1) {
+    restartBannerAutoplay(id, items.length);
+  }
+}
+
+function showBannerSlide(id, idx, total) {
+  const track = document.getElementById(id + "BannerTrack");
+  const dotsEl = document.getElementById(id + "BannerDots");
+  const counterEl = document.getElementById(id + "BannerCounter");
+  if (!track) return;
+
+  track.querySelectorAll(".new-banner-slide").forEach(el =>
+    el.classList.toggle("active", Number(el.dataset.idx) === idx)
+  );
+
+  if (dotsEl) {
+    dotsEl.querySelectorAll(".new-banner-dot").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.idx) === idx)
+    );
+  }
+
+  if (counterEl && total) {
+    counterEl.textContent = `${idx + 1} / ${total}`;
+  }
+
+  if (bannerStates[id]) bannerStates[id].index = idx;
+}
+
+function restartBannerAutoplay(id, total) {
+  if (!bannerStates[id]) bannerStates[id] = { interval: null, index: 0 };
+  const state = bannerStates[id];
+  if (state.interval) clearInterval(state.interval);
+  state.interval = setInterval(() => {
+    showBannerSlide(id, (state.index + 1) % total, total);
+  }, 3800);
+}
+
+/* يشغّل الثلاث بانرات: وصل حديثاً، ملابس (رجالي+نسائي+أطفال)، إكسسوارات.
+   كل بانر يظهر بس لو عنده منتجات، وإلا يختفي تلقائياً */
+function renderAllBanners() {
+  const pool = (allProducts || []).filter(p => p && p.name && p.img);
+
+  const newItems = pool
+    .filter(isProductStillNew)
+    .sort((a, b) => new Date(b.newUntil) - new Date(a.newUntil));
+  renderBanner("new", newItems);
+
+  const clothesItems = pool
+    .filter(p => ["رجالي", "نسائي", "أطفال"].includes(p.cat))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
+  renderBanner("clothes", clothesItems);
+
+  const accItems = pool
+    .filter(p => p.cat === "إكسسوارات")
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
+  renderBanner("acc", accItems);
+}
+
 function renderGallery() {
   galleryEl.innerHTML = "";
   let list = activeCat === "الكل" ? [...products] : products.filter(p => p.cat === activeCat);
@@ -1412,6 +1567,9 @@ async function handleCustomerSignup() {
   }
 
   try {
+    /* نمسح أي جلسة قديمة شغالة قبل إنشاء الحساب، لنفس سبب تسجيل الدخول */
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+
     /* ================= إنشاء الحساب في Appwrite ================= */
 
     const userId =
@@ -1555,6 +1713,11 @@ async function handleCustomerLogin() {
   }
 
   try {
+    /* إذا كان بالمتصفح جلسة قديمة شغالة (حتى لو منتهية الصلاحية أو تخص حساب
+       ثاني)، Appwrite يرفض إنشاء جلسة جديدة فوقها برسالة "session is active" —
+       نمسحها أول قبل أي محاولة دخول جديدة حتى ما يصير هذا الخطأ */
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+
     /* ================= تسجيل الدخول في Appwrite ================= */
 
     const response = await appwriteAuthFetch("/account/sessions/email", {
@@ -2228,5 +2391,6 @@ async function initApp() {
   // applyLanguage() بحالها بترسم الفلاتر + المعرض + السلة، فما في داعي نرسمهم قبلها
   // (كان الرسم يصير مرتين ورا بعض هون، وهاد يلي كان يسبب اختفاء/وميض الصور لحظة فتح الموقع)
   applyLanguage(currentLang);
+  renderAllBanners();
 }
 initApp();
