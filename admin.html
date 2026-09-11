@@ -805,6 +805,55 @@
       cursor: not-allowed;
     }
 
+    /* ===== القياسات والأسعار ===== */
+    .size-row {
+      display: grid;
+      grid-template-columns: 1fr 160px 42px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .size-row input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .size-row input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-tint);
+    }
+
+    .size-remove {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 10px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .size-remove:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    @media (max-width: 520px) {
+      .size-row {
+        grid-template-columns: 1fr 1fr 42px;
+      }
+    }
+
     @media (max-width: 720px) {
       .list-head {
         display: none;
@@ -1230,6 +1279,39 @@
                 </div>
                 <div class="field"><label>السعر *</label><input type="number" step="0.01" min="0" id="newPrice"
                     placeholder="0.00"></div>
+                <div class="field field-wide">
+                  <label>
+                    <input type="checkbox" id="newHasSizes" onchange="toggleNewSizes()">
+                    هذا المنتج لديه قياسات وأسعار مختلفة
+                  </label>
+                </div>
+
+                <div id="newSizesBox" class="field field-wide" style="display:none;">
+                  <div style="
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface-soft);
+  ">
+
+                    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    ">
+                      <strong>القياسات والأسعار</strong>
+
+                      <button type="button" class="btn" style="width:auto;" onclick="addNewSizeRow()">
+                        ➕ إضافة قياس
+                      </button>
+                    </div>
+
+                    <div id="newSizesRows"></div>
+
+                  </div>
+                </div>
 
                 <div class="field">
                   <label>الفئة</label>
@@ -1333,7 +1415,7 @@
   <div id="editProductModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-head">
-        <h2>✏️ تعديل المنتج</h2>
+        <h2> تعديل المنتج</h2>
         <button class="modal-close" onclick="closeEditProduct()">✕</button>
       </div>
 
@@ -1342,6 +1424,39 @@
           <div class="field"><label>رقم المنتج</label><input type="number" id="editId"></div>
           <div class="field"><label>اسم المنتج</label><input type="text" id="editName"></div>
           <div class="field"><label>السعر</label><input type="number" step="0.01" min="0" id="editPrice"></div>
+          <div class="field field-wide">
+            <label>
+              <input type="checkbox" id="editHasSizes" onchange="toggleEditSizes()">
+              هذا المنتج لديه قياسات وأسعار مختلفة
+            </label>
+          </div>
+
+          <div id="editSizesBox" class="field field-wide" style="display:none;">
+            <div style="
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface-soft);
+  ">
+
+              <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    ">
+                <strong>القياسات والأسعار</strong>
+
+                <button type="button" class="btn" style="width:auto;" onclick="addEditSizeRow()">
+                  ➕ إضافة قياس
+                </button>
+              </div>
+
+              <div id="editSizesRows"></div>
+
+            </div>
+          </div>
 
           <div class="field">
             <label>الفئة</label>
@@ -1406,7 +1521,7 @@
     /* Table ID الحقيقي لجدول orders بـ Appwrite (مو حرفياً كلمة "orders" —
    الاسم المعروض شي، والـ ID الداخلي شي ثاني). خذ هذا من Databases → جدول
    orders → الرمز الرمادي جنب اسم الجدول */
-const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
+    const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
     const APPWRITE_VISITS_TABLE_ID = "visits";
     // ⚠️ لازم تنشئ هذا الجدول يدوياً بـ Appwrite Console (Databases → جدول جديد بالمعرف admin_logs)
     // بأربع خصائص نصية (string): action, entity, entity_id, details, admin_email
@@ -1453,6 +1568,28 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
     /* يحوّل صف من جدول Products بـ Appwrite لشكل المنتج المستخدم بهاي الصفحة */
     function productFromAppwriteRow(row) {
       return {
+        variants: (() => {
+          try {
+            if (!row.variants) return [];
+
+            if (Array.isArray(row.variants)) {
+              return row.variants;
+            }
+
+            const parsed = JSON.parse(row.variants);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        })(),
+
+        sizes: (() => {
+          try {
+            return row.sizes ? JSON.parse(row.sizes) : [];
+          } catch {
+            return [];
+          }
+        })(),
         id: row.product_id,
         name: row.name,
         price: Number(row.price),
@@ -1553,7 +1690,7 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
     }
 
     async function handleLogout() {
-      try { await awAccount.deleteSession({ sessionId: "current" }); } catch (e) {}
+      try { await awAccount.deleteSession({ sessionId: "current" }); } catch (e) { }
       document.getElementById("dashboard").style.display = "none";
       document.getElementById("loginScreen").style.display = "flex";
       document.getElementById("loginPassword").value = "";
@@ -1817,15 +1954,361 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
         <input type="number" step="0.01" value="${p.price}" id="price-${p.id}">
         <span>$</span>
       </div>
-      <div class="row-actions">
-        <button class="row-save-btn" id="save-${p.id}" onclick="saveProduct(${p.id})">حفظ</button>
-        <button class="row-edit-btn" onclick="openEditProduct(${p.id})">✏️ تعديل</button>
-        <button class="delete-product-btn" onclick="deleteProduct(${p.id})">حذف</button>
-      </div>
+<div class="row-actions">
+  <button
+    class="row-save-btn"
+    id="save-${p.id}"
+    onclick="saveProduct(${p.id})">
+    حفظ
+  </button>
+
+  <button
+    class="row-edit-btn"
+    onclick="openEditProduct(${p.id})">
+     تعديل
+  </button>
+
+  <button
+    class="merge-product-btn"
+    onclick="openMergeProduct(${p.id})">
+     دمج
+  </button>
+
+  <button
+    class="delete-product-btn"
+    onclick="deleteProduct(${p.id})">
+    حذف
+  </button>
+</div>
     </div>
   `).join("");
     }
+    /* ================= دمج المنتجات كخيارات ================= */
 
+    let mergeMainProductId = null;
+    let mergeSelectedIds = new Set();
+
+    function getProductVariants(product) {
+      if (!product) return [];
+
+      if (Array.isArray(product.variants)) {
+        return product.variants;
+      }
+
+      return [];
+    }
+
+    function openMergeProduct(id) {
+      const product = allProducts.find(
+        p => Number(p.id) === Number(id)
+      );
+
+      if (!product) {
+        showToast("❌ المنتج غير موجود");
+        return;
+      }
+
+      mergeMainProductId = Number(id);
+      mergeSelectedIds = new Set();
+
+      const mainInfo = document.getElementById("mergeMainInfo");
+      const mainBox = document.getElementById("mergeMainProduct");
+      const search = document.getElementById("mergeSearch");
+      const modal = document.getElementById("mergeProductModal");
+
+      if (mainInfo) {
+        mainInfo.textContent = `المنتج الرئيسي #${product.id}`;
+      }
+
+      if (mainBox) {
+        mainBox.innerHTML = `
+      <img
+        src="${product.img || ""}"
+        alt=""
+        style="
+          width:64px;
+          height:64px;
+          object-fit:cover;
+          border-radius:12px;
+          border:1px solid var(--border);
+        "
+        onerror="this.style.visibility='hidden'"
+      >
+
+      <div>
+        <div style="font-weight:900;">
+          #${product.id}
+        </div>
+
+        <div style="font-weight:700;">
+          ${escapeHtml(product.name || "")}
+        </div>
+
+        ${product.color
+            ? `<div style="font-size:12px;color:var(--ink-soft);">
+                 ${escapeHtml(product.color)}
+               </div>`
+            : ""
+          }
+      </div>
+    `;
+      }
+
+      if (search) {
+        search.value = "";
+      }
+
+      renderMergeProducts();
+
+      if (modal) {
+        modal.style.display = "flex";
+      }
+    }
+
+    function closeMergeProduct() {
+      const modal = document.getElementById("mergeProductModal");
+
+      if (modal) {
+        modal.style.display = "none";
+      }
+
+      mergeMainProductId = null;
+      mergeSelectedIds = new Set();
+    }
+
+    function renderMergeProducts() {
+      const listEl = document.getElementById("mergeProductsList");
+      if (!listEl) return;
+
+      const q = (
+        document.getElementById("mergeSearch")?.value || ""
+      ).trim().toLowerCase();
+
+      let list = allProducts.filter(
+        p => Number(p.id) !== Number(mergeMainProductId)
+      );
+
+      if (q) {
+        list = list.filter(p =>
+          String(p.id).includes(q) ||
+          String(p.name || "").toLowerCase().includes(q) ||
+          String(p.color || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (!list.length) {
+        listEl.innerHTML = `
+      <div class="empty-state">
+        😕 ما في منتجات مطابقة
+      </div>
+    `;
+        return;
+      }
+
+      listEl.innerHTML = list.map(p => {
+        const selected = mergeSelectedIds.has(Number(p.id));
+
+        return `
+      <label
+        style="
+          display:flex;
+          align-items:center;
+          gap:12px;
+          padding:12px;
+          border:1px solid ${selected ? "var(--accent)" : "var(--border)"};
+          border-radius:14px;
+          background:${selected ? "var(--accent-tint)" : "var(--surface)"};
+          cursor:pointer;
+          transition:0.15s ease;
+        "
+      >
+
+        <input
+          type="checkbox"
+          ${selected ? "checked" : ""}
+          onchange="toggleMergeProduct(${Number(p.id)}, this.checked)"
+          style="
+            width:18px;
+            height:18px;
+            flex:0 0 auto;
+          "
+        >
+
+        <img
+          src="${p.img || ""}"
+          alt=""
+          style="
+            width:58px;
+            height:58px;
+            object-fit:cover;
+            border-radius:10px;
+            border:1px solid var(--border);
+          "
+          onerror="this.style.visibility='hidden'"
+        >
+
+        <div style="min-width:0;">
+          <div style="font-weight:900;">
+            #${p.id}
+          </div>
+
+          <div style="
+            font-size:14px;
+            font-weight:700;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+          ">
+            ${escapeHtml(p.name || "")}
+          </div>
+
+          <div style="
+            font-size:12px;
+            color:var(--ink-soft);
+            margin-top:3px;
+          ">
+            ${p.color ? escapeHtml(p.color) : ""}
+            ${p.color && p.price !== undefined ? " • " : ""}
+            ${p.price !== undefined ? `${p.price}$` : ""}
+          </div>
+        </div>
+
+      </label>
+    `;
+      }).join("");
+    }
+
+    function toggleMergeProduct(id, checked) {
+      id = Number(id);
+
+      if (checked) {
+        mergeSelectedIds.add(id);
+      } else {
+        mergeSelectedIds.delete(id);
+      }
+
+      renderMergeProducts();
+    }
+
+    async function saveMergeProducts() {
+  if (mergeMainProductId === null) {
+    showToast("❌ لم يتم تحديد المنتج الرئيسي");
+    return;
+  }
+
+  const selectedIds = [...mergeSelectedIds].map(Number);
+
+  if (!selectedIds.length) {
+    showToast("⚠️ اختر منتجًا واحدًا على الأقل");
+    return;
+  }
+
+  const mainProduct = allProducts.find(
+    p => Number(p.id) === Number(mergeMainProductId)
+  );
+
+  if (!mainProduct) {
+    showToast("❌ المنتج الرئيسي غير موجود");
+    return;
+  }
+
+  /* المجموعة الجديدة = الرئيسي + المنتجات المختارة */
+  const groupIds = [
+    Number(mainProduct.id),
+    ...selectedIds
+  ];
+
+  const uniqueIds = [...new Set(groupIds)];
+
+  const groupProducts = allProducts.filter(
+    p => uniqueIds.includes(Number(p.id))
+  );
+
+  if (groupProducts.length < 2) {
+    showToast("❌ لازم يكون عندك منتجين على الأقل");
+    return;
+  }
+
+  /*
+    نحول كل منتج إلى بيانات خيار كاملة
+    حتى أي منتج داخل المجموعة يقدر يعرف باقي المنتجات.
+  */
+  const variants = groupProducts.map(p => ({
+    id: Number(p.id),
+    name: p.name || "",
+    price: Number(p.price) || 0,
+
+    old_price:
+      p.old_price !== null &&
+      p.old_price !== undefined
+        ? Number(p.old_price)
+        : null,
+
+    category: p.cat || "",
+    subcategory: p.sub || "",
+    color: p.color || "",
+    badge: p.badge || "",
+
+    image: p.img || "",
+
+    sizes: Array.isArray(p.sizes)
+      ? p.sizes
+      : [],
+
+    sale: !!p.sale
+  }));
+
+  try {
+    showToast("⏳ جاري إنشاء مجموعة المنتجات...");
+
+    /*
+      مهم:
+      نحفظ نفس variants داخل كل منتج بالمجموعة.
+      
+      لذلك:
+      200 يعرف 200 + 202 + 203
+      202 يعرف 200 + 202 + 203
+      203 يعرف 200 + 202 + 203
+    */
+    for (const product of groupProducts) {
+      await awTablesDB.updateRow({
+        databaseId: APPWRITE_DATABASE_ID,
+        tableId: APPWRITE_TABLE_ID,
+        rowId: String(product.id),
+        data: {
+          variants: JSON.stringify(variants)
+        }
+      });
+    }
+
+    /* تحديث البيانات المحلية */
+    for (const product of groupProducts) {
+      product.variants = variants;
+    }
+
+    renderProductList();
+    closeMergeProduct();
+
+    logAdminAction(
+      "دمج",
+      "مجموعة خيارات",
+      mainProduct.id,
+      `المجموعة: ${uniqueIds.map(id => "#" + id).join(" + ")}`
+    );
+
+    showToast(
+      `✅ تم دمج ${uniqueIds.length} منتجات كمجموعة واحدة`
+    );
+
+  } catch (error) {
+    console.error("MERGE GROUP ERROR:", error);
+
+    showToast(
+      "❌ فشل دمج المجموعة: " +
+      (error.message || "خطأ غير معروف")
+    );
+  }
+}
     /* ============ حفظ تعديل منتج (اسم + سعر) ============ */
     async function saveProduct(id) {
       const nameInput = document.getElementById(`name-${id}`);
@@ -2016,7 +2499,97 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       sub.innerHTML = `<option value="">اختر الفئة الفرعية</option>`;
       subs.forEach(item => { sub.innerHTML += `<option value="${item}">${item}</option>`; });
     }
+    function toggleNewSizes() {
+      const checkbox = document.getElementById("newHasSizes");
+      const box = document.getElementById("newSizesBox");
 
+      if (!checkbox || !box) return;
+
+      box.style.display = checkbox.checked ? "block" : "none";
+
+      if (checkbox.checked) {
+        const rows = document.getElementById("newSizesRows");
+
+        if (rows && !rows.querySelector(".size-row")) {
+          addNewSizeRow();
+        }
+      }
+    }
+
+    function addNewSizeRow(sizeName = "", sizePrice = "") {
+      const container = document.getElementById("newSizesRows");
+
+      if (!container) return;
+
+      const row = document.createElement("div");
+      row.className = "size-row";
+
+      row.innerHTML = `
+    <input
+      type="text"
+      class="new-size-name"
+      placeholder="القياس — مثال: M"
+      value="${escapeHtml(sizeName)}"
+    >
+
+    <input
+      type="number"
+      class="new-size-price"
+      step="0.01"
+      min="0"
+      placeholder="السعر"
+      value="${sizePrice}"
+    >
+
+    <button
+      type="button"
+      class="size-remove"
+      title="حذف القياس"
+      onclick="this.parentElement.remove()">
+      ✕
+    </button>
+  `;
+
+      container.appendChild(row);
+    }
+
+    function getNewSizes() {
+      const checkbox = document.getElementById("newHasSizes");
+
+      if (!checkbox || !checkbox.checked) {
+        return [];
+      }
+
+      const rows = document.querySelectorAll("#newSizesRows .size-row");
+
+      const sizes = [];
+
+      rows.forEach(row => {
+        const nameInput = row.querySelector(".new-size-name");
+        const priceInput = row.querySelector(".new-size-price");
+
+        const name = nameInput?.value.trim() || "";
+        const price = parseFloat(priceInput?.value);
+
+        if (name && Number.isFinite(price) && price >= 0) {
+          sizes.push({
+            name,
+            price
+          });
+        }
+      });
+
+      return sizes;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
     async function addProduct() {
       const btn = document.getElementById("addProductBtn");
 
@@ -2025,7 +2598,12 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       const cat = document.getElementById("newCat").value.trim() || null;
       const sub = document.getElementById("newSub").value.trim() || null;
       const price = parseFloat(document.getElementById("newPrice").value);
+      const sizes = getNewSizes();
 
+      if (document.getElementById("newHasSizes").checked && sizes.length === 0) {
+        showToast("⚠️ أضف قياسًا واحدًا على الأقل مع سعره");
+        return;
+      }
       const oldPriceRaw = document.getElementById("newOldPrice").value;
       const old_price = oldPriceRaw === "" ? null : parseFloat(oldPriceRaw);
 
@@ -2131,6 +2709,7 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
               color: color || null,
               badge: badge || null,
               image: img,
+              sizes: JSON.stringify(sizes),
               new_until: newUntil,
               sale: old_price !== null && old_price > price,
             },
@@ -2178,6 +2757,20 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       document.getElementById("editId").value = product.id;
       document.getElementById("editName").value = product.name || "";
       document.getElementById("editPrice").value = product.price ?? "";
+      const existingSizes = Array.isArray(product.sizes)
+        ? product.sizes
+        : [];
+
+      document.getElementById("editHasSizes").checked = existingSizes.length > 0;
+
+      document.getElementById("editSizesBox").style.display =
+        existingSizes.length > 0 ? "block" : "none";
+
+      document.getElementById("editSizesRows").innerHTML = "";
+
+      existingSizes.forEach(size => {
+        addEditSizeRow(size.name, size.price);
+      });
       document.getElementById("editOldPrice").value = product.old_price ?? "";
       document.getElementById("editColor").value = product.color || "";
       document.getElementById("editBadge").value = product.badge || "";
@@ -2201,9 +2794,92 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       document.getElementById("editProductModal").style.display = "none";
     }
 
+    function toggleEditSizes() {
+      const checkbox = document.getElementById("editHasSizes");
+      const box = document.getElementById("editSizesBox");
+
+      if (!checkbox || !box) return;
+
+      box.style.display = checkbox.checked ? "block" : "none";
+
+      if (
+        checkbox.checked &&
+        !document.querySelector("#editSizesRows .size-row")
+      ) {
+        addEditSizeRow();
+      }
+    }
+
+    function addEditSizeRow(sizeName = "", sizePrice = "") {
+      const container = document.getElementById("editSizesRows");
+
+      if (!container) return;
+
+      const row = document.createElement("div");
+      row.className = "size-row";
+
+      row.innerHTML = `
+    <input
+      type="text"
+      class="edit-size-name"
+      placeholder="القياس — مثال: M"
+      value="${escapeHtml(sizeName)}"
+    >
+
+    <input
+      type="number"
+      class="edit-size-price"
+      step="0.01"
+      min="0"
+      placeholder="السعر"
+      value="${sizePrice}"
+    >
+
+    <button
+      type="button"
+      class="size-remove"
+      title="حذف القياس"
+      onclick="this.parentElement.remove()">
+      ✕
+    </button>
+  `;
+
+      container.appendChild(row);
+    }
+
+    function getEditSizes() {
+      const checkbox = document.getElementById("editHasSizes");
+
+      if (!checkbox || !checkbox.checked) {
+        return [];
+      }
+
+      const rows = document.querySelectorAll("#editSizesRows .size-row");
+
+      const sizes = [];
+
+      rows.forEach(row => {
+        const nameInput = row.querySelector(".edit-size-name");
+        const priceInput = row.querySelector(".edit-size-price");
+
+        const name = nameInput?.value.trim() || "";
+        const price = parseFloat(priceInput?.value);
+
+        if (name && Number.isFinite(price) && price >= 0) {
+          sizes.push({
+            name,
+            price
+          });
+        }
+      });
+
+      return sizes;
+    }
+
     function updateEditSubcats() {
       const cat = document.getElementById("editCat").value;
       const sub = document.getElementById("editSub");
+
       sub.innerHTML = "";
 
       if (!cat) {
@@ -2222,7 +2898,10 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
 
       sub.disabled = false;
       sub.innerHTML = `<option value="">اختر الفئة الفرعية</option>`;
-      subs.forEach(item => { sub.innerHTML += `<option value="${item}">${item}</option>`; });
+
+      subs.forEach(item => {
+        sub.innerHTML += `<option value="${item}">${item}</option>`;
+      });
     }
 
     /* ============ حفظ تعديل منتج كامل (مع دعم استبدال الصورة) ============ */
@@ -2240,6 +2919,15 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       const cat = document.getElementById("editCat").value.trim() || null;
       const sub = document.getElementById("editSub").value.trim() || null;
       const price = parseFloat(document.getElementById("editPrice").value);
+      const sizes = getEditSizes();
+
+      if (
+        document.getElementById("editHasSizes").checked &&
+        sizes.length === 0
+      ) {
+        showToast("⚠️ أضف قياسًا واحدًا على الأقل مع سعره");
+        return;
+      }
 
       const oldPriceRaw = document.getElementById("editOldPrice").value.trim();
       const old_price = oldPriceRaw === "" ? null : parseFloat(oldPriceRaw);
@@ -2327,6 +3015,9 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
           subcategory: sub,
           color,
           badge,
+
+          sizes: JSON.stringify(sizes),
+
           new_until: badge === "جديد" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null,
           sale: old_price !== null && old_price > price,
           image: newImageUrl || existingProduct?.img || null,
@@ -2369,7 +3060,7 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
           }
         } catch (error) {
           if (uploadedNewFileId) {
-            try { await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: uploadedNewFileId }); } catch (_) {}
+            try { await awStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: uploadedNewFileId }); } catch (_) { }
           }
           throw error;
         }
@@ -2497,6 +3188,100 @@ const APPWRITE_ORDERS_TABLE_ID = "6a95b38700155bc15eb7";
       status.textContent = `✅ تم اختيار الصورة: ${file.name}`;
     });
   </script>
+  <!-- ================= نافذة دمج المنتجات كخيارات ================= -->
+  <div id="mergeProductModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card" style="max-width:900px;">
+
+      <div class="modal-head">
+        <div>
+          <h2>🔗 دمج المنتج كخيارات</h2>
+          <div id="mergeMainInfo" style="font-size:13px;color:var(--ink-soft);margin-top:4px;">
+          </div>
+        </div>
+
+        <button class="modal-close" type="button" onclick="closeMergeProduct()">
+          ✕
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <div style="
+        padding:14px;
+        border:1px solid var(--border);
+        border-radius:14px;
+        background:var(--surface-soft);
+        margin-bottom:18px;
+      ">
+          <strong>المنتج الرئيسي</strong>
+
+          <div id="mergeMainProduct" style="
+               display:flex;
+               align-items:center;
+               gap:12px;
+               margin-top:12px;
+             ">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ابحث عن المنتجات التي تريد تحويلها إلى خيارات</label>
+
+          <input type="text" id="mergeSearch" placeholder="ابحث برقم المنتج أو الاسم..."
+            oninput="renderMergeProducts()">
+        </div>
+
+        <div style="
+        margin-top:16px;
+        margin-bottom:10px;
+        font-weight:800;
+      ">
+          اختر المنتجات:
+        </div>
+
+        <div id="mergeProductsList" style="
+          display:grid;
+          grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+          gap:12px;
+        ">
+        </div>
+
+        <div style="
+        margin-top:18px;
+        padding:12px 14px;
+        border:1px solid var(--border);
+        border-radius:12px;
+        background:var(--surface-soft);
+        font-size:13px;
+        color:var(--ink-soft);
+      ">
+          المنتجات التي تحددها هنا ستصبح <strong>خيارات</strong> داخل المنتج الرئيسي،
+          ولن تتغير معلومات المنتج الرئيسي.
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="
+           display:flex;
+           gap:10px;
+           justify-content:flex-start;
+           padding:16px;
+           border-top:1px solid var(--border);
+         ">
+
+        <button type="button" class="btn" onclick="saveMergeProducts()">
+          دمج كخيارات
+        </button>
+
+        <button type="button" class="btn" style="background:var(--surface-soft);color:var(--ink);"
+          onclick="closeMergeProduct()">
+          إلغاء
+        </button>
+
+      </div>
+
+    </div>
+  </div>
 </body>
 
 </html>

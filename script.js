@@ -687,93 +687,110 @@ async function loadProducts() {
       throw new Error("Appwrite لم يرجع أي منتجات");
     }
 
-allProducts = rows.map(row => {
-  /* Appwrite يرجّع خصائص الصف مباشرة على الصف نفسه (row.name, row.price...)
-     مو جوة كائن فرعي اسمه row.data — الكود القديم كان يدوّر على row.data
-     اللي مالها وجود أبداً، فكانت كل البيانات الحقيقية تنطنّش وترجع تلقائياً
-     للقائمة الاحتياطية القديمة (fallback) حتى لو المنتج انعدّل أو انضاف جديد */
-  let data = row;
+    allProducts = rows.map(row => {
+      /* Appwrite يرجّع خصائص الصف مباشرة على الصف نفسه (row.name, row.price...)
+         مو جوة كائن فرعي اسمه row.data — الكود القديم كان يدوّر على row.data
+         اللي مالها وجود أبداً، فكانت كل البيانات الحقيقية تنطنّش وترجع تلقائياً
+         للقائمة الاحتياطية القديمة (fallback) حتى لو المنتج انعدّل أو انضاف جديد */
+      let data = row;
 
-  // أحيانًا البيانات قد تصل كنص JSON (حالة نادرة، احتياط فقط)
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(data);
-    } catch (e) {
-      data = {};
-    }
-  }
+      // أحيانًا البيانات قد تصل كنص JSON (حالة نادرة، احتياط فقط)
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          data = {};
+        }
+      }
 
-  const id =
-    data.product_id !== undefined && data.product_id !== null
-      ? Number(data.product_id)
-      : Number(data.id || row.$id);
+      const id =
+        data.product_id !== undefined && data.product_id !== null
+          ? Number(data.product_id)
+          : Number(data.id || row.$id);
 
-  // البحث عن نفس المنتج في النسخة الاحتياطية
-  const fallback = allProductsFallback.find(
-    p => Number(p.id) === Number(id)
-  );
+      // البحث عن نفس المنتج في النسخة الاحتياطية
+      const fallback = allProductsFallback.find(
+        p => Number(p.id) === Number(id)
+      );
 
-  return {
-    id: id || fallback?.id || 0,
+      return {
+        id: id || fallback?.id || 0,
 
-    name:
-      data.name ||
-      fallback?.name ||
-      `منتج #${id}`,
+        name:
+          data.name ||
+          fallback?.name ||
+          `منتج #${id}`,
 
-    cat:
-      data.category ||
-      data.cat ||
-      fallback?.cat ||
-      "",
+        cat:
+          data.category ||
+          data.cat ||
+          fallback?.cat ||
+          "",
 
-    sub:
-      data.subcategory ||
-      data.sub ||
-      fallback?.sub ||
-      "",
+        sub:
+          data.subcategory ||
+          data.sub ||
+          fallback?.sub ||
+          "",
 
-    price:
-      data.price !== undefined &&
-      data.price !== null &&
-      data.price !== ""
-        ? Number(data.price)
-        : Number(fallback?.price || 0),
+        price:
+          data.price !== undefined &&
+            data.price !== null &&
+            data.price !== ""
+            ? Number(data.price)
+            : Number(fallback?.price || 0),
 
-    oldPrice:
-      data.old_price !== undefined &&
-      data.old_price !== null &&
-      data.old_price !== ""
-        ? Number(data.old_price)
-        : fallback?.oldPrice,
+        oldPrice:
+          data.old_price !== undefined &&
+            data.old_price !== null &&
+            data.old_price !== ""
+            ? Number(data.old_price)
+            : fallback?.oldPrice,
 
-    color:
-      data.color ||
-      fallback?.color ||
-      undefined,
+        color:
+          data.color ||
+          fallback?.color ||
+          undefined,
 
-    img:
-      data.image ||
-      data.img ||
-      fallback?.img ||
-      "",
+        img:
+          data.image ||
+          data.img ||
+          fallback?.img ||
+          "",
 
-    badge:
-      data.badge ||
-      fallback?.badge ||
-      undefined,
+        badge:
+          data.badge ||
+          fallback?.badge ||
+          undefined,
 
-    newUntil:
-      data.new_until ||
-      fallback?.newUntil ||
-      null,
+        newUntil:
+          data.new_until ||
+          fallback?.newUntil ||
+          null,
 
-    sale:
-      data.sale !== undefined
-        ? !!data.sale
-        : !!fallback?.sale
-  };
-});
+        sale:
+          data.sale !== undefined
+            ? !!data.sale
+            : !!fallback?.sale,
+        sizes: (() => {
+          try {
+            if (Array.isArray(data.sizes)) {
+              return data.sizes;
+            }
+
+            if (typeof data.sizes === "string") {
+              const parsed = JSON.parse(data.sizes);
+              return Array.isArray(parsed) ? parsed : [];
+            }
+
+            return [];
+          } catch (e) {
+            return [];
+          }
+        })()
+      };
+    });
+
 
   } catch (e) {
     console.warn(
@@ -784,52 +801,52 @@ allProducts = rows.map(row => {
     allProducts = allProductsFallback;
   }
 
-const appwriteProducts = allProducts || [];
+  const appwriteProducts = allProducts || [];
 
-// المنتجات الموجودة في Appwrite لها الأولوية
-const appwriteIds = new Set(
-  appwriteProducts.map(p => Number(p.id))
-);
+  // المنتجات الموجودة في Appwrite لها الأولوية
+  const appwriteIds = new Set(
+    appwriteProducts.map(p => Number(p.id))
+  );
 
-// أضف المنتجات الناقصة من النسخة الاحتياطية
-const missingFallbackProducts = allProductsFallback.filter(
-  p => !appwriteIds.has(Number(p.id))
-);
+  // أضف المنتجات الناقصة من النسخة الاحتياطية
+  const missingFallbackProducts = allProductsFallback.filter(
+    p => !appwriteIds.has(Number(p.id))
+  );
 
-// دمج Appwrite + المنتجات الاحتياطية
-allProducts = [
-  ...appwriteProducts,
-  ...missingFallbackProducts
-];
+  // دمج Appwrite + المنتجات الاحتياطية
+  allProducts = [
+    ...appwriteProducts,
+    ...missingFallbackProducts
+  ];
 
-products = allProducts.filter(
-  p =>
-    p &&
-    p.name &&
-    p.cat &&
-    !HIDDEN_CATEGORIES.includes(p.cat) &&
-    !HIDDEN_PRODUCT_IDS.includes(p.id)
-);
+  products = allProducts.filter(
+    p =>
+      p &&
+      p.name &&
+      p.cat &&
+      !HIDDEN_CATEGORIES.includes(p.cat) &&
+      !HIDDEN_PRODUCT_IDS.includes(p.id)
+  );
 
-console.log("📦 إجمالي منتجات المعرض:", products.length);
-console.log(
-  "☁️ منتجات Appwrite:",
-  appwriteProducts.length
-);
-console.log(
-  "📁 منتجات احتياطية مضافة:",
-  missingFallbackProducts.length
-);
+  console.log("📦 إجمالي منتجات المعرض:", products.length);
+  console.log(
+    "☁️ منتجات Appwrite:",
+    appwriteProducts.length
+  );
+  console.log(
+    "📁 منتجات احتياطية مضافة:",
+    missingFallbackProducts.length
+  );
 
-console.log("📦 إجمالي منتجات المعرض:", products.length);
-console.log(
-  "☁️ منتجات Appwrite:",
-  appwriteProducts.length
-);
-console.log(
-  "📁 منتجات احتياطية مضافة:",
-  missingFallbackProducts.length
-);
+  console.log("📦 إجمالي منتجات المعرض:", products.length);
+  console.log(
+    "☁️ منتجات Appwrite:",
+    appwriteProducts.length
+  );
+  console.log(
+    "📁 منتجات احتياطية مضافة:",
+    missingFallbackProducts.length
+  );
   console.log("📦 منتجات المعرض:", products);
 }
 
@@ -1124,7 +1141,261 @@ function renderAllBanners() {
     .slice(0, 10);
   renderBanner("acc", accItems);
 }
+/* ============ تفاصيل المنتج ============ */
 
+let selectedDetailSize = null;
+
+function parseProductSizes(product) {
+  if (!product) return [];
+
+  if (Array.isArray(product.sizes)) {
+    return product.sizes;
+  }
+
+  if (typeof product.sizes === "string") {
+    try {
+      const parsed = JSON.parse(product.sizes);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function getDetailPrice(product, sizeName = null) {
+  const sizes = parseProductSizes(product);
+
+  if (sizeName && sizes.length) {
+    const selected = sizes.find(
+      size => String(size.name) === String(sizeName)
+    );
+
+    if (selected && Number.isFinite(Number(selected.price))) {
+      return Number(selected.price);
+    }
+  }
+
+  return Number(product?.price || 0);
+}
+
+function openProductDetails(productId) {
+  const product = products.find(
+    p => Number(p.id) === Number(productId)
+  );
+
+  if (!product) return;
+
+  const modal = document.getElementById("productDetailsModal");
+  if (!modal) return;
+
+  const image = document.getElementById("detailsImage");
+  const idEl = document.getElementById("detailsId");
+  const categoryEl = document.getElementById("detailsCategory");
+  const nameEl = document.getElementById("detailsName");
+  const colorEl = document.getElementById("detailsColor");
+  const descriptionEl = document.getElementById("detailsDescription");
+  const priceEl = document.getElementById("detailsPrice");
+  const sizesBox = document.getElementById("detailsSizesBox");
+  const sizesEl = document.getElementById("detailsSizes");
+  const addBtn = document.getElementById("detailsAddBtn");
+  const variantsBox = document.getElementById("detailsVariantsBox");
+  const variantsEl = document.getElementById("detailsVariants");
+
+  selectedDetailSize = null;
+
+  if (image) {
+    image.src = product.img || "";
+    image.alt = product.name || "";
+  }
+
+  if (idEl) {
+    idEl.textContent = `#${product.id}`;
+  }
+
+  if (categoryEl) {
+    categoryEl.textContent = t(catKeyMap[product.cat] || product.cat || "");
+  }
+
+  if (nameEl) {
+    nameEl.textContent = product.name || "";
+  }
+
+  if (colorEl) {
+    if (product.color) {
+      colorEl.textContent = `اللون: ${product.color}`;
+      colorEl.style.display = "block";
+    } else {
+      colorEl.textContent = "";
+      colorEl.style.display = "none";
+    }
+  }
+
+  if (descriptionEl) {
+    descriptionEl.textContent = "";
+    descriptionEl.style.display = "none";
+  }
+
+  const sizes = parseProductSizes(product);
+
+  if (sizes.length) {
+    if (sizesBox) sizesBox.style.display = "block";
+
+    if (sizesEl) {
+      sizesEl.innerHTML = "";
+
+      sizes.forEach(size => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "detail-size-btn";
+
+        button.textContent =
+          `${size.name} — ${Number(size.price)}${CURRENCY}`;
+
+        button.onclick = () => {
+          selectedDetailSize = String(size.name);
+
+          document
+            .querySelectorAll(".detail-size-btn")
+            .forEach(btn => btn.classList.remove("active"));
+
+          button.classList.add("active");
+
+          if (priceEl) {
+            priceEl.textContent =
+              `${getDetailPrice(product, selectedDetailSize)}${CURRENCY}`;
+          }
+          /* ================= خيارات المجموعة ================= */
+
+          if (variantsBox && variantsEl) {
+
+            if (groupProducts.length > 1) {
+
+              variantsBox.style.display = "block";
+              variantsEl.innerHTML = "";
+
+              groupProducts.forEach(variantProduct => {
+
+                const button = document.createElement("button");
+
+                button.type = "button";
+                button.className = "detail-variant-btn";
+
+                if (
+                  Number(variantProduct.id) ===
+                  Number(product.id)
+                ) {
+                  button.classList.add("active");
+                }
+
+                button.innerHTML = `
+        <img
+          src="${variantProduct.img || ""}"
+          alt="${variantProduct.name || ""}"
+        >
+
+        <span>
+          ${variantProduct.color ||
+                  variantProduct.name ||
+                  `#${variantProduct.id}`
+                  }
+        </span>
+      `;
+
+                button.onclick = (e) => {
+                  e.stopPropagation();
+                  openProductDetails(variantProduct.id);
+                };
+
+                variantsEl.appendChild(button);
+              });
+
+            } else {
+
+              variantsBox.style.display = "none";
+              variantsEl.innerHTML = "";
+            }
+          }
+          if (addBtn) {
+            addBtn.disabled = false;
+          }
+        };
+
+        sizesEl.appendChild(button);
+      });
+    }
+
+    if (priceEl) {
+      priceEl.textContent = "اختر القياس";
+    }
+
+    if (addBtn) {
+      addBtn.disabled = true;
+    }
+  } else {
+    if (sizesBox) sizesBox.style.display = "none";
+
+    if (priceEl) {
+      priceEl.textContent =
+        `${getDetailPrice(product)}${CURRENCY}`;
+    }
+
+    if (addBtn) {
+      addBtn.disabled = false;
+    }
+  }
+
+  if (addBtn) {
+    addBtn.onclick = () => {
+      if (sizes.length && !selectedDetailSize) {
+        return;
+      }
+
+      const price = getDetailPrice(
+        product,
+        selectedDetailSize
+      );
+
+      addToCart(
+        product.id,
+        selectedDetailSize,
+        price
+      );
+
+      closeProductDetails();
+    };
+  }
+
+  modal.classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeProductDetails() {
+  const modal = document.getElementById("productDetailsModal");
+
+  if (!modal) return;
+
+  modal.classList.remove("show");
+  selectedDetailSize = null;
+  let groupProducts = [];
+
+  if (Array.isArray(product.variants) && product.variants.length) {
+    const groupIds = product.variants
+      .map(v => Number(v.id))
+      .filter(id => Number.isInteger(id));
+
+    groupProducts = products.filter(p =>
+      groupIds.includes(Number(p.id))
+    );
+  }
+
+  if (!groupProducts.length) {
+    groupProducts = [product];
+  }
+  document.body.style.overflow = "";
+}
 function renderGallery() {
   galleryEl.innerHTML = "";
   let list = activeCat === "الكل" ? [...products] : products.filter(p => p.cat === activeCat);
@@ -1156,7 +1427,11 @@ function renderGallery() {
     card.className = "card";
     card.innerHTML = `
       <div class="card-img">
-        <img src="${p.img}" alt="${p.name}" ${p.fallback ? `onerror="this.onerror=null;this.src='${p.fallback}'"` : ""} onclick="openLightbox(this.src,'${p.name.replace(/'/g, "\\'")}')">
+       <img
+  src="${p.img}"
+  alt="${p.name}"
+  ${p.fallback ? `onerror="this.onerror=null;this.src='${p.fallback}'"` : ""}
+>
         <span class="product-id">#${p.id}</span>
         ${getDisplayBadge(p) ? `<span class="badge ${p.sale ? 'sale' : ''} ${p.best ? 'best' : ''}">${getDisplayBadge(p)}</span>` : ""}
       </div>
@@ -1174,6 +1449,9 @@ function renderGallery() {
         </div>
       </div>`;
     galleryEl.appendChild(card);
+    card.onclick = () => {
+      openProductDetails(p.id);
+    };
   });
 
   document.querySelectorAll(".add-btn").forEach(btn => {
@@ -1267,8 +1545,8 @@ function updateCartUI() {
           src="${p.img}"
           alt="${p.name}"
           ${p.fallback
-            ? `onerror="this.onerror=null;this.src='${p.fallback}'"`
-            : ""}
+        ? `onerror="this.onerror=null;this.src='${p.fallback}'"`
+        : ""}
         >
 
         <div class="ci-info">
@@ -1568,7 +1846,7 @@ async function handleCustomerSignup() {
 
   try {
     /* نمسح أي جلسة قديمة شغالة قبل إنشاء الحساب، لنفس سبب تسجيل الدخول */
-    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => { });
 
     /* ================= إنشاء الحساب في Appwrite ================= */
 
@@ -1716,7 +1994,7 @@ async function handleCustomerLogin() {
     /* إذا كان بالمتصفح جلسة قديمة شغالة (حتى لو منتهية الصلاحية أو تخص حساب
        ثاني)، Appwrite يرفض إنشاء جلسة جديدة فوقها برسالة "session is active" —
        نمسحها أول قبل أي محاولة دخول جديدة حتى ما يصير هذا الخطأ */
-    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => {});
+    await appwriteAuthFetch("/account/sessions/current", { method: "DELETE" }).catch(() => { });
 
     /* ================= تسجيل الدخول في Appwrite ================= */
 
@@ -1830,224 +2108,224 @@ async function handleGoogleAuth() {
 
 /* إرسال رابط إعادة تعيين كلمة السر على الإيميل */
 async function handleForgotPassword() {
+  const errEl =
+    document.getElementById("accountError");
+
+  const email =
+    document
+      .getElementById("custLoginEmail")
+      .value
+      .trim();
+
+  errEl.style.color = "";
+  errEl.textContent = "";
+
+  if (!email) {
+    errEl.textContent =
+      "اكتب إيميلك بالأول حتى نرسلّك رابط تغيير كلمة السر";
+    return;
+  }
+
+  try {
+    const recoveryUrl =
+      window.location.origin +
+      window.location.pathname;
+
+    const response = await appwriteAuthFetch("/account/recovery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        url: recoveryUrl
+      })
+    });
+
+    const result =
+      await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        result.message ||
+        "تعذر إرسال رابط تغيير كلمة السر"
+      );
+    }
+
+    errEl.style.color = "#1FAE7A";
+    errEl.textContent =
+      "تم إرسال رابط تغيير كلمة السر لإيميلك ✅";
+
+  } catch (error) {
+
+    console.error(
+      "APPWRITE PASSWORD RECOVERY ERROR:",
+      error
+    );
+
+    errEl.style.color = "";
+    errEl.textContent =
+      "❌ تعذر إرسال رابط تغيير كلمة السر، جرّب مرة ثانية";
+  }
+}
+
+async function handleCustomerLogout() {
+  try {
+    const response = await appwriteAuthFetch("/account/sessions/current", {
+      method: "DELETE"
+    });
+
+    if (!response.ok && response.status !== 401) {
+      const errorData =
+        await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+        "تعذر تسجيل الخروج"
+      );
+    }
+
+    // مسح جلسة Appwrite المحلية
+    window.appwriteCustomerSession = null;
+
+    // مسح بيانات الحساب المحفوظة محليًا
+    try {
+      localStorage.removeItem("appwrite_customer_name");
+      localStorage.removeItem("appwrite_customer_email");
+    } catch (e) {
+      console.warn(
+        "تعذر مسح بيانات الحساب المحلية:",
+        e
+      );
+    }
+
+    // تحديث نافذة الحساب
+    await refreshAccountModalView();
+
+  } catch (error) {
+
+    console.error(
+      "APPWRITE LOGOUT ERROR:",
+      error
+    );
+
     const errEl =
       document.getElementById("accountError");
 
-    const email =
-      document
-        .getElementById("custLoginEmail")
-        .value
-        .trim();
-
-    errEl.style.color = "";
-    errEl.textContent = "";
-
-    if (!email) {
+    if (errEl) {
       errEl.textContent =
-        "اكتب إيميلك بالأول حتى نرسلّك رابط تغيير كلمة السر";
+        "❌ تعذر تسجيل الخروج، حاول مرة ثانية";
+    }
+  }
+}
+
+/* ينتظر تحميل قائمة المنتجات (لازمة لتجهيز نص رسالة الفاتورة) */
+async function waitForProducts(timeoutMs) {
+  const limit = timeoutMs || 8000;
+  const start = Date.now();
+  while ((!products || !products.length) && Date.now() - start < limit) {
+    await new Promise(r => setTimeout(r, 150));
+  }
+}
+
+/* إذا كان في طلب فاتورة معلّق بانتظار تسجيل الدخول (مثلاً بعد الرجوع من Google)، نكمّل إرساله تلقائياً */
+async function completePendingCheckoutIfAny() {
+  let pending;
+  try { pending = localStorage.getItem(PENDING_CHECKOUT_KEY); } catch (e) { pending = null; }
+  if (!pending || !customerSession) return;
+
+  try { localStorage.removeItem(PENDING_CHECKOUT_KEY); } catch (e) { }
+  accountModalContext = null;
+
+  await waitForProducts();
+  if (!cart.length) return;
+
+  closeAccountModal();
+  await sendWhatsAppOrder();
+}
+
+async function loadMyOrders() {
+  const listEl = document.getElementById("accOrdersList");
+
+  if (!listEl) return;
+
+  listEl.innerHTML =
+    `<div class="acc-empty">جاري التحميل...</div>`;
+
+  try {
+    /* الحصول على المستخدم الحالي من Appwrite */
+    const userResponse = await appwriteAuthFetch("/account");
+
+    if (!userResponse.ok) {
+      listEl.innerHTML =
+        `<div class="acc-empty">سجّل دخولك أولاً</div>`;
       return;
     }
 
-    try {
-      const recoveryUrl =
-        window.location.origin +
-        window.location.pathname;
+    const user = await userResponse.json();
 
-      const response = await appwriteAuthFetch("/account/recovery", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          url: recoveryUrl
-        })
+    /* جلب طلبات المستخدم الحالي فقط — الفلترة تصير من السيرفر مباشرة
+       (Query.equal) بدل ما نجيب كل فواتير كل الزبائن ونخفي الباقي بالمتصفح،
+       حتى ما توصل فواتير غير زبائن لجهاز الزبون أصلًا */
+    const result = await tablesDB.listRows({
+      databaseId: APPWRITE_DATABASE_ID,
+      tableId: APPWRITE_ORDERS_TABLE_ID,
+      queries: [
+        Appwrite.Query.equal("customer_id", user.$id),
+        Appwrite.Query.orderDesc("$createdAt"),
+        Appwrite.Query.limit(100)
+      ]
+    });
+
+    const rows = Array.isArray(result.rows) ? result.rows : [];
+
+    const myOrders = rows.map(row => ({
+      $createdAt: row.$createdAt,
+      data: row
+    }));
+
+    if (!myOrders.length) {
+      listEl.innerHTML =
+        `<div class="acc-empty">ما عندك طلبات سابقة بعد</div>`;
+      return;
+    }
+
+    listEl.innerHTML = myOrders.map(o => {
+      const data = o.data || {};
+
+      const date = new Date(
+        o.$createdAt
+      ).toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
       });
 
-      const result =
-        await response.json().catch(() => ({}));
+      let items = data.items || [];
 
-      if (!response.ok) {
-        throw new Error(
-          result.message ||
-          "تعذر إرسال رابط تغيير كلمة السر"
-        );
-      }
-
-      errEl.style.color = "#1FAE7A";
-      errEl.textContent =
-        "تم إرسال رابط تغيير كلمة السر لإيميلك ✅";
-
-    } catch (error) {
-
-      console.error(
-        "APPWRITE PASSWORD RECOVERY ERROR:",
-        error
-      );
-
-      errEl.style.color = "";
-      errEl.textContent =
-        "❌ تعذر إرسال رابط تغيير كلمة السر، جرّب مرة ثانية";
-    }
-  }
-
-  async function handleCustomerLogout() {
-    try {
-      const response = await appwriteAuthFetch("/account/sessions/current", {
-        method: "DELETE"
-      });
-
-      if (!response.ok && response.status !== 401) {
-        const errorData =
-          await response.json().catch(() => ({}));
-
-        throw new Error(
-          errorData.message ||
-          "تعذر تسجيل الخروج"
-        );
-      }
-
-      // مسح جلسة Appwrite المحلية
-      window.appwriteCustomerSession = null;
-
-      // مسح بيانات الحساب المحفوظة محليًا
-      try {
-        localStorage.removeItem("appwrite_customer_name");
-        localStorage.removeItem("appwrite_customer_email");
-      } catch (e) {
-        console.warn(
-          "تعذر مسح بيانات الحساب المحلية:",
-          e
-        );
-      }
-
-      // تحديث نافذة الحساب
-      await refreshAccountModalView();
-
-    } catch (error) {
-
-      console.error(
-        "APPWRITE LOGOUT ERROR:",
-        error
-      );
-
-      const errEl =
-        document.getElementById("accountError");
-
-      if (errEl) {
-        errEl.textContent =
-          "❌ تعذر تسجيل الخروج، حاول مرة ثانية";
-      }
-    }
-  }
-
-  /* ينتظر تحميل قائمة المنتجات (لازمة لتجهيز نص رسالة الفاتورة) */
-  async function waitForProducts(timeoutMs) {
-    const limit = timeoutMs || 8000;
-    const start = Date.now();
-    while ((!products || !products.length) && Date.now() - start < limit) {
-      await new Promise(r => setTimeout(r, 150));
-    }
-  }
-
-  /* إذا كان في طلب فاتورة معلّق بانتظار تسجيل الدخول (مثلاً بعد الرجوع من Google)، نكمّل إرساله تلقائياً */
-  async function completePendingCheckoutIfAny() {
-    let pending;
-    try { pending = localStorage.getItem(PENDING_CHECKOUT_KEY); } catch (e) { pending = null; }
-    if (!pending || !customerSession) return;
-
-    try { localStorage.removeItem(PENDING_CHECKOUT_KEY); } catch (e) { }
-    accountModalContext = null;
-
-    await waitForProducts();
-    if (!cart.length) return;
-
-    closeAccountModal();
-    await sendWhatsAppOrder();
-  }
-
-  async function loadMyOrders() {
-    const listEl = document.getElementById("accOrdersList");
-
-    if (!listEl) return;
-
-    listEl.innerHTML =
-      `<div class="acc-empty">جاري التحميل...</div>`;
-
-    try {
-      /* الحصول على المستخدم الحالي من Appwrite */
-      const userResponse = await appwriteAuthFetch("/account");
-
-      if (!userResponse.ok) {
-        listEl.innerHTML =
-          `<div class="acc-empty">سجّل دخولك أولاً</div>`;
-        return;
-      }
-
-      const user = await userResponse.json();
-
-      /* جلب طلبات المستخدم الحالي فقط — الفلترة تصير من السيرفر مباشرة
-         (Query.equal) بدل ما نجيب كل فواتير كل الزبائن ونخفي الباقي بالمتصفح،
-         حتى ما توصل فواتير غير زبائن لجهاز الزبون أصلًا */
-      const result = await tablesDB.listRows({
-        databaseId: APPWRITE_DATABASE_ID,
-        tableId: APPWRITE_ORDERS_TABLE_ID,
-        queries: [
-          Appwrite.Query.equal("customer_id", user.$id),
-          Appwrite.Query.orderDesc("$createdAt"),
-          Appwrite.Query.limit(100)
-        ]
-      });
-
-      const rows = Array.isArray(result.rows) ? result.rows : [];
-
-      const myOrders = rows.map(row => ({
-        $createdAt: row.$createdAt,
-        data: row
-      }));
-
-      if (!myOrders.length) {
-        listEl.innerHTML =
-          `<div class="acc-empty">ما عندك طلبات سابقة بعد</div>`;
-        return;
-      }
-
-      listEl.innerHTML = myOrders.map(o => {
-        const data = o.data || {};
-
-        const date = new Date(
-          o.$createdAt
-        ).toLocaleDateString("ar-EG", {
-          year: "numeric",
-          month: "short",
-          day: "numeric"
-        });
-
-        let items = data.items || [];
-
-        /* في حال كانت items محفوظة كنص JSON */
-        if (typeof items === "string") {
-          try {
-            items = JSON.parse(items);
-          } catch (e) {
-            items = [];
-          }
+      /* في حال كانت items محفوظة كنص JSON */
+      if (typeof items === "string") {
+        try {
+          items = JSON.parse(items);
+        } catch (e) {
+          items = [];
         }
+      }
 
-        const itemsText = Array.isArray(items)
-          ? items.map(it => {
-            if (typeof it === "string") {
-              try {
-                const parsed = JSON.parse(it);
-                return `${parsed.name || ""} × ${parsed.qty || 1}`;
-              } catch (e) {
-                return it;
-              }
+      const itemsText = Array.isArray(items)
+        ? items.map(it => {
+          if (typeof it === "string") {
+            try {
+              const parsed = JSON.parse(it);
+              return `${parsed.name || ""} × ${parsed.qty || 1}`;
+            } catch (e) {
+              return it;
             }
+          }
 
-            return `${it.name || ""} × ${it.qty || 1}`;
-          }).join("، ")
-          : "";
+          return `${it.name || ""} × ${it.qty || 1}`;
+        }).join("، ")
+        : "";
 
-        return `
+      return `
         <div class="acc-order-card">
           <div class="acc-order-head">
             <span>طلب #${o.$id}</span>
@@ -2063,18 +2341,18 @@ async function handleForgotPassword() {
           </div>
         </div>
       `;
-      }).join("");
+    }).join("");
 
-    } catch (error) {
-      console.error(
-        "APPWRITE LOAD ORDERS ERROR:",
-        error
-      );
+  } catch (error) {
+    console.error(
+      "APPWRITE LOAD ORDERS ERROR:",
+      error
+    );
 
-      listEl.innerHTML =
-        `<div class="acc-empty">تعذر تحميل الطلبات</div>`;
-    }
+    listEl.innerHTML =
+      `<div class="acc-empty">تعذر تحميل الطلبات</div>`;
   }
+}
 
 /* ============ نافذة "تواصل معنا" (واتساب + انستغرام) ============ */
 function openContactModal() {
