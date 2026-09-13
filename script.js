@@ -773,25 +773,41 @@ async function loadProducts() {
             ? !!data.sale
             : !!fallback?.sale,
         sizes: (() => {
-          try {
-            if (Array.isArray(data.sizes)) {
-              return data.sizes;
-            }
+  try {
+    if (Array.isArray(data.sizes)) {
+      return data.sizes;
+    }
 
-            if (typeof data.sizes === "string") {
-              const parsed = JSON.parse(data.sizes);
-              return Array.isArray(parsed) ? parsed : [];
-            }
+    if (typeof data.sizes === "string") {
+      const parsed = JSON.parse(data.sizes);
+      return Array.isArray(parsed) ? parsed : [];
+    }
 
-            return [];
-          } catch (e) {
-            return [];
-          }
-        })()
-      };
+    return [];
+  } catch (e) {
+    return [];
+  }
+})(),
+
+variants: (() => {
+  try {
+    if (Array.isArray(data.variants)) {
+      return data.variants;
+    }
+
+    if (typeof data.variants === "string") {
+      const parsed = JSON.parse(data.variants);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+
+    return [];
+  } catch (e) {
+    return [];
+  }
+})(),
+
+};
     });
-
-
   } catch (e) {
     console.warn(
       "تعذّر جلب المنتجات من Appwrite، تم استخدام النسخة الاحتياطية:",
