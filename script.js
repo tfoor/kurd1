@@ -1185,7 +1185,7 @@ function getDetailPrice(product, sizeName = null) {
 
   if (sizeName && sizes.length) {
     const selected = sizes.find(
-      size => String(size.name) === String(sizeName)
+      size => String(size.name || size.size) === String(sizeName)
     );
 
     if (selected && Number.isFinite(Number(selected.price))) {
@@ -1267,11 +1267,12 @@ function openProductDetails(productId) {
         button.type = "button";
         button.className = "detail-size-btn";
 
+        const sizeName = size.name || size.size;
         button.textContent =
-          `${size.name} — ${Number(size.price)}${CURRENCY}`;
+          `${sizeName} — ${Number(size.price)}${CURRENCY}`;
 
         button.onclick = () => {
-          selectedDetailSize = String(size.name);
+          selectedDetailSize = String(sizeName);
 
           document
             .querySelectorAll(".detail-size-btn")
@@ -1497,9 +1498,18 @@ function observeCards() {
 }
 
 /* ============ السلة ============ */
-function addToCart(id) {
-  const existing = cart.find(c => c.id === id);
-  if (existing) { existing.qty++; } else { cart.push({ id, qty: 1 }); }
+function addToCart(id, size = null, price = null) {
+  const existing = cart.find(c => c.id === id && (!size || c.size === size));
+  if (existing) { 
+    existing.qty++; 
+  } else { 
+    cart.push({ 
+      id, 
+      qty: 1,
+      size: size || null,
+      sizePrice: price || null
+    }); 
+  }
   saveCartToStorage();
   updateCartUI();
 }
@@ -1511,8 +1521,14 @@ function changeQty(id, delta) {
   saveCartToStorage();
   updateCartUI();
 }
-function removeFromCart(id) {
-  cart = cart.filter(c => c.id !== id);
+function removeFromCart(id, size = null) {
+  if (size) {
+    // إذا تم تحديد القياس، احذف فقط العنصر مع هذا القياس
+    cart = cart.filter(c => !(c.id === id && c.size === size));
+  } else {
+    // وإلا، احذف جميع العناصر بهذا المعرّف
+    cart = cart.filter(c => c.id !== id);
+  }
   saveCartToStorage();
   updateCartUI();
 }
@@ -1552,7 +1568,9 @@ function updateCartUI() {
 
     if (!p) return "";
 
-    const subtotal = Number(p.price || 0) * c.qty;
+    // استخدام سعر القياس إذا كان موجوداً، وإلا استخدم السعر الافتراضي
+    const itemPrice = c.sizePrice !== null && c.sizePrice !== undefined ? c.sizePrice : Number(p.price || 0);
+    const subtotal = itemPrice * c.qty;
     total += subtotal;
 
     return `
@@ -1570,9 +1588,11 @@ function updateCartUI() {
             ${p.name}
             <span class="ci-id">#${p.id}</span>
           </h4>
+          
+          ${c.size ? `<span class="ci-size" style="font-size: 12px; color: var(--accent); margin-bottom: 4px; display: block;">📏 المقاس: ${c.size}</span>` : ""}
 
           <span class="ci-price">
-            ${p.price}${CURRENCY} × ${c.qty} = ${subtotal}${CURRENCY}
+            ${itemPrice}${CURRENCY} × ${c.qty} = ${subtotal}${CURRENCY}
           </span>
 
           <div class="qty-row">
