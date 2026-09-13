@@ -264,6 +264,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+/* ============ تصحيح مؤقت: يوري أي خطأ برمجي كرسالة منبثقة جوة التطبيق بس ============
+   هاي إضافة مؤقتة لتشخيص مشكلة "خيارات أخرى" — بعد ما نلقى السبب لازم تنشال */
+if (isInsideMobileApp()) {
+  window.addEventListener("error", (e) => {
+    alert("⚠️ خطأ برمجي:\n" + e.message + "\nبالسطر: " + e.lineno);
+  });
+}
+
 /* ============ Appwrite التجريبي ============ */
 
 const APPWRITE_ENDPOINT =
@@ -1242,6 +1250,15 @@ function openProductDetails(productId) {
 
   if (!groupProducts.length) {
     groupProducts = [product];
+  }
+
+  /* تصحيح مؤقت لمشكلة "خيارات أخرى" جوة التطبيق — لازم تنشال بعدين */
+  if (isInsideMobileApp()) {
+    alert(
+      "🔍 تصحيح:\n" +
+      "product.variants = " + JSON.stringify(product.variants) + "\n" +
+      "عدد groupProducts = " + groupProducts.length
+    );
   }
 
   function renderProduct(selectedProduct) {
