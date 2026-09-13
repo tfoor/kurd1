@@ -1474,7 +1474,17 @@ function openProductDetails(productId) {
   modal.classList.add("show");
   document.body.style.overflow = "hidden";
 }
+function closeProductDetails() {
+  const modal = document.getElementById("productDetailsModal");
 
+  if (!modal) return;
+
+  modal.classList.remove("show");
+
+  selectedDetailSize = null;
+
+  document.body.style.overflow = "";
+}
 function renderGallery() {
   galleryEl.innerHTML = "";
   let list = activeCat === "الكل" ? [...products] : products.filter(p => p.cat === activeCat);
