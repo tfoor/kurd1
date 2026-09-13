@@ -773,40 +773,40 @@ async function loadProducts() {
             ? !!data.sale
             : !!fallback?.sale,
         sizes: (() => {
-  try {
-    if (Array.isArray(data.sizes)) {
-      return data.sizes;
-    }
+          try {
+            if (Array.isArray(data.sizes)) {
+              return data.sizes;
+            }
 
-    if (typeof data.sizes === "string") {
-      const parsed = JSON.parse(data.sizes);
-      return Array.isArray(parsed) ? parsed : [];
-    }
+            if (typeof data.sizes === "string") {
+              const parsed = JSON.parse(data.sizes);
+              return Array.isArray(parsed) ? parsed : [];
+            }
 
-    return [];
-  } catch (e) {
-    return [];
-  }
-})(),
+            return [];
+          } catch (e) {
+            return [];
+          }
+        })(),
 
-variants: (() => {
-  try {
-    if (Array.isArray(data.variants)) {
-      return data.variants;
-    }
+        variants: (() => {
+          try {
+            if (Array.isArray(data.variants)) {
+              return data.variants;
+            }
 
-    if (typeof data.variants === "string") {
-      const parsed = JSON.parse(data.variants);
-      return Array.isArray(parsed) ? parsed : [];
-    }
+            if (typeof data.variants === "string") {
+              const parsed = JSON.parse(data.variants);
+              return Array.isArray(parsed) ? parsed : [];
+            }
 
-    return [];
-  } catch (e) {
-    return [];
-  }
-})(),
+            return [];
+          } catch (e) {
+            return [];
+          }
+        })(),
 
-};
+      };
     });
   } catch (e) {
     console.warn(
@@ -1421,11 +1421,10 @@ function openProductDetails(productId) {
             >
 
             <span>
-              ${
-                groupProduct.color ||
-                groupProduct.name ||
-                `#${groupProduct.id}`
-              }
+              ${groupProduct.color ||
+            groupProduct.name ||
+            `#${groupProduct.id}`
+            }
             </span>
           `;
 
@@ -1572,15 +1571,15 @@ function observeCards() {
 /* ============ السلة ============ */
 function addToCart(id, size = null, price = null) {
   const existing = cart.find(c => c.id === id && (!size || c.size === size));
-  if (existing) { 
-    existing.qty++; 
-  } else { 
-    cart.push({ 
-      id, 
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({
+      id,
       qty: 1,
       size: size || null,
       sizePrice: price || null
-    }); 
+    });
   }
   saveCartToStorage();
   updateCartUI();
