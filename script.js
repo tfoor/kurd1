@@ -1197,7 +1197,7 @@ function getDetailPrice(product, sizeName = null) {
 }
 
 function openProductDetails(productId) {
-  const product = products.find(
+  let product = products.find(
     p => Number(p.id) === Number(productId)
   );
 
@@ -1215,225 +1215,25 @@ function openProductDetails(productId) {
   const priceEl = document.getElementById("detailsPrice");
   const sizesBox = document.getElementById("detailsSizesBox");
   const sizesEl = document.getElementById("detailsSizes");
-  const addBtn = document.getElementById("detailsAddBtn");
   const variantsBox = document.getElementById("detailsVariantsBox");
   const variantsEl = document.getElementById("detailsVariants");
-
-  selectedDetailSize = null;
-
-  if (image) {
-    image.src = product.img || "";
-    image.alt = product.name || "";
-  }
-
-  // 🆕 إضافة الصور المصغرة
   const thumbnailsEl = document.getElementById("detailsThumbnails");
-  if (thumbnailsEl) {
-    thumbnailsEl.innerHTML = "";
-    
-    // الصورة الرئيسية أولاً
-    const mainThumb = document.createElement("div");
-    mainThumb.className = "details-thumbnail active";
-    mainThumb.innerHTML = `<img src="${product.img || ""}" alt="${product.name || ""}">`;
-    mainThumb.onclick = () => {
-      image.src = product.img || "";
-      document.querySelectorAll(".details-thumbnail").forEach(t => t.classList.remove("active"));
-      mainThumb.classList.add("active");
-    };
-    thumbnailsEl.appendChild(mainThumb);
-    
-    // الصور الإضافية
-    if (product.images && Array.isArray(product.images)) {
-      product.images.forEach(imgUrl => {
-        const thumb = document.createElement("div");
-        thumb.className = "details-thumbnail";
-        thumb.innerHTML = `<img src="${imgUrl}" alt="${product.name || ""}">`;
-        thumb.onclick = () => {
-          image.src = imgUrl;
-          document.querySelectorAll(".details-thumbnail").forEach(t => t.classList.remove("active"));
-          thumb.classList.add("active");
-        };
-        thumbnailsEl.appendChild(thumb);
-      });
-    }
-  }
+  const addBtn = document.getElementById("detailsAddBtn");
 
-  if (idEl) {
-    idEl.textContent = `#${product.id}`;
-  }
-
-  if (categoryEl) {
-    categoryEl.textContent = t(catKeyMap[product.cat] || product.cat || "");
-  }
-
-  if (nameEl) {
-    nameEl.textContent = product.name || "";
-  }
-
-  if (colorEl) {
-    if (product.color) {
-      colorEl.textContent = `اللون: ${product.color}`;
-      colorEl.style.display = "block";
-    } else {
-      colorEl.textContent = "";
-      colorEl.style.display = "none";
-    }
-  }
-
-  if (descriptionEl) {
-    descriptionEl.textContent = "";
-    descriptionEl.style.display = "none";
-  }
-
-  const sizes = parseProductSizes(product);
-
-  if (sizes.length) {
-    if (sizesBox) sizesBox.style.display = "block";
-
-    if (sizesEl) {
-      sizesEl.innerHTML = "";
-
-      sizes.forEach(size => {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.className = "detail-size-btn";
-
-        const sizeName = size.name || size.size;
-        button.textContent =
-          `${sizeName} — ${Number(size.price)}${CURRENCY}`;
-
-        button.onclick = () => {
-          selectedDetailSize = String(sizeName);
-
-          document
-            .querySelectorAll(".detail-size-btn")
-            .forEach(btn => btn.classList.remove("active"));
-
-          button.classList.add("active");
-
-          if (priceEl) {
-            priceEl.textContent =
-              `${getDetailPrice(product, selectedDetailSize)}${CURRENCY}`;
-          }
-          /* ================= خيارات المجموعة ================= */
-
-          if (variantsBox && variantsEl) {
-
-            if (groupProducts.length > 1) {
-
-              variantsBox.style.display = "block";
-              variantsEl.innerHTML = "";
-
-              groupProducts.forEach(variantProduct => {
-
-                const button = document.createElement("button");
-
-                button.type = "button";
-                button.className = "detail-variant-btn";
-
-                if (
-                  Number(variantProduct.id) ===
-                  Number(product.id)
-                ) {
-                  button.classList.add("active");
-                }
-
-                button.innerHTML = `
-        <img
-          src="${variantProduct.img || ""}"
-          alt="${variantProduct.name || ""}"
-        >
-
-        <span>
-          ${variantProduct.color ||
-                  variantProduct.name ||
-                  `#${variantProduct.id}`
-                  }
-        </span>
-      `;
-
-                button.onclick = (e) => {
-                  e.stopPropagation();
-                  openProductDetails(variantProduct.id);
-                };
-
-                variantsEl.appendChild(button);
-              });
-
-            } else {
-
-              variantsBox.style.display = "none";
-              variantsEl.innerHTML = "";
-            }
-          }
-          if (addBtn) {
-            addBtn.disabled = false;
-          }
-        };
-
-        sizesEl.appendChild(button);
-      });
-    }
-
-    if (priceEl) {
-      priceEl.textContent = "اختر القياس";
-    }
-
-    if (addBtn) {
-      addBtn.disabled = true;
-    }
-  } else {
-    if (sizesBox) sizesBox.style.display = "none";
-
-    if (priceEl) {
-      priceEl.textContent =
-        `${getDetailPrice(product)}${CURRENCY}`;
-    }
-
-    if (addBtn) {
-      addBtn.disabled = false;
-    }
-  }
-
-  if (addBtn) {
-    addBtn.onclick = () => {
-      if (sizes.length && !selectedDetailSize) {
-        return;
-      }
-
-      const price = getDetailPrice(
-        product,
-        selectedDetailSize
-      );
-
-      addToCart(
-        product.id,
-        selectedDetailSize,
-        price
-      );
-
-      closeProductDetails();
-    };
-  }
-
-  modal.classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-
-function closeProductDetails() {
-  const modal = document.getElementById("productDetailsModal");
-
-  if (!modal) return;
-
-  modal.classList.remove("show");
   selectedDetailSize = null;
+
+  /*
+    إيجاد المجموعة كاملة:
+    200 → 200 + 202 + 203
+    202 → 200 + 202 + 203
+    203 → 200 + 202 + 203
+  */
   let groupProducts = [];
 
   if (Array.isArray(product.variants) && product.variants.length) {
     const groupIds = product.variants
       .map(v => Number(v.id))
-      .filter(id => Number.isInteger(id));
+      .filter(Number.isInteger);
 
     groupProducts = products.filter(p =>
       groupIds.includes(Number(p.id))
@@ -1443,8 +1243,238 @@ function closeProductDetails() {
   if (!groupProducts.length) {
     groupProducts = [product];
   }
-  document.body.style.overflow = "";
+
+  function renderProduct(selectedProduct) {
+    product = selectedProduct;
+    selectedDetailSize = null;
+
+    /* الصورة الكبيرة */
+    if (image) {
+      image.src = product.img || "";
+      image.alt = product.name || "";
+    }
+
+    /* رقم المنتج */
+    if (idEl) {
+      idEl.textContent = `#${product.id}`;
+    }
+
+    /* الفئة */
+    if (categoryEl) {
+      categoryEl.textContent =
+        t(catKeyMap[product.cat] || product.cat || "");
+    }
+
+    /* الاسم */
+    if (nameEl) {
+      nameEl.textContent = product.name || "";
+    }
+
+    /* اللون */
+    if (colorEl) {
+      if (product.color) {
+        colorEl.textContent = `اللون: ${product.color}`;
+        colorEl.style.display = "block";
+      } else {
+        colorEl.textContent = "";
+        colorEl.style.display = "none";
+      }
+    }
+
+    /* الوصف */
+    if (descriptionEl) {
+      descriptionEl.textContent = "";
+      descriptionEl.style.display = "none";
+    }
+
+    /* السعر والقياسات */
+    const sizes = parseProductSizes(product);
+
+    if (sizes.length) {
+      if (sizesBox) {
+        sizesBox.style.display = "block";
+      }
+
+      if (sizesEl) {
+        sizesEl.innerHTML = "";
+
+        sizes.forEach(size => {
+          const button = document.createElement("button");
+
+          button.type = "button";
+          button.className = "detail-size-btn";
+
+          const sizeName = size.name || size.size;
+
+          button.textContent =
+            `${sizeName} — ${Number(size.price)}${CURRENCY}`;
+
+          button.onclick = () => {
+            selectedDetailSize = String(sizeName);
+
+            document
+              .querySelectorAll(".detail-size-btn")
+              .forEach(btn => {
+                btn.classList.remove("active");
+              });
+
+            button.classList.add("active");
+
+            if (priceEl) {
+              priceEl.textContent =
+                `${getDetailPrice(product, selectedDetailSize)}${CURRENCY}`;
+            }
+
+            if (addBtn) {
+              addBtn.disabled = false;
+            }
+          };
+
+          sizesEl.appendChild(button);
+        });
+      }
+
+      if (priceEl) {
+        priceEl.textContent = "اختر القياس";
+      }
+
+      if (addBtn) {
+        addBtn.disabled = true;
+      }
+
+    } else {
+      if (sizesBox) {
+        sizesBox.style.display = "none";
+      }
+
+      if (priceEl) {
+        priceEl.textContent =
+          `${getDetailPrice(product)}${CURRENCY}`;
+      }
+
+      if (addBtn) {
+        addBtn.disabled = false;
+      }
+    }
+
+    /* ================= صور خيارات المجموعة ================= */
+
+    if (thumbnailsEl) {
+      thumbnailsEl.innerHTML = "";
+
+      groupProducts.forEach(groupProduct => {
+
+        const thumb = document.createElement("div");
+
+        thumb.className = "details-thumbnail";
+
+        if (
+          Number(groupProduct.id) ===
+          Number(product.id)
+        ) {
+          thumb.classList.add("active");
+        }
+
+        thumb.innerHTML = `
+          <img
+            src="${groupProduct.img || ""}"
+            alt="${groupProduct.name || ""}"
+          >
+        `;
+
+        thumb.onclick = (e) => {
+          e.stopPropagation();
+          renderProduct(groupProduct);
+        };
+
+        thumbnailsEl.appendChild(thumb);
+      });
+    }
+
+    /* ================= نفس الخيارات تحت زر القياس ================= */
+
+    if (variantsBox && variantsEl) {
+
+      if (groupProducts.length > 1) {
+
+        variantsBox.style.display = "block";
+        variantsEl.innerHTML = "";
+
+        groupProducts.forEach(groupProduct => {
+
+          const button = document.createElement("button");
+
+          button.type = "button";
+          button.className = "detail-variant-btn";
+
+          if (
+            Number(groupProduct.id) ===
+            Number(product.id)
+          ) {
+            button.classList.add("active");
+          }
+
+          button.innerHTML = `
+            <img
+              src="${groupProduct.img || ""}"
+              alt="${groupProduct.name || ""}"
+            >
+
+            <span>
+              ${
+                groupProduct.color ||
+                groupProduct.name ||
+                `#${groupProduct.id}`
+              }
+            </span>
+          `;
+
+          button.onclick = (e) => {
+            e.stopPropagation();
+            renderProduct(groupProduct);
+          };
+
+          variantsEl.appendChild(button);
+        });
+
+      } else {
+
+        variantsBox.style.display = "none";
+        variantsEl.innerHTML = "";
+      }
+    }
+
+    /* ================= زر السلة ================= */
+
+    if (addBtn) {
+      addBtn.onclick = () => {
+
+        if (sizes.length && !selectedDetailSize) {
+          return;
+        }
+
+        const price = getDetailPrice(
+          product,
+          selectedDetailSize
+        );
+
+        addToCart(
+          product.id,
+          selectedDetailSize,
+          price
+        );
+
+        closeProductDetails();
+      };
+    }
+  }
+
+  renderProduct(product);
+
+  modal.classList.add("show");
+  document.body.style.overflow = "hidden";
 }
+
 function renderGallery() {
   galleryEl.innerHTML = "";
   let list = activeCat === "الكل" ? [...products] : products.filter(p => p.cat === activeCat);
