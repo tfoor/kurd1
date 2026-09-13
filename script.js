@@ -1226,6 +1226,38 @@ function openProductDetails(productId) {
     image.alt = product.name || "";
   }
 
+  // 🆕 إضافة الصور المصغرة
+  const thumbnailsEl = document.getElementById("detailsThumbnails");
+  if (thumbnailsEl) {
+    thumbnailsEl.innerHTML = "";
+    
+    // الصورة الرئيسية أولاً
+    const mainThumb = document.createElement("div");
+    mainThumb.className = "details-thumbnail active";
+    mainThumb.innerHTML = `<img src="${product.img || ""}" alt="${product.name || ""}">`;
+    mainThumb.onclick = () => {
+      image.src = product.img || "";
+      document.querySelectorAll(".details-thumbnail").forEach(t => t.classList.remove("active"));
+      mainThumb.classList.add("active");
+    };
+    thumbnailsEl.appendChild(mainThumb);
+    
+    // الصور الإضافية
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach(imgUrl => {
+        const thumb = document.createElement("div");
+        thumb.className = "details-thumbnail";
+        thumb.innerHTML = `<img src="${imgUrl}" alt="${product.name || ""}">`;
+        thumb.onclick = () => {
+          image.src = imgUrl;
+          document.querySelectorAll(".details-thumbnail").forEach(t => t.classList.remove("active"));
+          thumb.classList.add("active");
+        };
+        thumbnailsEl.appendChild(thumb);
+      });
+    }
+  }
+
   if (idEl) {
     idEl.textContent = `#${product.id}`;
   }
