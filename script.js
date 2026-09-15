@@ -255,6 +255,7 @@ function isInsideMobileApp() {
   return false;
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
   if (isInsideMobileApp()) {
     const divider = document.getElementById("googleDivider");
@@ -2215,8 +2216,11 @@ async function handleCustomerLogin() {
 
 /* ============ التسجيل / الدخول عبر Google ============ */
 async function handleGoogleAuth() {
-  const successUrl = "https://styleroj.com/";
-  const failureUrl = "https://styleroj.com/";
+  const successUrl =
+    window.location.origin +
+    window.location.pathname;
+
+  const failureUrl = successUrl;
 
   const googleUrl =
     `${APPWRITE_ENDPOINT}/account/sessions/oauth2/google` +
