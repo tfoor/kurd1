@@ -2215,11 +2215,8 @@ async function handleCustomerLogin() {
 
 /* ============ التسجيل / الدخول عبر Google ============ */
 async function handleGoogleAuth() {
-  const successUrl =
-    window.location.origin +
-    window.location.pathname;
-
-  const failureUrl = successUrl;
+  const successUrl = "https://styleroj.com/";
+  const failureUrl = "https://styleroj.com/";
 
   const googleUrl =
     `${APPWRITE_ENDPOINT}/account/sessions/oauth2/google` +
@@ -2227,7 +2224,7 @@ async function handleGoogleAuth() {
     `&success=${encodeURIComponent(successUrl)}` +
     `&failure=${encodeURIComponent(failureUrl)}`;
 
-  window.open(googleUrl, "_blank");
+  window.location.href = googleUrl;
 }
 
 /* إرسال رابط إعادة تعيين كلمة السر على الإيميل */
