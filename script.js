@@ -275,7 +275,7 @@ if (isInsideMobileApp()) {
 /* ============ Appwrite التجريبي ============ */
 
 const APPWRITE_ENDPOINT =
-  "https://api.styleroj.com/v1";
+  "https://fra.cloud.appwrite.io/v1";
 
 const APPWRITE_PROJECT_ID =
   "6a9321f3002b6c1004a9";
