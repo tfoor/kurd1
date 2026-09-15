@@ -252,7 +252,7 @@ applyTheme(localStorage.getItem("boutique_theme") || "light");
    الجوال يضيف علامة خاصة لهوية المتصفح (StyleRojApp)، نخفي الزر بس هناك،
    ونخلي الزبون يستخدم الإيميل العادي (شغّال صح جوة التطبيق) */
 function isInsideMobileApp() {
-  return navigator.userAgent.includes("StyleRojApp");
+  return false;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
