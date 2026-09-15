@@ -2227,7 +2227,7 @@ async function handleGoogleAuth() {
     `&success=${encodeURIComponent(successUrl)}` +
     `&failure=${encodeURIComponent(failureUrl)}`;
 
-  window.location.href = googleUrl;
+  window.open(googleUrl, "_blank");
 }
 
 /* إرسال رابط إعادة تعيين كلمة السر على الإيميل */
