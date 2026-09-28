@@ -39,6 +39,16 @@
       </ul>
     </nav>
     <div class="header-actions">
+      <a href="dress-designs.html"
+   class="tailor-btn"
+   title="تفصيل فستان"
+   aria-label="تفصيل فستان">
+
+  <span class="tailor-icon"></span>
+  <span class="tailor-text">تفصيل فستان</span>
+
+</a>
+      
       <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تبديل المظهر" aria-label="تبديل المظهر">
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 9 9 0 1 0 20.5 14.5Z" stroke="currentColor" stroke-width="1.7"
@@ -68,6 +78,7 @@
             stroke-linecap="round" />
         </svg>
       </button>
+      
       <button class="search-fab" id="searchFab" onclick="toggleSearchBar()" title="بحث" aria-label="بحث">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="10.8" cy="10.8" r="6.3" stroke="currentColor" stroke-width="1.8" />
@@ -79,6 +90,7 @@
           <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
         </svg>
       </button>
+      
     </div>
   </header>
 
@@ -593,39 +605,7 @@
       });
     })();
 
-    (function () {
-      /* نفس فكرة التصغير الناعم + التوهج عند الضغط لأزرار الهيدر العلوي */
-      const header = document.querySelector("header");
-      if (!header) return;
-
-      let lastY = window.scrollY;
-      let stopTimer = null;
-
-      function onScroll() {
-        const y = window.scrollY;
-        if (y > lastY && y > 40) {
-          header.classList.add("head-compact");
-        } else if (y < lastY || y <= 40) {
-          header.classList.remove("head-compact");
-        }
-        lastY = y;
-
-        clearTimeout(stopTimer);
-        stopTimer = setTimeout(() => header.classList.remove("head-compact"), 650);
-      }
-      window.addEventListener("scroll", onScroll, { passive: true });
-
-      header.querySelectorAll(".theme-btn, .cart-btn, .search-fab, .burger, .settings-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          btn.classList.remove("bnav-pop");
-          void btn.offsetWidth;
-          btn.classList.add("bnav-pop");
-        });
-        btn.addEventListener("animationend", (e) => {
-          if (e.target === btn) btn.classList.remove("bnav-pop");
-        });
-      });
-    })();
+    
   </script>
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0/dist/iife/sdk.min.js"></script>
   <script src="script.js?v=20260913debug1"></script>
