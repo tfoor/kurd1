@@ -1267,3 +1267,76 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* ===== زر تفصيل فستان ===== */
+.tailor-btn{
+  height:44px;
+  padding:0 15px;
+  border-radius:24px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+
+  background:linear-gradient(145deg,var(--accent),var(--accent-deep));
+  color:#fff;
+
+  border:1.5px solid rgba(255,255,255,.35);
+  box-shadow:
+    0 8px 20px rgba(214,61,110,.28),
+    inset 0 1px 0 rgba(255,255,255,.35);
+
+  font-family:'Cairo',sans-serif;
+  font-size:13px;
+  font-weight:800;
+
+  white-space:nowrap;
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    filter .25s ease;
+}
+
+.tailor-icon{
+  font-size:19px;
+  line-height:1;
+}
+
+.tailor-text{
+  line-height:1;
+}
+
+.tailor-btn:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.04);
+  box-shadow:
+    0 11px 24px rgba(214,61,110,.38),
+    inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+.tailor-btn:active{
+  transform:scale(.94);
+}
+
+.tailor-btn {
+  width: 85px;
+  height: 46px;
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  .tailor-btn {
+    font-size: 10px;
+  }
+}
+.tailor-btn {
+  font-size: 9px;
+}
+
+
+
+
+
+
+
+
+

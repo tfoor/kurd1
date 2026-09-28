@@ -2797,3 +2797,4 @@ async function initApp() {
   renderAllBanners();
 }
 initApp();
+
