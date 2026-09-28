@@ -50,10 +50,11 @@
       </ul>
     </nav>
     <div class="header-actions">
-      <a href="dress-designs.html"
+      <a href="#"
    class="tailor-btn"
    title="تفصيل فستان"
-   aria-label="تفصيل فستان">
+   aria-label="تفصيل فستان"
+   onclick="openUnavailableBox(event)">
 
   <span class="tailor-icon"></span>
   <span class="tailor-text">تفصيل فستان</span>
@@ -609,6 +610,20 @@
   </script>
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0/dist/iife/sdk.min.js"></script>
   <script src="script.js?v=20260913debug1"></script>
+
+<!-- Unavailable box -->
+<div id="unavailableBox" onclick="closeUnavailableBox()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;">
+  <div onclick="event.stopPropagation()" role="dialog" aria-modal="true" style="background:#fff;color:#222;max-width:340px;width:100%;border-radius:16px;padding:28px 24px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.3);direction:rtl;font-family:inherit;">
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">غير متوفر حالياً</div>
+    <div style="font-size:14px;opacity:.75;margin-bottom:20px;">خدمة تفصيل الفستان غير متوفرة في الوقت الحالي.</div>
+    <button type="button" onclick="closeUnavailableBox()" style="border:0;background:#222;color:#fff;padding:10px 28px;border-radius:999px;cursor:pointer;font-size:14px;font-family:inherit;">حسناً</button>
+  </div>
+</div>
+<script>
+function openUnavailableBox(e){ if(e) e.preventDefault(); document.getElementById('unavailableBox').style.display='flex'; }
+function closeUnavailableBox(){ document.getElementById('unavailableBox').style.display='none'; }
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeUnavailableBox(); });
+</script>
 </body>
 
 </html>
