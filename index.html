@@ -10,6 +10,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
  <link rel="stylesheet" href="style.css?v=20260913variants">
+
+  <!-- إخفاء شريط "تنزيل التطبيق" إذا الموقع مفتوح من داخل التطبيق نفسه -->
+  <style>
+    html.in-app .app-download-bar { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      try {
+        var ua = navigator.userAgent || "";
+        var inApp =
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.matchMedia("(display-mode: fullscreen)").matches ||
+          window.matchMedia("(display-mode: minimal-ui)").matches ||
+          window.navigator.standalone === true ||                        /* iOS (مثبّت على الشاشة) */
+          (document.referrer || "").indexOf("android-app://") === 0 ||   /* TWA / تطبيق أندرويد */
+          /; wv\)/.test(ua) ||                                           /* Android WebView */
+          /StyleRojApp/i.test(ua) ||                                     /* علامة مخصصة من التطبيق */
+          /[?&]app=1(&|$)/.test(location.search);                        /* رابط التطبيق ?app=1 */
+
+        /* نتذكر إنه تطبيق حتى لو تنقّل المستخدم بين الصفحات بدون ?app=1 */
+        if (inApp) sessionStorage.setItem("in_app", "1");
+        if (sessionStorage.getItem("in_app") === "1") {
+          document.documentElement.classList.add("in-app");
+        }
+      } catch (e) { }
+    })();
+  </script>
 </head>
 
 <body>
