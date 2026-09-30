@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تفصيل فستان | ستايل روج</title>
+<meta name="theme-color" content="#f43f76">
 <title>تفصيل فستان | ستايل روج</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1013,12 +1013,268 @@ body{
 }
 </style>
 
+
+<style id="pro-polish">
+/* =========================================================
+   PRO POLISH — طبقة تحسين بصري فقط (لا تغيّر أي وظيفة)
+   ========================================================= */
+:root{
+  --pink-soft:#fff1f5;
+  --ring:0 0 0 4px rgba(244,63,118,.16);
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --shadow-sm:0 4px 14px rgba(72,28,46,.06);
+  --shadow-md:0 14px 34px rgba(72,28,46,.10);
+}
+html{scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#f43f7626}
+
+/* إمكانية الوصول: مؤشر تركيز واضح عند التنقل بالكيبورد */
+button:focus-visible,a:focus-visible,input:focus-visible{
+  outline:2px solid var(--pink);outline-offset:2px;
+}
+
+/* ---------- العنوان ---------- */
+.top-title{padding:14px 0 22px}
+.top-title h1{
+  font-family:Lalezar,Cairo,Arial,sans-serif;font-weight:400;letter-spacing:.2px;
+  background:linear-gradient(135deg,#4a1728 20%,#dc2f66 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.top-title h1::after{
+  content:"";display:block;width:64px;height:4px;border-radius:4px;margin:10px auto 0;
+  background:linear-gradient(90deg,#ff5a8c,#f1ad26);
+}
+.top-title p{font-size:15px;color:var(--muted)}
+
+/* ---------- اللوحات الجانبية ---------- */
+.option-panel{
+  border-color:#f3dfe6;border-radius:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,251,252,.92));
+  box-shadow:var(--shadow-md);
+}
+.panel-title{
+  position:relative;letter-spacing:.2px;
+  background:linear-gradient(180deg,#fff3f7,#fff);
+  border-color:#f3d9e2;
+}
+.panel-title::before{
+  content:"";position:absolute;inset-inline-start:10px;top:50%;width:6px;height:6px;border-radius:50%;
+  transform:translateY(-50%);background:var(--pink);opacity:.7;
+}
+
+/* ---------- الموديلات ---------- */
+.thumb{
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s;
+  box-shadow:var(--shadow-sm);
+}
+.thumb img{transition:transform .4s var(--ease)}
+.thumb:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(72,28,46,.14)}
+.thumb:hover img{transform:scale(1.05)}
+.thumb.active{box-shadow:0 0 0 3px rgba(244,63,118,.18),0 10px 22px rgba(244,63,118,.18)}
+.model-list{scrollbar-width:thin;scrollbar-color:#efc3d1 transparent}
+.model-list::-webkit-scrollbar{width:5px}
+.model-list::-webkit-scrollbar-thumb{background:#efc3d1;border-radius:6px}
+
+/* ---------- الألوان والأقمشة ---------- */
+.fabric-color{position:relative;transition:transform .2s var(--ease),box-shadow .2s,border-color .2s,background .2s}
+.fabric-color:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(72,28,46,.10)}
+.fabric-color.active::after{
+  content:"✓";position:absolute;top:-6px;inset-inline-end:-6px;width:18px;height:18px;border-radius:50%;
+  background:var(--pink);color:#fff;font-size:10px;font-weight:900;line-height:18px;text-align:center;
+  box-shadow:0 3px 8px rgba(244,63,118,.35);
+}
+.fabric-type{transition:transform .2s var(--ease),box-shadow .2s,border-color .2s,background .2s}
+.fabric-type:hover{transform:translateY(-1px);border-color:#f2b6c8;box-shadow:0 6px 14px rgba(72,28,46,.08)}
+.show-more-colors{transition:background .2s,transform .2s,box-shadow .2s}
+.show-more-colors:hover{background:var(--pink-soft)!important;transform:translateY(-1px);box-shadow:0 6px 14px rgba(217,45,98,.10)}
+
+/* ---------- منطقة المعاينة ---------- */
+.center{border-color:#f3dfe6;box-shadow:var(--shadow-md)}
+.hero-dress{transition:transform .5s var(--ease),filter .3s}
+.dress-preview:hover .hero-dress{transform:scale(1.025)}
+.arr{transition:transform .2s var(--ease),box-shadow .2s,filter .2s;display:grid;place-items:center;line-height:1;padding:0}
+.arr:hover{transform:translateY(-50%) scale(1.08);box-shadow:0 14px 28px rgba(220,47,100,.32)}
+.arr:active{transform:translateY(-50%) scale(.96)}
+.tag{font-size:14px;letter-spacing:.2px}
+.selection-chip{box-shadow:0 2px 6px rgba(72,28,46,.04)}
+.choose{transition:transform .2s var(--ease),box-shadow .2s,filter .2s}
+.choose:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(220,47,100,.30);filter:saturate(1.08)}
+.choose:active{transform:translateY(0)}
+.selected{font-weight:700;color:#2e764a;background:#eaf8ef;padding:6px 12px;border-radius:999px}
+
+/* ---------- ملخص الطلب ---------- */
+.order-box{
+  border:1px solid #f0d9e2;border-radius:20px;
+  background:linear-gradient(180deg,#fff,#fffafb);
+  box-shadow:var(--shadow-sm);
+}
+.order-box-title{font-size:14px}
+.order-row{padding:8px 4px;font-size:12px}
+.order-row strong{font-weight:800}
+.total-row{margin-top:4px;border-top:1.5px dashed #efc7d5;padding-top:10px}
+.invoice-hint{border:1px dashed #f0d79c}
+
+/* ---------- قسم المقاسات ---------- */
+.measure{border-color:#f3dfe6;box-shadow:var(--shadow-md)}
+.measure-head h2{font-family:Lalezar,Cairo,Arial,sans-serif;font-weight:400}
+.measure-head p{font-size:14px}
+.diagram{
+  background:linear-gradient(180deg,#fffafb,#fff);
+  box-shadow:inset 0 0 0 1px #f3e2e8;
+}
+.diagram img{border-radius:16px}
+.field label{color:#6c233d;font-size:12.5px}
+.field input{
+  background:#fffcfd;border-color:#ecd8df;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.field input::placeholder{color:#b9a3ac}
+.field input:hover{border-color:#e3bccb}
+.field input:focus{background:#fff;border-color:var(--pink);box-shadow:var(--ring)}
+.field input:not(:placeholder-shown){background:#fff;border-color:#eebccb}
+.send{transition:transform .2s var(--ease),box-shadow .2s,filter .2s}
+.send:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(220,47,100,.28);filter:saturate(1.08)}
+.send:disabled{background:linear-gradient(145deg,#d9b9c4,#c79aa9)!important;box-shadow:none!important}
+.note{border:1px solid #f7d6e0}
+.back{transition:background .2s,color .2s,border-color .2s}
+.back:hover{background:var(--pink-soft);border-color:var(--pink);color:var(--pink2)}
+.ok{font-size:13px}
+
+/* ---------- شاشات كبيرة فقط ---------- */
+@media (min-width:921px){
+  .design-area{gap:26px}
+  .wrap{padding-top:28px}
+}
+
+/* ---------- احترام تفضيل تقليل الحركة ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
+
+
+<style id="pro-motion">
+/* =========================================================
+   PRO MOTION — حركات وأنميشن (CSS فقط + سكربت صغير منفصل)
+   كل الأنميشن بـ fill-mode: backwards => لو فشل شي يبقى المحتوى ظاهر
+   ========================================================= */
+:root{--ease:cubic-bezier(.2,.7,.2,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+@keyframes fromRight{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:none}}
+@keyframes fromLeft{from{opacity:0;transform:translateX(-34px)}to{opacity:1;transform:none}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes breathe{0%,100%{transform:translateX(-50%) scale(1);opacity:.9}50%{transform:translateX(-50%) scale(1.06);opacity:1}}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.85;transform:scale(1.1)}}
+@keyframes shimmer{0%{transform:translateX(130%) skewX(-18deg)}55%,100%{transform:translateX(-230%) skewX(-18deg)}}
+@keyframes swapIn{0%{opacity:0;transform:translateY(14px) scale(.95);filter:blur(6px) drop-shadow(0 20px 20px rgba(68,20,41,.10))}100%{opacity:1;transform:none;filter:drop-shadow(0 20px 20px rgba(68,20,41,.10))}}
+@keyframes flash{0%{background:#ffe3ec;color:#d62f65}100%{background:transparent}}
+@keyframes popText{0%{transform:scale(.85);opacity:.4}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:0 12px 24px rgba(220,47,100,.20)}50%{box-shadow:0 12px 34px rgba(220,47,100,.42),0 0 0 6px rgba(244,63,118,.10)}}
+@keyframes ripple{to{transform:scale(3.4);opacity:0}}
+
+/* ---------- دخول الصفحة (staggered) ---------- */
+header{animation:dropIn .6s var(--ease) backwards}
+.top-title h1{animation:rise .8s var(--ease) .10s backwards}
+.top-title h1::after{animation:scaleIn .7s var(--ease) .55s backwards}
+.top-title p{animation:rise .8s var(--ease) .25s backwards}
+.fabric-panel{animation:fromRight .8s var(--ease) .30s backwards}
+.model-panel{animation:fromLeft .8s var(--ease) .30s backwards}
+.center{animation:scaleIn .9s var(--ease) .20s backwards}
+.fabric-colors .fabric-color{animation:rise .5s var(--ease) backwards}
+.fabric-types .fabric-type{animation:rise .5s var(--ease) backwards}
+.model-list .thumb{animation:rise .5s var(--ease) backwards}
+.fabric-colors .fabric-color:nth-child(1){animation-delay:0.395s}
+.fabric-colors .fabric-color:nth-child(2){animation-delay:0.440s}
+.fabric-colors .fabric-color:nth-child(3){animation-delay:0.485s}
+.fabric-colors .fabric-color:nth-child(4){animation-delay:0.530s}
+.fabric-colors .fabric-color:nth-child(5){animation-delay:0.575s}
+.fabric-colors .fabric-color:nth-child(6){animation-delay:0.620s}
+.fabric-colors .fabric-color:nth-child(7){animation-delay:0.665s}
+.fabric-colors .fabric-color:nth-child(8){animation-delay:0.710s}
+.fabric-colors .fabric-color:nth-child(9){animation-delay:0.755s}
+.model-list .thumb:nth-child(1){animation-delay:0.06s}
+.model-list .thumb:nth-child(2){animation-delay:0.12s}
+.model-list .thumb:nth-child(3){animation-delay:0.18s}
+.model-list .thumb:nth-child(4){animation-delay:0.24s}
+.model-list .thumb:nth-child(5){animation-delay:0.30s}
+.model-list .thumb:nth-child(6){animation-delay:0.36s}
+.fabric-types .fabric-type:nth-child(1){animation-delay:0.77s}
+.fabric-types .fabric-type:nth-child(2){animation-delay:0.84s}
+.fabric-types .fabric-type:nth-child(3){animation-delay:0.91s}
+.fabric-types .fabric-type:nth-child(4){animation-delay:0.98s}
+
+/* ---------- حركة خفيفة دائمة في المعاينة ---------- */
+.dress-preview{animation:floatY 6s ease-in-out infinite}
+.circle-bg{animation:breathe 7s ease-in-out infinite}
+.center::before,.center::after{
+  content:"";position:absolute;z-index:1;pointer-events:none;border-radius:50%;
+  width:5px;height:5px;animation:twinkle 3.8s ease-in-out infinite;
+}
+.center::before{top:14%;left:13%;background:#f7a8c0;
+  box-shadow:70px 46px 0 1px #f1ad26,300px -6px 0 #f7a8c0,390px 96px 0 1px #f1ad26,36px 300px 0 #f7a8c0,330px 350px 0 1px #f7a8c0}
+.center::after{bottom:16%;right:12%;background:#f1ad26;animation-delay:1.6s;
+  box-shadow:-80px -60px 0 1px #f7a8c0,-320px 20px 0 #f1ad26,-380px -210px 0 1px #f7a8c0,-30px -310px 0 #f1ad26}
+
+/* حركة الفستان عند تغييره (الكلاس يضيفه السكربت) */
+.hero-dress.swap{animation:swapIn .55s var(--ease)}
+.tag.pop,.selection-chip.pop{animation:popText .45s var(--spring)}
+.order-row strong.flash{animation:flash .9s ease-out;border-radius:8px;padding:0 6px}
+
+/* باراليكس خفيف للفستان مع الماوس (سكربت يضبط المتغيرات على الديسكتوب فقط) */
+.hero-dress{transform:translate3d(var(--px,0px),var(--py,0px),0);transition:transform .25s ease-out,filter .3s}
+.dress-preview:hover .hero-dress{transform:translate3d(var(--px,0px),var(--py,0px),0) scale(1.025)}
+
+/* علامة ✓ تطلع بحركة نابضة */
+.fabric-color.active::after{animation:pop .4s var(--spring)}
+.fabric-color.active .color-dot{animation:popText .4s var(--spring)}
+.fabric-type.active{animation:popText .35s var(--spring)}
+
+/* لمعان يمر على زر الاختيار + توهّج لزر الإرسال لما يصير جاهز */
+.choose{overflow:hidden}
+.choose::after{
+  content:"";position:absolute;top:0;bottom:0;width:38%;left:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:shimmer 4.5s ease-in-out 1.5s infinite;
+}
+.send{position:relative;overflow:hidden}
+.send:not(:disabled){animation:glow 2.6s ease-in-out infinite}
+.send:not(:disabled):hover{animation-play-state:paused}
+.ripple{
+  position:absolute;border-radius:50%;width:40px;height:40px;margin:-20px 0 0 -20px;pointer-events:none;
+  background:rgba(255,255,255,.55);transform:scale(0);animation:ripple .6s ease-out forwards;
+}
+
+/* ظهور عند التمرير (يتفعّل فقط إذا اشتغل السكربت) */
+.js-motion .reveal{opacity:0;transform:translateY(28px)}
+.js-motion .reveal.in{opacity:1;transform:none;transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.js-motion .reveal-item{opacity:0;transform:translateY(16px)}
+.js-motion .reveal.in .reveal-item{opacity:1;transform:none;transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--i,0)*60ms + 200ms)}
+
+/* شريط تقدّم التمرير */
+.scroll-progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:10000;pointer-events:none;
+  background:linear-gradient(90deg,#ff5a8c,#f1ad26);transform-origin:right center;transform:scaleX(0);
+}
+
+/* ---------- تقليل الحركة ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .js-motion .reveal,.js-motion .reveal-item{opacity:1!important;transform:none!important}
+}
+</style>
+
 </head>
 <body>
 
 <header>
     <div class="logo-image">
-      <img src="logo/style-rouge.webp">
+      <img src="logo/style-rouge.webp" alt="ستايل روج">
     </div>
     <nav id="nav">
       <button class="nav-close" onclick="closeNav()">✕</button>
@@ -1097,12 +1353,12 @@ body{
     </aside>
     <div class="center">
       <div class="circle-bg"></div>
-      <button class="arr left" id="prev">←</button>
+      <button class="arr left" id="prev" aria-label="التصميم السابق">←</button>
       <div class="dress-preview">
         <img class="hero-dress" id="heroDress" alt="الفستان المختار">
         <div class="fabric-overlay" id="fabricOverlay"></div>
       </div>
-      <button class="arr right" id="next">→</button>
+      <button class="arr right" id="next" aria-label="التصميم التالي">→</button>
       <div class="tag" id="tag">تصميم رقم 159</div>
       <div class="selection-summary">
         <span class="selection-chip" id="colorChip">اللون: زيتي</span>
@@ -1321,7 +1577,7 @@ function addThumb(parent,index){
 function updateOrderSummary(){
   colorChip.textContent = "اللون: " + selectedColor.name;
   fabricChip.textContent = "القماش: " + selectedFabric;
-  priceChip.textContent = money(PRODUCT_PRICE);
+  if(priceChip) priceChip.textContent = money(PRODUCT_PRICE);
 
   orderDress.textContent = dresses[current].id;
   orderColor.textContent = selectedColor.name;
@@ -1518,5 +1774,95 @@ refreshSendState();
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0/dist/iife/sdk.min.js"></script>
 <script src="script.js?v=20260913debug1"></script>
+
+<script id="pro-motion-js">
+/* سكربت أنميشن منفصل: لا يغيّر أي منطق في الصفحة، فقط يضيف كلاسات بصرية */
+(function(){
+  try{
+    var root=document.documentElement;
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    root.classList.add('js-motion');
+
+    function replay(el,cls){ if(!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+    /* شريط تقدّم التمرير */
+    var bar=document.createElement('div'); bar.className='scroll-progress'; document.body.appendChild(bar);
+    function onScroll(){
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      bar.style.transform='scaleX('+(h>0?Math.min(1,window.scrollY/h):0)+')';
+    }
+    window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+    /* حركة عند تغيير الفستان / النص (فقط إذا تغيّرت القيمة فعلاً) */
+    var hero=document.getElementById('heroDress');
+    if(hero){
+      new MutationObserver(function(){ replay(hero,'swap'); }).observe(hero,{attributes:true,attributeFilter:['src']});
+    }
+    function watchText(el,cls){
+      if(!el) return;
+      var last=el.textContent;
+      new MutationObserver(function(){
+        var now=el.textContent;
+        if(now!==last){ last=now; replay(el,cls); }
+      }).observe(el,{childList:true,characterData:true,subtree:true});
+    }
+    watchText(document.getElementById('tag'),'pop');
+    watchText(document.getElementById('colorChip'),'pop');
+    watchText(document.getElementById('fabricChip'),'pop');
+    ['orderDress','orderColor','orderFabric','orderPrice'].forEach(function(id){
+      watchText(document.getElementById(id),'flash');
+    });
+
+    /* ripple على الأزرار الرئيسية */
+    document.addEventListener('pointerdown',function(e){
+      var b=e.target.closest&&e.target.closest('.choose,.send');
+      if(!b||b.disabled) return;
+      var r=b.getBoundingClientRect(), d=document.createElement('span');
+      d.className='ripple'; d.style.left=(e.clientX-r.left)+'px'; d.style.top=(e.clientY-r.top)+'px';
+      b.appendChild(d); setTimeout(function(){ d.remove(); },650);
+    });
+
+    /* باراليكس الفستان (ماوس فقط، ديسكتوب) */
+    var center=document.querySelector('.center');
+    if(center&&hero&&!reduce&&window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches){
+      center.addEventListener('mousemove',function(e){
+        var r=center.getBoundingClientRect();
+        var x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+        hero.style.setProperty('--px',(x*-14).toFixed(1)+'px');
+        hero.style.setProperty('--py',(y*-10).toFixed(1)+'px');
+      });
+      center.addEventListener('mouseleave',function(){
+        hero.style.setProperty('--px','0px'); hero.style.setProperty('--py','0px');
+      });
+    }
+
+    /* ظهور قسم المقاسات عند التمرير */
+    var sec=document.querySelector('.measure');
+    if(sec){
+      sec.classList.add('reveal');
+      sec.querySelectorAll('.field,.send,.note,.back,.diagram').forEach(function(el,i){
+        el.classList.add('reveal-item'); el.style.setProperty('--i',i);
+      });
+      var show=function(){ sec.classList.add('in'); };
+      if('IntersectionObserver' in window){
+        var io=new IntersectionObserver(function(en){
+          en.forEach(function(x){ if(x.isIntersecting){ show(); io.disconnect(); } });
+        },{threshold:.08});
+        io.observe(sec);
+      }else{ show(); }
+      setTimeout(function(){ /* شبكة أمان: لا يبقى القسم مخفياً أبداً */
+        var r=sec.getBoundingClientRect();
+        if(r.top<window.innerHeight) show();
+      },2500);
+      var go=document.getElementById('choose');
+      if(go) go.addEventListener('click',show);
+    }
+  }catch(err){
+    document.documentElement.classList.remove('js-motion');
+    console.warn('pro-motion disabled:',err);
+  }
+})();
+</script>
+
 </body>
 </html>
