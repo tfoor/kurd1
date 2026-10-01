@@ -1130,6 +1130,96 @@
       }
     }
   </style>
+
+<style id="dash-look">
+/* مظهر لوحة التحكم الجديد — تنسيقات فقط، بدون تغيير أي وظيفة */
+:root{--accent:#F43F76;--accent-deep:#D92D62;--accent-soft:#FFE1EA;--bg:#F6F4F9;--ease:cubic-bezier(.2,.7,.2,1)}
+body{background:var(--bg)}
+@keyframes dRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* الشريط الجانبي */
+.sidebar{background:linear-gradient(180deg,#1B1627 0%,#120E1B 100%)}
+.sidebar-brand .mark{background:linear-gradient(135deg,#FF5C8A,#C92A5E);border-radius:16px;box-shadow:0 8px 20px rgba(244,63,118,.35)}
+.sidebar-brand .name{font-weight:900;font-size:19px;letter-spacing:.2px}
+.sidebar-brand .role{letter-spacing:1.5px;font-size:11px}
+.nav-item{border-radius:14px;transition:background .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease)}
+.nav-item:hover{background:rgba(255,255,255,.07);transform:translateX(-3px)}
+.nav-item.active{background:linear-gradient(135deg,#FF5C8A,#C92A5E);color:#fff;box-shadow:0 10px 24px rgba(244,63,118,.38);transform:none}
+.nav-item .count{background:#F43F76;color:#fff;border-radius:999px;min-width:24px;height:24px;padding:0 7px;display:inline-grid;place-items:center;font-size:12px;font-weight:800;margin-inline-start:auto}
+.nav-item.active .count{background:rgba(255,255,255,.28)}
+.logout-btn{border-radius:14px;transition:background .25s,color .25s}
+.logout-btn:hover{background:rgba(244,63,118,.14);color:#FF8DAE}
+
+/* العنوان */
+.page-head h1{font-size:26px;font-weight:900}
+.page-head .sub{color:var(--ink-soft)}
+
+/* بطاقات الإحصائيات */
+.stat-card{border-radius:22px;border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 28px rgba(32,27,43,.06);transition:transform .3s var(--ease),box-shadow .3s var(--ease);animation:dRise .6s var(--ease) backwards}
+.stat-card:nth-child(2){animation-delay:.08s}.stat-card:nth-child(3){animation-delay:.16s}.stat-card:nth-child(4){animation-delay:.24s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(32,27,43,.11)}
+.stat-card .icon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:24px}
+.stat-card .num{font-size:30px;font-weight:900;line-height:1.1}
+.stat-card .label{color:var(--ink-soft);font-weight:600}
+.stat-card.c-pink{background:linear-gradient(135deg,#FFEFF4,#fff)}.stat-card.c-pink .icon{background:#FFD6E3}
+.stat-card.c-purple{background:linear-gradient(135deg,#F3EEFF,#fff)}.stat-card.c-purple .icon{background:#E4DAFF}
+.stat-card.c-green{background:linear-gradient(135deg,#EAFAF2,#fff)}.stat-card.c-green .icon{background:#CFF2E1}
+
+/* اللوحات */
+.panel{border-radius:22px;border:1px solid #F0EAF3;box-shadow:0 10px 28px rgba(32,27,43,.05);animation:dRise .6s var(--ease) backwards}
+.panel-head{border-bottom:1px solid #F3EEF6}
+.panel-head h3{font-weight:800}
+
+/* جداول */
+table th{background:#F8F6FB;color:var(--ink-soft);font-size:12.5px;font-weight:700}
+table tbody tr{transition:background .2s}
+table tbody tr:hover{background:#FFF7FA}
+
+/* حقول وأزرار */
+.field input,.field select,.field textarea{border-radius:12px;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(244,63,118,.14);outline:none}
+.btn{border-radius:12px;transition:transform .2s var(--ease),box-shadow .2s,filter .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(244,63,118,.22)}
+.btn:active{transform:none}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+*{scrollbar-width:thin;scrollbar-color:#E5C3D0 transparent}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<style id="home-merge">
+
+:root{--pink:#F43F76;--pink2:#D92D62;--soft:#6F6A7E;--faint:#A29CB0;--line:#EFEAF3;--green:#1FAE7A;--card:#fff}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stats-row,.page-head{display:none!important}
+.sidebar{overflow:auto}
+.hlogo{display:flex;align-items:center;gap:10px}
+.hlogo svg{width:42px;height:52px}.hlogo b{display:block;font:400 32px 'Great Vibes',cursive;color:#FF5C8A;line-height:1}
+.hlogo small{display:block;font-size:10px;letter-spacing:3px;color:#9A93AE;margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:12px}
+.nav-item.soon{opacity:.42;cursor:not-allowed}.nav-item.soon:hover{background:none;transform:none}
+.hviewapp{margin:16px 0 8px;background:#241E33;border-radius:14px;padding:12px;display:flex;justify-content:center;gap:10px;font-size:13.5px;color:#DAD5E6;text-decoration:none;transition:.25s}
+.hviewapp:hover{background:#2E2742}
+.hme{display:flex;flex-direction:column;gap:12px}
+.hu{display:flex;align-items:center;gap:12px;padding:6px 4px}.hu b{display:block;font-size:14px;color:#fff}.hu small{font-size:12px;color:#8F88A3}
+.hav{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;background:linear-gradient(135deg,#FF8DAE,#8B5CF6);flex:none}
+.htop{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.hbrand{display:flex;align-items:center;gap:8px;color:var(--pink)}.hbrand svg{width:30px;height:38px;stroke-width:1.8}
+.hbrand b{display:block;font:400 26px 'Great Vibes',cursive;color:var(--pink2);line-height:1}.hbrand small{display:block;font-size:12px;color:var(--soft)}
+.hbell{position:relative;width:42px;height:42px;display:grid;place-items:center;border-radius:12px;border:0;background:none;cursor:pointer;color:var(--ink)}
+.hbell:hover{background:#fff}
+.hbell i{position:absolute;top:2px;inset-inline-start:2px;background:var(--pink);color:#fff;font:800 10px Cairo;min-width:17px;height:17px;border-radius:9px;display:grid;place-items:center;font-style:normal}
+.hsearch{flex:1;max-width:560px;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 16px;height:46px;transition:.2s;color:var(--soft)}
+.hsearch:focus-within{border-color:var(--pink);box-shadow:0 0 0 4px rgba(244,63,118,.12)}
+.hsearch input{flex:1;border:0;outline:0;background:none;font:500 13.5px Cairo;color:var(--ink)}
+#homeSection .r2{grid-template-columns:1.25fr 1fr}
+#homeSection .sel select{width:auto}
+#homeSection table{width:100%}
+@media(max-width:1180px){#homeSection .stats{grid-template-columns:repeat(2,1fr)}#homeSection .row,#homeSection .r2{grid-template-columns:1fr}}
+@media(max-width:860px){#homeSection .stat{padding:14px}#homeSection .stat .t strong{font-size:24px}#homeSection .pgrid{grid-template-columns:repeat(2,1fr)}.hbrand b{font-size:22px}}
+#homeSection .card{background:var(--card);border-radius:22px;box-shadow:0 8px 26px rgba(32,27,43,.05);border:1px solid #F3EFF6;animation:rise .6s var(--ease) backwards}#homeSection .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}#homeSection .stat{display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;padding:18px 20px;transition:.3s var(--ease)}#homeSection .stat:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(32,27,43,.1)}#homeSection .stat:nth-child(2){animation-delay:.07s}#homeSection .stat:nth-child(3){animation-delay:.14s}#homeSection .stat:nth-child(4){animation-delay:.21s}#homeSection .stat .ic{width:56px;height:56px;border-radius:17px;display:grid;place-items:center}#homeSection .stat .ic svg{width:28px;height:28px}#homeSection .stat .t{text-align:right}#homeSection .stat .t span{font-size:13.5px;font-weight:600;color:#4A4458}#homeSection .stat .t strong{display:block;font-size:30px;font-weight:900;line-height:1.25}#homeSection .stat .t em{font-style:normal;font-weight:800;font-size:13px;color:var(--green)}#homeSection .stat .t small{display:block;font-size:11.5px;color:var(--faint);margin-top:2px}#homeSection .s-pu{background:linear-gradient(135deg,#F5F1FF,#fff)}#homeSection .s-pu .ic{background:#E7DEFF;color:#7C5CE0}#homeSection .s-bl{background:linear-gradient(135deg,#FFF0F3,#fff)}#homeSection .s-bl .ic{background:#FFD8E2;color:#F43F76}#homeSection .s-pk{background:linear-gradient(135deg,#F4F0FF,#fff)}#homeSection .s-pk .ic{background:#E5DCFF;color:#8B5CF6}#homeSection .s-rd{background:linear-gradient(135deg,#FFEFF3,#fff)}#homeSection .s-rd .ic{background:#FFD6E1;color:#F43F76}#homeSection .row{display:grid;grid-template-columns:1fr 1.7fr;gap:16px;margin-bottom:16px}#homeSection .card .hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px}#homeSection .card h3{font-size:16.5px;font-weight:800}#homeSection .card .hd small{font-size:13px;color:var(--soft);font-weight:600}#homeSection .sel{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:12.5px;color:var(--soft);background:#fff}#homeSection .sel select{border:0;outline:0;background:none;font:600 12.5px Cairo;color:var(--soft);cursor:pointer}#homeSection .chartbox{padding:6px 14px 14px}#homeSection .donut{display:flex;align-items:center;justify-content:space-around;gap:10px;padding:10px 18px 24px;flex-wrap:wrap}#homeSection .dwrap{position:relative;width:190px;height:190px}#homeSection .dwrap svg{width:100%;height:100%;transform:rotate(-90deg)}#homeSection .dwrap circle{transition:stroke-dasharray 1s var(--ease)}#homeSection .dwrap .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}#homeSection .dwrap .mid b{font-size:28px;font-weight:900;line-height:1}#homeSection .dwrap .mid span{font-size:12px;color:var(--soft)}#homeSection .legend{display:flex;flex-direction:column;gap:14px;min-width:150px}#homeSection .legend div{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600}#homeSection .legend i{width:11px;height:11px;border-radius:50%}#homeSection .legend b{margin-inline-start:auto;font-weight:800;padding-inline-start:18px}#homeSection .btn-pk{background:linear-gradient(135deg,#FF5C8A,#E23468);color:#fff;font-weight:700;font-size:12.5px;padding:7px 18px;border-radius:10px;transition:.2s var(--ease)}#homeSection .btn-pk:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(244,63,118,.3)}#homeSection table{width:100%;border-collapse:collapse;font-size:13px}#homeSection .tw{padding:8px 16px 16px;overflow-x:auto}#homeSection th{background:#F8F6FB;color:var(--soft);font-weight:700;padding:11px 10px;text-align:right;font-size:12.5px}#homeSection th:first-child{border-radius:0 12px 12px 0}#homeSection th:last-child{border-radius:12px 0 0 12px}#homeSection td{padding:9px 10px;border-bottom:1px solid #F5F1F8;vertical-align:middle;white-space:nowrap}#homeSection tr:last-child td{border:0}#homeSection tbody tr:hover{background:#FFF8FA}#homeSection td .cu{display:flex;align-items:center;gap:10px;font-weight:600}#homeSection .cu .av{width:34px;height:34px;font-size:12px}#homeSection .pimg{display:inline-flex;gap:3px}#homeSection .pimg i{width:22px;height:34px;border-radius:5px}#homeSection .chip{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;display:inline-block}#homeSection .c1{background:#FFD9E5;color:#D92D62}#homeSection .c2{background:#E9E1FF;color:#7C5CE0}#homeSection .c3{background:#FFE9C7;color:#D98A12}#homeSection .c4{background:#D9F4E7;color:#169364}#homeSection .c5{background:#E8E6ED;color:#7A7589}#homeSection .det{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-size:12.5px;font-weight:600;background:#fff;transition:.2s}#homeSection .det:hover{border-color:var(--pink);color:var(--pink2)}#homeSection .det svg{width:15px;height:15px}#homeSection .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:12px 18px 20px}#homeSection .pcard{font-size:13px;font-weight:700;transition:.25s var(--ease);cursor:pointer}#homeSection .pcard:hover{transform:translateY(-3px)}#homeSection .pcard .ph{aspect-ratio:1/1.05;border-radius:14px;margin-bottom:8px;display:grid;place-items:center;overflow:hidden;position:relative}#homeSection .pcard .ph svg{width:46%;opacity:.55}#homeSection .pcard .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#homeSection .pcard .meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}#homeSection .pcard .meta b{font-size:13px}#homeSection .tag{background:#D9F4E7;color:#169364;font-size:11px;font-weight:700;padding:3px 10px;border-radius:7px}#homeSection .tag.out{background:#FFE0E6;color:#D92D62}#homeSection #login{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:radial-gradient(800px 500px at 15% -10%,#3a2b52,transparent 60%),radial-gradient(700px 500px at 110% 10%,#4a2438,transparent 55%),#1B1626}#homeSection .lcard{background:#fff;border-radius:24px;padding:32px 28px;width:100%;max-width:380px;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:rise .6s var(--ease)}#homeSection .lcard .lm{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,#FF5C8A,#C92A5E);margin-bottom:12px}#homeSection .lcard h2{font-size:22px;font-weight:900}#homeSection .lcard p{color:var(--soft);font-size:13.5px;margin:4px 0 16px}#homeSection .lcard label{display:block;font-size:12.5px;font-weight:700;margin:10px 0 5px}#homeSection .lcard input{width:100%;border:1px solid #E7E1EC;border-radius:12px;padding:11px 14px;font:500 14px Cairo;outline:0;transition:.2s}#homeSection .lcard input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(244,63,118,.14)}#homeSection #lerr{color:#D92D62;font-size:13px;font-weight:700;margin-top:10px;min-height:18px;text-align:center}#homeSection .nav a.soon{opacity:.42;cursor:not-allowed}#homeSection .nav a.soon:hover{background:none;transform:none}
+
+</style>
 </head>
 
 <body>
@@ -1159,35 +1249,26 @@
 
       <!-- الشريط الجانبي (ديسكتوب) -->
       <aside class="sidebar">
-        <div class="sidebar-brand">
-          <div class="mark">🛍️</div>
-          <div>
-            <div class="name">ستايل روج</div>
-            <div class="role">لوحة التحكم</div>
-          </div>
+        <div class="sidebar-brand hlogo">
+          <svg viewBox="0 0 46 56" fill="none" stroke="#FF5C8A" stroke-width="2"><path d="M23 4c-2 0-3 1.5-3 3s1 3 3 3 3-1.5 3-3-1-3-3-3zM20 10l-2 12 5 3 5-3-2-12M18 22c-5 8-10 20-12 30h34c-2-10-7-22-12-30"/><path d="M15 36c5 4 11 4 16 0"/></svg>
+          <div><b>Style Roj</b><small>ADMIN PANEL</small></div>
         </div>
+        <button class="nav-item active" id="mainTabHome" onclick="switchMainTab('home')"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg> الرئيسية</button>
+<button class="nav-item" id="mainTabProducts" onclick="switchMainTab('products')"><svg class="i" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/></svg> المنتجات<span class="count" id="navProductsCount">—</span></button>
+<button class="nav-item" id="mainTabOrders" onclick="switchMainTab('orders')"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/></svg> الطلبات<span class="count" id="navOrdersCount">—</span></button>
+<button class="nav-item" id="mainTabVisitors" onclick="switchMainTab('visitors')"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg> الزوار والإحصائيات<span class="count" id="navVisitsCount">—</span></button>
+<button class="nav-item" id="mainTabLogs" onclick="switchMainTab('logs')"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"/></svg> سجلات العمليات</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg> الأقسام</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2.2.7 3.5 2.6 3.5 5.7"/></svg> العملاء</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg> الرسائل</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> إعدادات التطبيق</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg> إدارة المستخدمين</button>
+<button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5zM12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg> النسخ الاحتياطي</button>
 
-        <div class="nav-label">الأقسام</div>
-        <button class="nav-item active" id="mainTabProducts" onclick="switchMainTab('products')">
-          <span class="ico">🧺</span> المنتجات
-          <span class="count" id="navProductsCount">—</span>
-        </button>
-        <button class="nav-item" id="mainTabOrders" onclick="switchMainTab('orders')">
-          <span class="ico">🧾</span> الطلبات
-          <span class="count" id="navOrdersCount">—</span>
-        </button>
-        <button class="nav-item" id="mainTabVisitors" onclick="switchMainTab('visitors')">
-          <span class="ico">👥</span> الزوار
-          <span class="count" id="navVisitsCount">—</span>
-        </button>
-        <button class="nav-item" id="mainTabLogs" onclick="switchMainTab('logs')">
-          <span class="ico">📋</span> سجلات الأدمن
-        </button>
-
-        <div class="sidebar-footer">
-          <button class="logout-btn" onclick="handleLogout()">
-            <span class="ico">↩️</span> تسجيل الخروج
-          </button>
+        <a class="hviewapp" href="index.html" target="_blank"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> عرض التطبيق</a>
+        <div class="sidebar-footer hme">
+          <div class="hu"><div class="hav" id="hMeAv">AD</div><div><b id="hMeName">المدير</b><small>مدير النظام</small></div></div>
+          <button class="logout-btn" onclick="handleLogout()"><svg class="i" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg> تسجيل الخروج</button>
         </div>
       </aside>
 
@@ -1200,19 +1281,54 @@
           <button class="btn btn-ghost btn-sm" onclick="handleLogout()">خروج</button>
         </div>
         <div class="mobile-nav">
-          <button class="nav-item active" id="mainTabProductsMobile" onclick="switchMainTab('products')">🧺
+          <button class="nav-item" id="mainTabHomeMobile" onclick="switchMainTab('home')">🏠 الرئيسية</button>
+          <button class="nav-item" id="mainTabProductsMobile" onclick="switchMainTab('products')">🧺
             المنتجات</button>
           <button class="nav-item" id="mainTabOrdersMobile" onclick="switchMainTab('orders')">🧾 الطلبات</button>
           <button class="nav-item" id="mainTabVisitorsMobile" onclick="switchMainTab('visitors')">👥 الزوار</button>
           <button class="nav-item" id="mainTabLogsMobile" onclick="switchMainTab('logs')">📋 السجلات</button>
         </div>
 
-        <div class="page-head">
+        <div class="htop" id="homeTop">
+          <div class="hbrand"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c-1 0-1.6.8-1.6 1.6S11 6 12 6s1.6-.8 1.6-1.6S13 3 12 3zM10.5 6 9.5 12l2.5 1.5 2.5-1.5-1-6M9.5 12C7 16 5 21 4 22h16c-1-1-3-6-5.5-10"/></svg><div><b>Style Roj</b><small>لوحة التحكم</small></div></div>
+          <button class="hbell" id="hBell" aria-label="الطلبات الجديدة"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"/></svg><i id="hBellN" style="display:none">0</i></button>
+          <label class="hsearch"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="hQ" placeholder="ابحث عن منتج، طلب، أو عميل... (Enter)"></label>
+        </div>
+<div class="page-head">
           <div>
             <h1>مرحبًا 👋</h1>
             <div class="sub">إدارة المنتجات، الأسعار، والطلبات الواردة من المتجر</div>
           </div>
         </div>
+        <div id="homeSection" style="display:none">
+<section class="stats" id="hStats"></section>
+
+  <section class="row">
+    <div class="card" style="animation-delay:.2s">
+      <div class="hd"><h3 id="hStatusTitle">حالة الطلبات</h3><small id="hStatusSub"></small></div>
+      <div class="donut">
+        <div class="legend" id="hLegend"></div>
+        <div class="dwrap"><svg viewBox="0 0 120 120" id="hDonut"></svg><div class="mid"><b id="hDTotal">0</b><span>طلب</span></div></div>
+      </div>
+    </div>
+    <div class="card" style="animation-delay:.28s">
+      <div class="hd"><h3 id="hLineTitle">الطلبات خلال آخر 30 يوم</h3>
+        <label class="sel"><select id="hRange"><option value="30">آخر 30 يوم</option><option value="7">آخر 7 أيام</option><option value="90">آخر 90 يوم</option></select></label></div>
+      <div class="chartbox"><svg id="hLine" viewBox="0 0 640 250" width="100%" style="display:block"></svg></div>
+    </div>
+  </section>
+
+  <section class="row r2">
+    <div class="card" style="animation-delay:.35s">
+      <div class="hd"><h3>أحدث الطلبات</h3><button class="btn-pk" data-go="orders">عرض الكل</button></div>
+      <div class="tw"><table><thead><tr><th>#</th><th>العميل</th><th>المنتجات</th><th>الحالة</th><th>التاريخ</th><th>الإجراءات</th></tr></thead><tbody id="hOrders"></tbody></table></div>
+    </div>
+    <div class="card" style="animation-delay:.42s">
+      <div class="hd"><h3>أحدث المنتجات</h3><button class="btn-pk" data-go="products">عرض الكل</button></div>
+      <div class="pgrid" id="hProducts"></div>
+    </div>
+  </section>
+</div>
         <div class="panel" id="visitorsSection" style="display:none;">
           <div class="panel-head">
             <h3>👥 الزوار</h3>
@@ -1706,6 +1822,9 @@
         loadVisitors(),
         loadOrdersCount()
       ]);
+
+      const hashTab = location.hash.slice(1);
+      switchMainTab(["home", "products", "orders", "visitors", "logs"].includes(hashTab) ? hashTab : "home");
     }
 
     /* ============ التبويبات الرئيسية: المنتجات / الطلبات / الزوار / السجلات ============ */
@@ -3282,6 +3401,130 @@
 
     </div>
   </div>
+<script id="home-merge-js">
+(function(){
+try{
+const IC={
+ home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',
+ box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/>',
+ grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2.2.7 3.5 2.6 3.5 5.7"/>',
+ chart:'<path d="M5 20V10M12 20V4M19 20v-7"/>',
+ msg:'<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+ file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"/>',
+ cloud:'<path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5zM12 11v6M9.5 14.5 12 17l2.5-2.5"/>',
+ cube:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+ dress:'<path d="M12 3c-1 0-1.6.8-1.6 1.6S11 6 12 6s1.6-.8 1.6-1.6S13 3 12 3zM10.5 6 9.5 12l2.5 1.5 2.5-1.5-1-6M9.5 12C7 16 5 21 4 22h16c-1-1-3-6-5.5-10"/>'
+};
+const svg=(n,x='')=>`<svg class="i" viewBox="0 0 24 24" ${x}>${IC[n]||''}</svg>`;
+const $=id=>document.getElementById(id);
+const initials=n=>(n||'').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const hues=['#FF8DAE,#8B5CF6','#F5A524,#F43F76','#4FBF8B,#3B82F6','#8B5CF6,#F43F76','#F43F76,#F5A524'];
+const AVBG=i=>`linear-gradient(135deg,${hues[i%hues.length]})`;
+const STATUS=['','قيد المعالجة','تم التأكيد','جاري التوصيل','مكتمل','ملغي'];
+const PHBG=['linear-gradient(135deg,#E7C9D4,#B88A9C)','linear-gradient(135deg,#3b3b4a,#14141c)','linear-gradient(135deg,#F2B8C8,#C47590)','linear-gradient(135deg,#7FBF9A,#1E6B4A)','linear-gradient(135deg,#E86A74,#8E1F2E)','linear-gradient(135deg,#6E86D6,#243A8A)'];
+const fmt=n=>Number(n).toLocaleString('en-US');
+
+function renderDashboard(D=DATA){
+
+  /* stats */
+  $('hStats').innerHTML=D.stats.map((s,i)=>`<div class="card stat ${s.cls}"><div class="t"><span>${s.label}</span><strong>${s.value}</strong>${s.change!=null?`<em style="${s.change<0?'color:#E14868':''}">${svg('up',`style="width:13px;height:13px;stroke-width:2.6;vertical-align:-2px;${s.change<0?'transform:rotate(180deg)':''}"`)} ${Math.abs(s.change)}%</em>`:''}<small>مقارنة بالشهر الماضي</small></div><div class="ic">${svg(s.icon)}</div></div>`).join('');
+
+  /* donut */
+  const tot=D.statuses.reduce((a,s)=>a+s.count,0)||1,R=48,C=2*Math.PI*R;let off=0;
+  $('hDonut').innerHTML=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="#F3EFF6" stroke-width="16"/>`+D.statuses.map(s=>{const len=s.count/tot*C,gap=1.6;const el=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${s.color}" stroke-width="16" stroke-dasharray="${Math.max(len-gap,0)} ${C}" stroke-dashoffset="${-off}"/>`;off+=len;return el}).join('');
+  $('hDTotal').textContent=fmt(tot);
+  $('hLegend').innerHTML=D.statuses.map(s=>`<div><i style="background:${s.color}"></i>${s.label}<b>${s.count}</b></div>`).join('');
+
+  drawLine(D);
+
+  /* orders */
+  $('hOrders').innerHTML=D.recentOrders.map((o,i)=>`<tr><td>${o.id}</td><td><div class="cu"><div class="av" style="background:${AVBG(i)}">${initials(o.customer)}</div>${o.customer}</div></td><td><span class="pimg">${[0,1].map(k=>`<i style="background:${o.image?`url(${o.image}) center/cover`:PHBG[(i+k*2)%6]}"></i>`).join('')}</span></td><td><span class="chip c${o.status||5}">${o.statusLabel||STATUS[o.status]||""}</span></td><td>${o.date}<br><small style="color:var(--faint)">${o.time||''}</small></td><td><button class="det" data-order="${o.id}">${svg('eye')}تفاصيل</button></td></tr>`).join('');
+
+  /* products */
+  $('hProducts').innerHTML=D.recentProducts.map((p,i)=>`<div class="pcard" data-i="${i}"><div class="ph" style="background:${PHBG[i%6]}">${p.image?`<img src="${p.image}" alt="${p.name}">`:svg('dress','style="width:46%;height:46%;stroke:#fff;stroke-width:1.2"')}</div>${p.name}<div class="meta"><b>$${p.price}</b><span class="tag ${p.inStock?'':'out'}">${p.inStock?'متوفر':'نفد'}</span></div></div>`).join('');
+}
+
+function drawLine(D){
+  const n=+$('hRange').value,all=D.ordersByDay,v=all.slice(-n);
+  $('hLineTitle').textContent=`الطلبات خلال آخر ${n} يوم`;
+  const W=640,H=250,L=40,Rr=14,T=16,B=34,max=Math.max(20,Math.ceil(Math.max(...v)/5)*5),
+    x=i=>L+(v.length>1?i/(v.length-1):0)*(W-L-Rr),y=val=>T+(1-val/max)*(H-T-B);
+  let g='';for(let k=0;k<=4;k++){const val=max/4*k,yy=y(val);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="#F0ECF4"/><text x="${L-10}" y="${yy+4}" text-anchor="end" font-size="11" fill="#A29CB0">${Math.round(val)}</text>`}
+  const pts=v.map((val,i)=>[x(i),y(val)]);
+  /* منحنى ناعم */
+  let d=`M${pts[0][0]},${pts[0][1]}`;for(let i=1;i<pts.length;i++){const p=pts[i-1],c=pts[i],mx=(p[0]+c[0])/2;d+=` C${mx},${p[1]} ${mx},${c[1]} ${c[0]},${c[1]}`}
+  const area=d+` L${pts[pts.length-1][0]},${H-B} L${pts[0][0]},${H-B} Z`;
+  const start=new Date(D.ordersStartDate||Date.now());const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const step=Math.max(1,Math.round((v.length-1)/6));let xl='';
+  for(let i=0;i<v.length;i+=step){const dt=new Date(start);dt.setDate(start.getDate()+(all.length-v.length)+i);xl+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle" font-size="11" fill="#A29CB0">${dt.getDate()} ${mon[dt.getMonth()]}</text>`}
+  $('hLine').innerHTML=`<defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F43F76" stop-opacity=".28"/><stop offset="1" stop-color="#F43F76" stop-opacity="0"/></linearGradient></defs>${g}<path d="${area}" fill="url(#lg)"/><path id="lp" d="${d}" fill="none" stroke="#F43F76" stroke-width="2.6" stroke-linecap="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="#fff" stroke="#F43F76" stroke-width="1.6"/>`).join('')}${xl}`;
+  const lp=$('hLine').querySelector('#lp');if(lp&&lp.getTotalLength&&!matchMedia('(prefers-reduced-motion:reduce)').matches){const L2=lp.getTotalLength();lp.style.strokeDasharray=L2;lp.style.strokeDashoffset=L2;lp.getBoundingClientRect();lp.style.transition='stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1)';lp.style.strokeDashoffset=0}
+}
+
+
+const NOW=Date.now(),DAY=864e5;
+const pct=(x,y)=>y>0?Math.round((x-y)/y*100):null;
+const within=(rows,f,t)=>rows.filter(r=>{const x=+new Date(r.$createdAt);return x>=f&&x<t}).length;
+const PAL=['#F43F76','#8B5CF6','#F5A524','#4FBF8B','#B8B5C2','#3B82F6'];
+const country=c=>c==='iq'?'العراق':c==='sy'?'سوريا':(c||'غير محدد');
+async function fetchAll(t){let off=0,rows=[];for(;;){const r=await awTablesDB.listRows({databaseId:APPWRITE_DATABASE_ID,tableId:t,queries:[AppwriteQuery.orderDesc("$createdAt"),AppwriteQuery.limit(500),AppwriteQuery.offset(off)]});rows.push(...r.rows);off+=500;if(r.rows.length<500||rows.length>=2500)break}return rows}
+const vcount=async q=>(await awTablesDB.listRows({databaseId:APPWRITE_DATABASE_ID,tableId:APPWRITE_VISITS_TABLE_ID,queries:[...q,AppwriteQuery.limit(1)]})).total;
+const parseItems=o=>{const a=Array.isArray(o.items)?o.items:(typeof o.items==='string'?(()=>{try{return JSON.parse(o.items||'[]')}catch(e){return[]}})():[]);return a.map(i=>{if(typeof i==='string'){try{return JSON.parse(i)}catch(e){return null}}return i}).filter(Boolean)};
+function mapOrder(o){const d=new Date(o.$createdAt),it=parseItems(o)[0]||{},lab=o.status||(o.customer_id?'زبون مسجل':'زائر');
+  return{id:String(o.$id).slice(-5),customer:o.customer_name||'زائر',image:it.img||it.image||'',status:Math.max(1,STATUS.indexOf(lab))||(o.customer_id?2:5),statusLabel:lab,date:d.toLocaleDateString('en-CA'),time:d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}}
+const mapProduct=p=>({name:p.name,price:Number(p.price),inStock:p.in_stock!==false,image:p.image||''});
+let CUR=null,ALL={o:[],p:[]},loadedAt=0,busy=false;
+async function build(){
+  const [P,O]=await Promise.all([fetchAll(APPWRITE_TABLE_ID),fetchAll(APPWRITE_ORDERS_TABLE_ID)]);
+  let vTot=null,vChg=null;
+  try{vTot=await vcount([]);const a=new Date(NOW-30*DAY).toISOString(),b=new Date(NOW-60*DAY).toISOString();
+    vChg=pct(await vcount([AppwriteQuery.greaterThanEqual('$createdAt',a)]),await vcount([AppwriteQuery.greaterThanEqual('$createdAt',b),AppwriteQuery.lessThan('$createdAt',a)]))}catch(e){}
+  const m30=NOW-30*DAY,m60=NOW-60*DAY,customers=new Set(O.filter(o=>o.customer_id).map(o=>o.customer_id)).size;
+  const byDay=Array(90).fill(0);O.forEach(o=>{const k=89-Math.floor((NOW-new Date(o.$createdAt))/DAY);if(k>=0&&k<90)byDay[k]++});
+  const hasSt=O.some(o=>o.status),g={};O.forEach(o=>{const k=hasSt?(o.status||'—'):country(o.country);g[k]=(g[k]||0)+1});
+  $('hStatusTitle').textContent=hasSt?'حالة الطلبات':'الطلبات حسب الدولة';
+  const today=within(O,NOW-DAY,NOW+DAY);const bn=$('hBellN');bn.textContent=today;bn.style.display=today?'':'none';
+  ALL.o=O.map(mapOrder);ALL.p=P.map(mapProduct);
+  return{ordersByDay:byDay,ordersStartDate:new Date(NOW-89*DAY).toISOString(),
+    stats:[{label:'إجمالي المنتجات',value:fmt(P.length),change:pct(within(P,m30,NOW+DAY),within(P,m60,m30)),icon:'cube',cls:'s-pu'},
+      {label:'إجمالي الزيارات',value:vTot==null?'—':fmt(vTot),change:vChg,icon:'eye',cls:'s-bl'},
+      {label:'العملاء المسجّلون',value:fmt(customers),change:null,icon:'users',cls:'s-pk'},
+      {label:'إجمالي الطلبات',value:fmt(O.length),change:pct(within(O,m30,NOW+DAY),within(O,m60,m30)),icon:'cart',cls:'s-rd'}],
+    statuses:Object.entries(g).sort((x,y)=>y[1]-x[1]).map(([label,count],i)=>({label,count,color:PAL[i%PAL.length]})),
+    recentOrders:ALL.o.slice(0,5),recentProducts:ALL.p.slice(0,6)}}
+async function load(force){
+  if(busy||(!force&&CUR&&Date.now()-loadedAt<60000))return;busy=true;
+  try{CUR=await build();loadedAt=Date.now();renderDashboard(CUR)}catch(e){console.error(e);$('hStats').innerHTML='<div class="card" style="padding:16px;color:#B3264D;grid-column:1/-1">تعذّر تحميل بيانات الرئيسية: '+(e.message||e)+'</div>'}
+  busy=false;
+  try{const u=await awAccount.get();const n=u.name||u.email||'المدير';$('hMeName').textContent=n;$('hMeAv').textContent=initials(n)}catch(e){}
+}
+$('hRange').onchange=()=>CUR&&drawLine(CUR);
+$('hQ').addEventListener('keydown',e=>{if(e.key!=='Enter'||!CUR)return;const t=e.target.value.trim().toLowerCase();
+  switchMainTab('home');renderDashboard(t?{...CUR,recentOrders:ALL.o.filter(o=>(o.customer+o.id).toLowerCase().includes(t)).slice(0,5),recentProducts:ALL.p.filter(p=>(p.name||'').toLowerCase().includes(t)).slice(0,6)}:CUR)});
+document.addEventListener('click',e=>{
+  const go=e.target.closest('#homeSection [data-go]');if(go)switchMainTab(go.dataset.go);
+  if(e.target.closest('#homeSection .det'))switchMainTab('orders');
+  if(e.target.closest('#homeSection .pcard'))switchMainTab('products');
+  if(e.target.closest('#hBell'))switchMainTab('orders')});
+/* تغليف switchMainTab: يضيف تبويب "الرئيسية" ويحافظ على كل التبويبات القديمة */
+const _sw=window.switchMainTab;
+window.switchMainTab=function(tab){
+  _sw(tab==='home'?'__home':tab);
+  const h=tab==='home';
+  ['mainTabHome','mainTabHomeMobile'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',h)});
+  $('homeSection').style.display=h?'block':'none';
+  if(h)load();
+};
+window.refreshHome=()=>load(true);
+}catch(err){console.error("home dashboard failed:",err)}
+})();
+</script>
 </body>
 
 </html>
