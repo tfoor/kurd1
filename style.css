@@ -1340,3 +1340,36 @@ footer{background:#1B1622;color:#c9c2d1;padding:60px 6% 26px;}
 
 
 
+.app-download-bar{
+  width:100%;
+  padding:10px 15px;
+  display:flex;
+  justify-content:center;
+  position:relative;
+  z-index:9999;
+}
+
+.app-download-bar a{
+  width:min(700px,100%);
+  text-align:center;
+  text-decoration:none;
+  color:#fff;
+  background:linear-gradient(135deg,#ff5a8c,#d92d62);
+  padding:13px 20px;
+  border-radius:16px;
+  font-family:Cairo,Arial,sans-serif;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:0 8px 22px rgba(217,45,98,.20);
+}
+
+@media(max-width:600px){
+  .app-download-bar{
+    padding:8px 10px;
+  }
+
+  .app-download-bar a{
+    font-size:13px;
+    padding:12px 15px;
+  }
+}
