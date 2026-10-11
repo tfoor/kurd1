@@ -1324,6 +1324,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 <button class="nav-item" id="mainTabOrders" onclick="switchMainTab('orders')"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H6"/></svg> الطلبات<span class="count" id="navOrdersCount">—</span></button>
 <button class="nav-item" id="mainTabVisitors" onclick="switchMainTab('visitors')"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg> الزوار والإحصائيات<span class="count" id="navVisitsCount">—</span></button>
 <button class="nav-item" id="mainTabLogs" onclick="switchMainTab('logs')"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"/></svg> سجلات العمليات</button>
+<button class="nav-item" id="mainTabDesigner" onclick="switchMainTab('designer')"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a2 2 0 0 1 2 2c0 1-1 1.5-2 2v1l9 6a1 1 0 0 1-.6 1.8H3.6A1 1 0 0 1 3 14l9-6"/></svg> تصميم الفستان</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg> الأقسام</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2.2.7 3.5 2.6 3.5 5.7"/></svg> العملاء</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg> الرسائل</button>
@@ -1354,6 +1355,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
           <button class="nav-item" id="mainTabOrdersMobile" onclick="switchMainTab('orders')">🧾 الطلبات</button>
           <button class="nav-item" id="mainTabVisitorsMobile" onclick="switchMainTab('visitors')">👥 الزوار</button>
           <button class="nav-item" id="mainTabLogsMobile" onclick="switchMainTab('logs')">📋 السجلات</button>
+          <button class="nav-item" id="mainTabDesignerMobile" onclick="switchMainTab('designer')">👗 تصميم الفستان</button>
         </div>
 
         <div class="htop" id="homeTop">
@@ -1406,6 +1408,15 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
             <div id="visitorsList">
               <div class="loading-state">جاري تحميل الزوار...</div>
             </div>
+          </div>
+        </div>
+
+        <div class="panel" id="designerSection" style="display:none;">
+          <div class="panel-head"><h3>👗 تصميم الفستان</h3><span class="hint">الموديلات، الألوان، الأقمشة، الخفتان — كل شي بسعره</span></div>
+          <div class="panel-body">
+            <div class="dz-tabs" id="dzTabs"></div>
+            <div id="dzForm"></div>
+            <div id="dzList"></div>
           </div>
         </div>
 
@@ -3591,6 +3602,105 @@ window.switchMainTab=function(tab){
 window.refreshHome=()=>load(true);
 let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(()=>{if(CUR&&$('homeSection').style.display!=='none')drawLine(CUR)},200)});
 }catch(err){console.error("home dashboard failed:",err)}
+})();
+</script>
+<style id="designer-css">
+#designerSection .dz-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+#designerSection .dz-b{border:1px solid #F0EAF3;background:#fff;color:inherit;border-radius:12px;padding:9px 14px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+#designerSection .dz-b.on,#designerSection .dz-b.p{background:#FF5C8A;border-color:#FF5C8A;color:#fff}
+#designerSection .dz-b.d{background:#fff0f0;color:#a33b50;border-color:#f6d5da}
+#designerSection .dz-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;background:#FFFAFC;border:1px solid #F3EAF0;border-radius:16px;padding:14px;margin-bottom:14px}
+#designerSection .dz-form label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+#designerSection .dz-form input{width:100%;padding:9px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit;background:#fff}
+#designerSection .dz-form input[type=color]{height:40px;padding:2px}
+#designerSection .dz-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F7EEF2}
+#designerSection .dz-item .th{width:56px;height:56px;border-radius:12px;object-fit:cover;background:#faecef;border:1px solid #F0EAF3;flex:none}
+#designerSection .dz-item .n{flex:1;font-weight:700}#designerSection .dz-item .pr{color:#e0346a;font-weight:800}
+#designerSection .dz-note{font-size:12.5px;line-height:1.8;background:#fff6dd;color:#8a641a;border-radius:12px;padding:10px 12px;margin-bottom:12px}
+</style>
+<script id="designer-js">
+(function(){
+const TABLE_ID="designer_options";
+const KINDS={model:"الموديلات",color:"ألوان القماش",fabric:"أنواع القماش",kaftan:"الخفتان"};
+let kind="model",all=[],edit=null,pend=null,loaded=false;
+const $=id=>document.getElementById(id);
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=v=>"$"+Number(v||0).toFixed(2);
+
+async function load(){
+  $("dzList").innerHTML='<div class="loading-state">جاري التحميل...</div>';
+  try{
+    all=[];let off=0;
+    while(true){
+      const r=await awTablesDB.listRows({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,queries:[AppwriteQuery.orderAsc("$createdAt"),AppwriteQuery.limit(100),AppwriteQuery.offset(off)]});
+      const b=r.rows||r.documents||[];all.push(...b);if(b.length<100)break;off+=100;
+    }
+    loaded=true;render();
+  }catch(e){
+    $("dzForm").innerHTML="";
+    $("dzList").innerHTML='<div class="dz-note">❌ تعذر تحميل البيانات: '+esc(e.message||e)+'<br>تأكدي إنك أنشأتي جدول <b>'+TABLE_ID+'</b> بـ Appwrite (الأعمدة والصلاحيات بالتعليمات).</div>';
+  }
+}
+function render(){
+  $("dzTabs").innerHTML=Object.entries(KINDS).map(([k,v])=>`<button class="dz-b ${k===kind?"on":""}" data-k="${k}">${v}</button>`).join("");
+  const e=edit?all.find(r=>r.$id===edit):null,isC=kind==="color";
+  $("dzForm").innerHTML=`<div class="dz-form">
+   <div><label>الاسم *</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
+   <div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>
+   ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
+   <div><label>${kind==="model"?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
+   <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
+  const list=all.filter(r=>r.kind===kind);
+  $("dzList").innerHTML=list.map(x=>`<div class="dz-item">${x.img?`<img class="th" src="${esc(x.img)}" alt="">`:`<div class="th" style="background:${esc(x.hex||"#faecef")}"></div>`}
+   <div class="n">${esc(x.name)}</div><div class="pr">${money(x.price)}</div>
+   <button class="dz-b" data-e="${esc(x.$id)}">تعديل</button><button class="dz-b d" data-d="${esc(x.$id)}">حذف</button></div>`).join("")||'<div class="empty-state">لا يوجد عناصر بعد</div>';
+}
+async function save(){
+  const name=$("dzName").value.trim();if(!name)return showToast("اكتبي الاسم");
+  const e=edit?all.find(r=>r.$id===edit):null;
+  const id=e?e.$id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  let img=e&&e.img?e.img:"";
+  const btn=$("dzSave");btn.disabled=true;
+  try{
+    const f=$("dzFile").files[0];
+    if(f){
+      const webp=await compressImageToWebP(f),fid="dsg-"+id;
+      try{await awStorage.deleteFile({bucketId:APPWRITE_BUCKET_ID,fileId:fid})}catch(_){}
+      await awStorage.createFile({bucketId:APPWRITE_BUCKET_ID,fileId:fid,file:webp,permissions:[AppwritePermission.read(AppwriteRole.any())]});
+      img=appwriteFileViewUrl(fid)+"&v="+Date.now();
+    }
+    if(kind==="model"&&!img){showToast("الموديل لازم يكون إله صورة");btn.disabled=false;return}
+    const data={kind,name,price:parseFloat($("dzPrice").value)||0,hex:kind==="color"?$("dzHex").value:"",img};
+    if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
+    else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
+    logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);
+    showToast("✅ تم الحفظ");edit=null;await load();
+  }catch(err){console.error(err);showToast("❌ فشل الحفظ: "+(err.message||err));btn.disabled=false}
+}
+async function del(id){
+  const x=all.find(r=>r.$id===id);if(!x||!confirm("حذف: "+x.name+"؟"))return;
+  try{
+    await awTablesDB.deleteRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id});
+    try{await awStorage.deleteFile({bucketId:APPWRITE_BUCKET_ID,fileId:"dsg-"+id})}catch(_){}
+    logAdminAction("حذف","designer_"+x.kind,id,x.name);showToast("🗑️ تم الحذف");await load();
+  }catch(err){showToast("❌ فشل الحذف: "+(err.message||err))}
+}
+$("designerSection").addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.k){kind=t.dataset.k;edit=null;render()}
+  else if(t.dataset.e){edit=t.dataset.e;render();$("designerSection").scrollIntoView({behavior:"smooth"})}
+  else if(t.dataset.d)del(t.dataset.d);
+  else if(t.id==="dzSave")save();
+  else if(t.id==="dzCancel"){edit=null;render()}
+});
+const _prev=window.switchMainTab;
+window.switchMainTab=function(tab){
+  _prev(tab);
+  const on=tab==="designer";
+  ["mainTabDesigner","mainTabDesignerMobile"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("active",on)});
+  $("designerSection").style.display=on?"block":"none";
+  if(on)load();
+};
 })();
 </script>
 <div id="sbBackdrop"></div>
