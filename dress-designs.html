@@ -56,7 +56,14 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
  .bar{display:flex;position:fixed;inset:auto 0 0;z-index:30;background:#fffffff5;border-top:1px solid var(--line);padding:10px 16px;align-items:center;justify-content:space-between;backdrop-filter:blur(10px)}
  .bar b{font-size:20px;color:var(--deep)}.bar button{border:0;border-radius:14px;padding:12px 20px;background:var(--pink);color:#fff;font-weight:800}
 }
-</style></head><body>
+</style><style>html.in-app,html.in-app body{touch-action:pan-x pan-y}</style>
+<script>
+try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.search)||/StyleRojApp|; wv\)/i.test(navigator.userAgent)){
+ sessionStorage.setItem("in_app","1");document.documentElement.classList.add("in-app");
+ var vp=document.querySelector('meta[name="viewport"]');if(vp)vp.setAttribute("content","width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no");
+ document.addEventListener("gesturestart",function(e){e.preventDefault()});}}catch(e){}
+</script>
+</head><body>
 <header><img src="logo/style-rouge.webp" alt="ستايل روج"><a class="back" href="index.html">← رجوع</a></header>
 <div class="intro"><h1>صمّمي فستانك بنفسك</h1><p class="sub">اختاري التفاصيل خطوة بخطوة، والسعر بيتحدّث معك</p></div>
 <div class="wrap">
@@ -81,7 +88,11 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
 <div class="bar"><div>الإجمالي <b id="total2"></b></div><button id="goM">أكملي المقاسات ↓</button></div>
 <div id="lb"><button onclick="closeLb()">✕</button><img id="lbImg" alt=""></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
-<script src="store.js"></script>
+<script>
+/* إعدادات الموقع (صارت داخل الصفحة، فما عادت تحتاج store.js) */
+const SR={ENDPOINT:"https://api.styleroj.com/v1",PROJECT:"6a9321f3002b6c1004a9",DATABASE:"6a93224c002e35f858b8",WHATSAPP:"9647511429970",CUR:"$",
+ money:v=>"$"+Number(v||0).toFixed(2)};
+</script>
 <script>
 /* ID جدول designer_options الحقيقي بـ Appwrite (نفس اللي بالأدمن) */
 const TABLE_ID="6acba36b001e0aba51e4";
