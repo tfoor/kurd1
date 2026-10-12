@@ -1412,7 +1412,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
         </div>
 
         <div class="panel" id="designerSection" style="display:none;">
-          <div class="panel-head"><h3>👗 تصميم الفستان</h3><span class="hint">الموديلات، الألوان، الأقمشة، الخفتان — كل شي بسعره</span></div>
+          <div class="panel-head"><h3>👗 تصميم الفستان</h3><span class="hint">الفساتين، الخفاتين، ألوان وأنواع البطان — كل شي بسعره</span></div>
           <div class="panel-body">
             <div class="dz-tabs" id="dzTabs"></div>
             <div id="dzForm"></div>
@@ -3620,9 +3620,11 @@ let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout((
 </style>
 <script id="designer-js">
 (function(){
-const TABLE_ID="designer_options";
-const KINDS={model:"الموديلات",color:"ألوان القماش",fabric:"أنواع القماش",kaftan:"الخفتان"};
-let kind="model",all=[],edit=null,pend=null,loaded=false;
+const TABLE_ID="6acba36b001e0aba51e4";
+/* kind: model=فستان، kaftan=خفتان، color=لون البطان، fabric=نوع البطان */
+const KINDS={model:"الفساتين",kaftan:"الخفاتين",color:"ألوان البطان",fabric:"أنواع البطان"};
+const NAMEL={model:"اسم الفستان *",kaftan:"اسم الخفتان *",color:"اسم اللون *",fabric:"نوع البطان *"};
+let kind="model",all=[],edit=null;
 const $=id=>document.getElementById(id);
 const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=v=>"$"+Number(v||0).toFixed(2);
@@ -3635,29 +3637,30 @@ async function load(){
       const r=await awTablesDB.listRows({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,queries:[AppwriteQuery.orderAsc("$createdAt"),AppwriteQuery.limit(100),AppwriteQuery.offset(off)]});
       const b=r.rows||r.documents||[];all.push(...b);if(b.length<100)break;off+=100;
     }
-    loaded=true;render();
+    render();
   }catch(e){
     $("dzForm").innerHTML="";
-    $("dzList").innerHTML='<div class="dz-note">❌ تعذر تحميل البيانات: '+esc(e.message||e)+'<br>تأكدي إنك أنشأتي جدول <b>'+TABLE_ID+'</b> بـ Appwrite (الأعمدة والصلاحيات بالتعليمات).</div>';
+    $("dzList").innerHTML='<div class="dz-note">❌ تعذر تحميل البيانات: '+esc(e.message||e)+'</div>';
   }
 }
 function render(){
   $("dzTabs").innerHTML=Object.entries(KINDS).map(([k,v])=>`<button class="dz-b ${k===kind?"on":""}" data-k="${k}">${v}</button>`).join("");
-  const e=edit?all.find(r=>r.$id===edit):null,isC=kind==="color";
+  const e=edit?all.find(r=>r.$id===edit):null,isC=kind==="color",hasF=kind==="model"||kind==="kaftan";
   $("dzForm").innerHTML=`<div class="dz-form">
-   <div><label>الاسم *</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
-   <div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>
+   <div><label>${NAMEL[kind]}</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
+   ${hasF?`<div><label>نوع القماش (اكتبيه)</label><input id="dzFabric" placeholder="مثال: ساتان مطرز" value="${esc(e?e.fabric:"")}"></div>`:""}
+   ${isC?"":`<div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>`}
    ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
-   <div><label>${kind==="model"?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
+   <div><label>${hasF?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
    <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
   const list=all.filter(r=>r.kind===kind);
   $("dzList").innerHTML=list.map(x=>`<div class="dz-item">${x.img?`<img class="th" src="${esc(x.img)}" alt="">`:`<div class="th" style="background:${esc(x.hex||"#faecef")}"></div>`}
-   <div class="n">${esc(x.name)}</div><div class="pr">${money(x.price)}</div>
+   <div class="n">${esc(x.name)}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
    <button class="dz-b" data-e="${esc(x.$id)}">تعديل</button><button class="dz-b d" data-d="${esc(x.$id)}">حذف</button></div>`).join("")||'<div class="empty-state">لا يوجد عناصر بعد</div>';
 }
 async function save(){
   const name=$("dzName").value.trim();if(!name)return showToast("اكتبي الاسم");
-  const e=edit?all.find(r=>r.$id===edit):null;
+  const e=edit?all.find(r=>r.$id===edit):null,isC=kind==="color",hasF=kind==="model"||kind==="kaftan";
   const id=e?e.$id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   let img=e&&e.img?e.img:"";
   const btn=$("dzSave");btn.disabled=true;
@@ -3669,8 +3672,8 @@ async function save(){
       await awStorage.createFile({bucketId:APPWRITE_BUCKET_ID,fileId:fid,file:webp,permissions:[AppwritePermission.read(AppwriteRole.any())]});
       img=appwriteFileViewUrl(fid)+"&v="+Date.now();
     }
-    if(kind==="model"&&!img){showToast("الموديل لازم يكون إله صورة");btn.disabled=false;return}
-    const data={kind,name,price:parseFloat($("dzPrice").value)||0,hex:kind==="color"?$("dzHex").value:"",img};
+    if(hasF&&!img){showToast("لازم تضيفي صورة");btn.disabled=false;return}
+    const data={kind,name,price:isC?0:(parseFloat($("dzPrice").value)||0),hex:isC?$("dzHex").value:"",img,fabric:hasF?$("dzFabric").value.trim():""};
     if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);

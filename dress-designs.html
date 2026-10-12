@@ -3,83 +3,140 @@
 <meta name="theme-color" content="#f43f76"><title>تفصيل فستان | ستايل روج</title>
 <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#f43f76;--ink:#4a1728;--muted:#8a727d;--line:#f0d8e1}*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Cairo,sans-serif;background:linear-gradient(#fff,#fff7fa);color:var(--ink);padding-top:70px}
-header{position:fixed;inset:0 0 auto;height:64px;background:#fffffff2;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:9;backdrop-filter:blur(10px)}
-header img{height:42px}.back{background:linear-gradient(145deg,#ff5a8c,#d92d62);color:#fff;padding:9px 22px;border-radius:24px;font-weight:800;text-decoration:none}
-h1{font:400 40px Lalezar;text-align:center;margin:14px 0 4px}.sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:18px}
-.grid{direction:ltr;max-width:1200px;margin:auto;padding:0 16px 50px;display:grid;grid-template-columns:230px 1fr 270px;gap:18px}
-.grid>*{direction:rtl}.span2{grid-column:span 2}
-.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 12px 30px rgba(72,28,46,.06)}
-.ttl{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:14px}
-.ttl i{font-style:normal;width:32px;height:32px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center}
-.opt{position:relative;border:2px solid transparent;background:#fff;border-radius:16px;cursor:pointer;text-align:center;font:inherit;color:inherit;padding:6px}
-.opt.on{border-color:var(--pink);background:#fff6f8}.opt.on::after{content:"✓";position:absolute;top:-6px;left:-6px;background:var(--pink);color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;display:grid;place-items:center}
-.pr{color:var(--pink);font-weight:800;font-size:12px}.nm{font-size:12px;font-weight:700}
-.models{display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto}
-.models .opt{display:flex;align-items:center;gap:10px;text-align:right;background:#faecef}
-.models img{width:70px;height:80px;object-fit:cover;border-radius:12px}
-.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#ffe3ec,#fff 70%);position:relative;min-height:520px}
-.stage img{max-height:430px;max-width:100%;object-fit:contain}
-.arr{position:absolute;top:45%;width:44px;height:44px;border-radius:50%;border:0;background:var(--pink);color:#fff;font-size:20px;cursor:pointer}
-.arr.l{left:12px}.arr.r{right:12px}
-.tag{margin-top:10px;background:#fff;border-radius:24px;padding:10px 26px;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.07);text-align:center}
-.dots{display:flex;gap:6px;margin-top:10px}.dots b{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--pink)}.dots b.on{background:var(--pink)}
-.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.dot{display:block;width:44px;height:44px;border-radius:50%;margin:0 auto 4px;border:3px solid #fff;box-shadow:0 0 0 1px #0002;object-fit:cover}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
-.tiles .im{display:block;width:100%;height:90px;border-radius:12px;object-fit:cover;background:#faecef;margin-bottom:4px}
-.none{display:grid;place-items:center;height:90px;font-size:34px;color:var(--pink)}
-.meas{display:grid;grid-template-columns:1fr 1fr;gap:10px}.meas svg{width:100%;max-width:260px;margin:auto}
-.f{display:flex;align-items:center;gap:8px;margin-bottom:9px}.f label{flex:1;font-weight:700;font-size:13px}.f input{width:110px;padding:9px;border:1px solid var(--line);border-radius:12px;font:inherit}
-.sum img{width:100%;max-height:200px;object-fit:contain;background:#faecef;border-radius:14px}
-.row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line)}.row b{color:var(--pink)}
-.total{display:flex;justify-content:space-between;font-size:20px;font-weight:800;margin:12px 0}.total b{color:var(--pink);font-size:26px}
-.send{width:100%;border:0;border-radius:18px;padding:15px;background:linear-gradient(145deg,#ff5a8c,#d92d62);color:#fff;font:800 16px Cairo;cursor:pointer}.send:disabled{opacity:.5;cursor:not-allowed}
-@media(max-width:860px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.grid>.models-card{order:2}.stage{order:1}.meas{grid-template-columns:1fr}.models{flex-direction:row;max-height:none}.models .opt{min-width:200px}}
+:root{--pink:#f43f76;--deep:#c9245a;--ink:#3f1424;--muted:#8a727d;--line:#f1dce4;--soft:#fff5f8}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:Cairo,sans-serif;background:#fffafb;color:var(--ink);padding-top:64px}
+button{font:inherit;color:inherit;cursor:pointer}
+header{position:fixed;inset:0 0 auto;height:60px;background:#fffffff0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:20;backdrop-filter:blur(10px)}
+header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:none;font-size:14px}
+.intro{text-align:center;padding:22px 16px 6px}.intro h1{font:400 34px Lalezar;line-height:1.3}.intro p{color:var(--muted);font-size:14px;margin-top:4px}
+.wrap{max-width:1120px;margin:auto;padding:14px 16px 110px;display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start}
+.steps{display:flex;flex-direction:column;gap:18px;min-width:0}
+.step{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px}
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:14px}.sh i{font-style:normal;flex:none;width:30px;height:30px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.sh h2{font-size:17px;font-weight:800}.sh small{color:var(--muted);font-size:12px;margin-inline-start:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.ow{position:relative}
+.co{width:100%;background:#fff;border:2px solid var(--line);border-radius:18px;padding:8px;text-align:center;display:flex;flex-direction:column;gap:3px;transition:.15s}
+.co:hover{border-color:#f7b3c8}.co.on{border-color:var(--pink);background:var(--soft);box-shadow:0 8px 20px rgba(244,63,118,.15)}
+.co.on::after{content:"✓";position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;background:var(--pink);color:#fff;font-size:13px;display:grid;place-items:center}
+.co .im{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:12px;background:#faecef;display:block}
+.co b{font-size:14px}.co small{font-size:11.5px;color:var(--muted);line-height:1.4}.pr{color:var(--deep);font-weight:800;font-size:13px}
+.none{aspect-ratio:3/4;border-radius:12px;background:#faecef;display:grid;place-items:center;font-size:34px}
+.zb{position:absolute;top:14px;left:14px;border:0;background:#fffffff0;border-radius:20px;padding:4px 10px;font-size:11.5px;font-weight:700;box-shadow:0 3px 10px #0002}
+.sw{display:flex;flex-wrap:wrap;gap:12px}.sw button{background:none;border:0;width:70px;text-align:center}
+.dot{display:block;width:46px;height:46px;border-radius:50%;margin:0 auto 4px;border:3px solid #fff;box-shadow:0 0 0 1.5px #0003;object-fit:cover}
+.sw button.on .dot{box-shadow:0 0 0 3px var(--pink)}.sw span{font-size:12px;font-weight:700}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ty{display:flex;align-items:center;gap:10px;border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px;text-align:right}
+.ty.on{border-color:var(--pink);background:var(--soft)}.ty .im{width:42px;height:42px;border-radius:10px;object-fit:cover}.ty div{flex:1;font-weight:700;font-size:14px}
+.meas{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:center}.meas svg{width:100%}
+.mf{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f label{display:block;font-size:12.5px;font-weight:700;margin-bottom:3px}
+.f input{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}.f input:focus{outline:0;border-color:var(--pink)}.f input.err{border-color:#e11;background:#fff0f0}
+.side{position:sticky;top:76px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 16px 40px rgba(72,28,46,.08)}
+.pv{position:relative;background:radial-gradient(circle at 50% 35%,#ffe1ea,#fff 72%);border-radius:18px;height:380px;display:grid;place-items:center}
+.pv>img{max-height:360px;max-width:92%;object-fit:contain}
+.arr{position:absolute;top:44%;width:36px;height:36px;border-radius:50%;border:0;background:var(--pink);color:#fff;font-size:16px}.arr.l{left:8px}.arr.r{right:8px}
+.pz{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);border:0;background:#fff;color:var(--deep);font-weight:800;font-size:12.5px;border-radius:20px;padding:7px 16px;box-shadow:0 4px 14px #0002;white-space:nowrap}
+.inset{position:absolute;top:10px;right:10px;width:70px;border-radius:12px;border:2px solid #fff;box-shadow:0 4px 12px #0003;cursor:zoom-in}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:8px 0;border-bottom:1px dashed var(--line)}.row b{color:var(--deep);white-space:nowrap}.row em{display:block;font-style:normal;font-size:11.5px;color:var(--muted)}
+.total{display:flex;justify-content:space-between;align-items:center;margin:12px 0 4px;font-weight:800}.total b{font-size:26px;color:var(--deep)}
+.send{width:100%;border:0;border-radius:16px;padding:15px;background:linear-gradient(145deg,#ff5a8c,#d92d62);color:#fff;font-weight:800;font-size:16px;box-shadow:0 10px 22px rgba(217,45,98,.3)}
+.fsum{display:none;margin-bottom:14px;background:var(--soft);border-radius:16px;padding:6px 14px}
+.bar{display:none}
+#lb{position:fixed;inset:0;background:#000d;display:none;z-index:99;overflow:auto;padding:56px 10px 20px;text-align:center}#lb.show{display:block}
+#lb img{max-width:92vw;max-height:86vh;cursor:zoom-in;border-radius:12px;background:#fff}#lb img.z{max-width:none;max-height:none;width:190vw;cursor:zoom-out}
+#lb button{position:fixed;top:12px;left:12px;border:0;border-radius:50%;width:40px;height:40px;font-size:18px;background:#fff}
+#toast{position:fixed;bottom:90px;left:50%;transform:translate(-50%,20px);background:#3f1424;color:#fff;padding:10px 20px;border-radius:24px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:100}#toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{color:var(--muted);font-size:13px;padding:8px}
+@media(max-width:900px){
+ .wrap{grid-template-columns:1fr;padding-bottom:100px}.side{position:static;order:-1;padding:12px}.side .sumside{display:none}
+ .pv{height:300px}.pv>img{max-height:280px}.fsum{display:block}.meas{grid-template-columns:1fr}.meas svg{max-width:170px;margin:auto}
+ .cards{grid-template-columns:repeat(2,1fr)}
+ .bar{display:flex;position:fixed;inset:auto 0 0;z-index:30;background:#fffffff5;border-top:1px solid var(--line);padding:10px 16px;align-items:center;justify-content:space-between;backdrop-filter:blur(10px)}
+ .bar b{font-size:20px;color:var(--deep)}.bar button{border:0;border-radius:14px;padding:12px 20px;background:var(--pink);color:#fff;font-weight:800}
+}
 </style></head><body>
-<header><img src="logo/style-rouge.webp" alt="ستايل روج"><a class="back" href="index.html">رجوع</a></header>
-<h1>صمّمي فستانك بنفسك</h1><p class="sub">اختاري كل التفاصيل التي تناسب ذوقك .. وسيتم تفصيل فستانك حسب اختياراتك</p>
-<div class="grid">
- <section class="card models-card"><div class="ttl"><i>1</i>اختاري الموديل</div><div class="models" id="models"></div></section>
- <section class="card stage" id="stage"><button class="arr l" id="prev">←</button><img id="hero" alt=""><button class="arr r" id="next">→</button><div class="tag" id="tag"></div><div class="dots" id="dots"></div></section>
- <section class="card"><div class="ttl"><i>2</i>اختاري لون القماش</div><div class="colors" id="colors"></div></section>
- <section class="card span2" style="grid-column:1/2;grid-column:span 1"><div class="ttl"><i>3</i>اختاري نوع البطان</div><div class="tiles" id="fabrics"></div></section>
- <section class="card" style="grid-column:2/4"><div class="ttl"><i>4</i>اختاري الخفتان (اختياري)</div><div class="tiles" id="kaftans"></div></section>
- <section class="card" style="grid-column:1/3"><div class="ttl"><i>5</i>أدخلي المقاسات</div><div class="meas">
-  <svg viewBox="0 0 200 330" fill="none" stroke="#e8708f" stroke-width="2"><path d="M70 20 Q100 45 130 20 L140 60 L118 130 L190 310 H10 L82 130 L60 60Z" fill="#ffd9e4"/><g stroke-dasharray="5 4" stroke="#d92d62"><path d="M62 52H138"/><path d="M80 90H120"/><path d="M82 130H118"/><path d="M45 245H155"/><path d="M18 20V310"/></g><g fill="#6c233d" stroke="none" font-size="11" font-family="Cairo"><text x="76" y="44">الكتف</text><text x="86" y="86">الصدر</text><text x="86" y="126">الخصر</text><text x="82" y="241">الورك</text><text x="22" y="170">الطول</text></g></svg>
-  <div id="mf"></div></div></section>
- <section class="card sum" style="grid-column:3/4"><div class="ttl"><i>6</i>ملخص الطلب</div><img id="sImg" alt=""><div id="rows"></div>
-  <div class="total"><span>الإجمالي</span><b id="total"></b></div><button class="send" id="send" disabled>أكملي المقاسات لإرسال الطلب</button></section>
+<header><img src="logo/style-rouge.webp" alt="ستايل روج"><a class="back" href="index.html">← رجوع</a></header>
+<div class="intro"><h1>صمّمي فستانك بنفسك</h1><p class="sub">اختاري التفاصيل خطوة بخطوة، والسعر بيتحدّث معك</p></div>
+<div class="wrap">
+ <div class="steps">
+  <section class="step"><div class="sh"><i>1</i><h2>اختاري الفستان</h2></div><div class="cards" id="models"></div></section>
+  <section class="step"><div class="sh"><i>2</i><h2>الخفتان</h2><small>اختياري</small></div><div class="cards" id="kaftans"></div></section>
+  <section class="step"><div class="sh"><i>3</i><h2>لون البطان</h2><small id="colName"></small></div><div class="sw" id="colors"></div></section>
+  <section class="step"><div class="sh"><i>4</i><h2>نوع البطان</h2></div><div class="types" id="linings"></div></section>
+  <section class="step" id="measure"><div class="sh"><i>5</i><h2>المقاسات</h2><small>بالسنتيمتر</small></div>
+   <div class="fsum" id="fsum"></div>
+   <div class="meas">
+    <svg viewBox="0 0 200 330" fill="none" stroke="#e8708f" stroke-width="2"><path d="M70 20 Q100 45 130 20 L140 60 L118 130 L190 310 H10 L82 130 L60 60Z" fill="#ffd9e4"/><g stroke-dasharray="5 4" stroke="#d92d62"><path d="M62 52H138"/><path d="M80 90H120"/><path d="M82 130H118"/><path d="M45 245H155"/><path d="M18 20V310"/></g><g fill="#6c233d" stroke="none" font-size="11" font-family="Cairo"><text x="76" y="44">الكتف</text><text x="86" y="86">الصدر</text><text x="86" y="126">الخصر</text><text x="82" y="241">الورك</text><text x="22" y="170">الطول</text></g></svg>
+    <div class="mf" id="mf"></div></div>
+   <button class="send" id="sendM" style="margin-top:16px">إرسال الطلب عبر واتساب 📲</button></section>
+ </div>
+ <aside class="side">
+  <div class="pv"><button class="arr l" id="prev">←</button><img id="hero" alt=""><img class="inset" id="inset" alt="" style="display:none"><button class="arr r" id="next">→</button><button class="pz" id="zoomDress" style="display:none">🔍 تكبير القماش</button></div>
+  <div class="sumside"><div id="rows"></div><div class="total"><span>الإجمالي</span><b id="total"></b></div><button class="send" id="send">أكملي المقاسات ↓</button></div>
+ </aside>
 </div>
+<div class="bar"><div>الإجمالي <b id="total2"></b></div><button id="goM">أكملي المقاسات ↓</button></div>
+<div id="lb"><button onclick="closeLb()">✕</button><img id="lbImg" alt=""></div><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
 <script src="store.js"></script>
 <script>
-const D=SR.load(),M=[["a","الصدر"],["b","الطول"],["c","طول الأكمام"],["d","الكتف"],["e","عرض الكم"],["f","طرف الكم"],["g","الخصر"],["h","الورك"]];
-const S={m:0,color:D.colors[0]&&D.colors[0].id,fabric:D.fabrics[0]&&D.fabrics[0].id,kaftan:null};
-const $=id=>document.getElementById(id),by=(a,id)=>D[a].find(x=>x.id===id),$$=SR.money;
-$('mf').innerHTML=M.map(([k,n])=>`<div class="f"><label>${n} (${k})</label><input id="m-${k}" type="number" min="1" placeholder="سم"></div>`).join('');
-function pick(k,id){S[k]=id;draw()}
-function draw(){
- const mo=D.models[S.m]||{},co=by('colors',S.color),fa=by('fabrics',S.fabric),ka=by('kaftans',S.kaftan);
- $('models').innerHTML=D.models.map((x,i)=>`<button class="opt ${i==S.m?'on':''}" onclick="S.m=${i};draw()"><img src="${x.img}" alt=""><span><div class="nm">${x.name}</div><div class="pr">${$$(x.price)}</div></span></button>`).join('');
- $('hero').src=mo.img||'';$('tag').innerHTML=`${mo.name||''}<div class="pr" style="font-size:15px">${$$(mo.price)}</div>`;
- $('dots').innerHTML=D.models.map((_,i)=>`<b class="${i==S.m?'on':''}"></b>`).join('');
- $('colors').innerHTML=D.colors.map(x=>`<button class="opt ${x.id==S.color?'on':''}" onclick="pick('color','${x.id}')">${x.img?`<img class="dot" src="${x.img}">`:`<span class="dot" style="background:${x.hex}"></span>`}<div class="nm">${x.name}</div><div class="pr">${$$(x.price)}</div></button>`).join('');
- $('fabrics').innerHTML=D.fabrics.map(x=>`<button class="opt ${x.id==S.fabric?'on':''}" onclick="pick('fabric','${x.id}')"><img class="im" src="${x.img}" alt=""><div class="nm">${x.name}</div><div class="pr">${$$(x.price)}</div></button>`).join('');
- $('kaftans').innerHTML=`<button class="opt ${!S.kaftan?'on':''}" onclick="pick('kaftan',null)"><div class="none">⛔</div><div class="nm">بدون خفتان</div><div class="pr">${$$(0)}</div></button>`+D.kaftans.map(x=>`<button class="opt ${x.id==S.kaftan?'on':''}" onclick="pick('kaftan','${x.id}')"><img class="im" src="${x.img}" alt=""><div class="nm">${x.name}</div><div class="pr">${$$(x.price)}</div></button>`).join('');
- $('sImg').src=mo.img||'';
- const parts=[["الموديل",mo.name,mo.price],["لون القماش",co&&co.name,co&&co.price],["نوع القماش",fa&&fa.name,fa&&fa.price],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price:0]];
- $('rows').innerHTML=parts.map(p=>`<div class="row"><span>${p[0]}: ${p[1]||'-'}</span><b>${$$(p[2])}</b></div>`).join('');
- S.total=parts.reduce((s,p)=>s+(+p[2]||0),0);S.parts=parts;$('total').textContent=$$(S.total);
+let D;const M=[["a","الصدر"],["b","الطول"],["c","طول الأكمام"],["d","الكتف"],["e","عرض الكم"],["f","طرف الكم"],["g","الخصر"],["h","الورك"]];
+const S={m:0,color:null,lining:null,kaftan:null,parts:[],total:0};
+const $=id=>document.getElementById(id),$$=SR.money;
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const by=(a,id)=>D[a].find(x=>x.id===id);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
+async function loadAll(){
+ const c=new Appwrite.Client().setEndpoint(SR.ENDPOINT).setProject(SR.PROJECT),db=new Appwrite.TablesDB(c),rows=[];let off=0;
+ for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:SR.TABLE,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
+ const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||''}));
+ return{models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
 }
-const step=d=>{S.m=(S.m+d+D.models.length)%D.models.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
-const ready=()=>M.every(([k])=>$('m-'+k).value.trim());
-document.addEventListener('input',()=>{const r=ready();$('send').disabled=!r;$('send').textContent=r?'إرسال الفاتورة والطلب عبر واتساب 📲':'أكملي المقاسات لإرسال الطلب'});
-$('send').onclick=()=>{
+function openLb(src){if(!src)return;$('lbImg').className='';$('lbImg').src=src;$('lb').classList.add('show')}
+function closeLb(){$('lb').classList.remove('show')}
+$('lbImg').onclick=e=>{e.stopPropagation();e.target.classList.toggle('z')};$('lb').onclick=e=>{if(e.target.id==='lb')closeLb()};
+document.addEventListener('keydown',e=>e.key==='Escape'&&closeLb());
+$('mf').innerHTML=M.map(([k,n])=>`<div class="f"><label>${n} (${k})</label><input id="m-${k}" type="number" min="1" inputmode="decimal" placeholder="سم"></div>`).join('');
+const im=x=>x.img?`<img class="im" src="${esc(x.img)}" alt="" loading="lazy">`:`<div class="im"></div>`;
+const info=x=>`<b>${esc(x.name)}</b>${x.fabric?`<small>${esc(x.fabric)}</small>`:''}<span class="pr">${$$(x.price)}</span>`;
+function draw(){
+ const mo=D.models[S.m]||{},co=by('colors',S.color),li=by('linings',S.lining),ka=by('kaftans',S.kaftan);
+ $('models').innerHTML=D.models.map((x,i)=>`<div class="ow"><button class="co ${i==S.m?'on':''}" data-m="${i}">${im(x)}${info(x)}</button></div>`).join('')||'<p class="empty">لا توجد فساتين بعد</p>';
+ $('kaftans').innerHTML=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-k="">${'<div class="none">⛔</div>'}<b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`+D.kaftans.map(x=>`<div class="ow"><button class="co ${x.id==S.kaftan?'on':''}" data-k="${esc(x.id)}">${im(x)}${info(x)}</button>${x.img?`<button class="zb" data-z="${esc(x.img)}">🔍 تكبير</button>`:''}</div>`).join('');
+ $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
+ $('colName').textContent=co?co.name:'';
+ $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price)}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
+ $('hero').style.display=mo.img?'':'none';$('hero').src=mo.img||'';$('zoomDress').style.display=mo.img?'':'none';
+ $('inset').style.display=ka&&ka.img?'':'none';if(ka&&ka.img)$('inset').src=ka.img;
+ const parts=[["الفستان",mo.name,mo.price,mo.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li&&li.price]];
+ const h=parts.map(p=>`<div class="row"><span>${p[0]}: ${esc(p[1]||'-')}${p[3]?`<em>${esc(p[3])}</em>`:''}</span>${p[2]==null?'':`<b>${$$(p[2])}</b>`}</div>`).join('');
+ $('rows').innerHTML=h;$('fsum').innerHTML=h+`<div class="total"><span>الإجمالي</span><b>${$$(parts.reduce((t,p)=>t+(+p[2]||0),0))}</b></div>`;
+ S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;$('total').textContent=$$(S.total);$('total2').textContent=$$(S.total);
+}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-m],[data-k],[data-c],[data-l],[data-z]');if(!t)return;
+ if(t.dataset.z)return openLb(t.dataset.z);
+ if('m' in t.dataset)S.m=+t.dataset.m;
+ if('k' in t.dataset)S.kaftan=t.dataset.k||null;
+ if('c' in t.dataset)S.color=t.dataset.c;
+ if('l' in t.dataset)S.lining=t.dataset.l;
+ draw();
+});
+$('zoomDress').onclick=()=>openLb((D.models[S.m]||{}).img);$('inset').onclick=()=>openLb($('inset').src);
+const step=d=>{if(!D.models.length)return;S.m=(S.m+d+D.models.length)%D.models.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
+const goM=()=>$('measure').scrollIntoView();$('goM').onclick=goM;$('send').onclick=goM;
+function send(){
+ const miss=M.find(([k])=>!$('m-'+k).value.trim());
+ M.forEach(([k])=>$('m-'+k).classList.toggle('err',!$('m-'+k).value.trim()));
+ if(miss){$('m-'+miss[0]).focus();return toast('أكملي كل المقاسات أول')}
  const msg=["🧾 *فاتورة طلب تفصيل — ستايل روج*","رقم الفاتورة: SR-"+Date.now().toString().slice(-6),"",
-  ...S.parts.map(p=>`${p[0]}: ${p[1]} — ${$$(p[2])}`),"","📏 *المقاسات*",
+  ...S.parts.map(p=>`${p[0]}: ${p[1]||'-'}${p[3]?' ('+p[3]+')':''}${p[2]==null?'':' — '+$$(p[2])}`),"","📏 *المقاسات*",
   ...M.map(([k,n])=>`${n} (${k}): ${$('m-'+k).value} سم`),"",`💰 *الإجمالي: ${$$(S.total)}*`,"✅ أريد تأكيد الطلب."].join("\n");
- window.open("https://wa.me/"+D.settings.whatsapp+"?text="+encodeURIComponent(msg),"_blank","noopener");
-};
-draw();
+ window.open("https://wa.me/"+SR.WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");
+}
+$('sendM').onclick=send;
+loadAll().then(d=>{D=d;S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})
+ .catch(e=>{console.error(e);document.querySelector('.sub').textContent='تعذر تحميل الخيارات، حاولي لاحقًا'});
 </script></body></html>
