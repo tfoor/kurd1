@@ -94,8 +94,9 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');set
 async function loadAll(){
  const c=new Appwrite.Client().setEndpoint(SR.ENDPOINT).setProject(SR.PROJECT),db=new Appwrite.TablesDB(c),rows=[];let off=0;
  for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:TABLE_ID,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
+ const cnt={};rows.forEach(x=>cnt[x.kind]=(cnt[x.kind]||0)+1);
  const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||''}));
- return{designs:g('design'),models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
+ return{cnt,designs:g('design'),models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
 }
 function openLb(src){if(!src)return;$('lbImg').className='';$('lbImg').src=src;$('lb').classList.add('show')}
 function closeLb(){$('lb').classList.remove('show')}
@@ -113,7 +114,7 @@ function draw(){
  $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
  $('colName').textContent=co?co.name:'';
  $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price)}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
- $('hero').style.display=de.img?'':'none';$('hero').src=de.img||'';$('zoomDress').style.display=de.img?'':'none';
+ S.pv=de.img||(dr&&dr.img)||'';$('hero').style.display=S.pv?'':'none';$('hero').src=S.pv;$('zoomDress').style.display=S.pv?'':'none';
  const parts=[["الموديل",de.name,de.price],["الفستان",dr&&dr.name,dr&&dr.price,dr&&dr.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li&&li.price]];
  const h=parts.map(p=>`<div class="row"><span>${p[0]}: ${esc(p[1]||'-')}${p[3]?`<em>${esc(p[3])}</em>`:''}</span>${p[2]==null?'':`<b>${$$(p[2])}</b>`}</div>`).join('');
  S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;
@@ -129,7 +130,7 @@ document.addEventListener('click',e=>{
  if('l' in t.dataset)S.lining=t.dataset.l;
  draw();
 });
-$('zoomDress').onclick=()=>openLb((D.designs[S.d]||{}).img);
+$('zoomDress').onclick=()=>openLb(S.pv);
 const step=d=>{if(!D.designs.length)return;S.d=(S.d+d+D.designs.length)%D.designs.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
 const goM=()=>$('measure').scrollIntoView();$('goM').onclick=goM;$('send').onclick=goM;
 function send(){
@@ -142,6 +143,8 @@ function send(){
  window.open("https://wa.me/"+SR.WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");
 }
 $('sendM').onclick=send;
-loadAll().then(d=>{D=d;S.dress=d.models[0]&&d.models[0].id;S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})
+loadAll().then(d=>{D=d;S.dress=d.models[0]&&d.models[0].id;
+  if(!d.designs.length||!d.models.length){const c=d.cnt;document.querySelector('.sub').textContent='الموجود بالجدول: موديلات '+(c.design||0)+' • فساتين '+(c.model||0)+' • خفاتين '+(c.kaftan||0)+' • ألوان '+(c.color||0)+' • أنواع بطان '+(c.fabric||0)}
+  S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})
  .catch(e=>{console.error(e);document.querySelector('.sub').textContent='تعذر تحميل الخيارات: '+(e.message||e)});
 </script></body></html>
