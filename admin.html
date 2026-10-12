@@ -1879,8 +1879,23 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
         return;
       }
 
-      currentAdminEmail = email;
+      /* السماح بالدخول فقط للحسابات اللي عليها label اسمه admin */
+      let user = null;
+      try { user = await awAccount.get(); } catch (e) { }
+      if (!isAdminUser(user)) {
+        try { await awAccount.deleteSession({ sessionId: "current" }); } catch (e) { }
+        errEl.textContent = "هذا الحساب ما إله صلاحية دخول لوحة التحكم";
+        errEl.style.display = "block";
+        document.getElementById("loginPassword").value = "";
+        return;
+      }
+
+      currentAdminEmail = user.email || email;
       showDashboard();
+    }
+
+    function isAdminUser(user) {
+      return !!user && Array.isArray(user.labels) && user.labels.includes("admin");
     }
 
     async function handleLogout() {
@@ -3349,6 +3364,14 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
     (async function checkSession() {
       try {
         const user = await awAccount.get();
+        if (!isAdminUser(user)) {
+          /* جلسة حساب عادي: نطلّعه ونضل شاشة الدخول */
+          try { await awAccount.deleteSession({ sessionId: "current" }); } catch (e2) { }
+          const errEl = document.getElementById("loginError");
+          errEl.textContent = "هذا الحساب ما إله صلاحية دخول لوحة التحكم";
+          errEl.style.display = "block";
+          return;
+        }
         currentAdminEmail = user?.email || null;
         showDashboard();
       } catch (e) {
