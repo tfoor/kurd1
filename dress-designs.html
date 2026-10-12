@@ -61,11 +61,12 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
 <div class="intro"><h1>صمّمي فستانك بنفسك</h1><p class="sub">اختاري التفاصيل خطوة بخطوة، والسعر بيتحدّث معك</p></div>
 <div class="wrap">
  <div class="steps">
-  <section class="step"><div class="sh"><i>1</i><h2>اختاري الفستان</h2></div><div class="cards" id="models"></div></section>
-  <section class="step"><div class="sh"><i>2</i><h2>الخفتان</h2><small>اختياري</small></div><div class="cards" id="kaftans"></div></section>
-  <section class="step"><div class="sh"><i>3</i><h2>لون البطان</h2><small id="colName"></small></div><div class="sw" id="colors"></div></section>
-  <section class="step"><div class="sh"><i>4</i><h2>نوع البطان</h2></div><div class="types" id="linings"></div></section>
-  <section class="step" id="measure"><div class="sh"><i>5</i><h2>المقاسات</h2><small>بالسنتيمتر</small></div>
+  <section class="step"><div class="sh"><i>1</i><h2>اختاري الموديل</h2></div><div class="cards" id="designs"></div></section>
+  <section class="step"><div class="sh"><i>2</i><h2>الفستان</h2><small>نوع القماش</small></div><div class="cards" id="models"></div></section>
+  <section class="step"><div class="sh"><i>3</i><h2>الخفتان</h2><small>اختياري</small></div><div class="cards" id="kaftans"></div></section>
+  <section class="step"><div class="sh"><i>4</i><h2>لون البطان</h2><small id="colName"></small></div><div class="sw" id="colors"></div></section>
+  <section class="step"><div class="sh"><i>5</i><h2>نوع البطان</h2></div><div class="types" id="linings"></div></section>
+  <section class="step" id="measure"><div class="sh"><i>6</i><h2>المقاسات</h2><small>بالسنتيمتر</small></div>
    <div class="fsum" id="fsum"></div>
    <div class="meas">
     <svg viewBox="0 0 200 330" fill="none" stroke="#e8708f" stroke-width="2"><path d="M70 20 Q100 45 130 20 L140 60 L118 130 L190 310 H10 L82 130 L60 60Z" fill="#ffd9e4"/><g stroke-dasharray="5 4" stroke="#d92d62"><path d="M62 52H138"/><path d="M80 90H120"/><path d="M82 130H118"/><path d="M45 245H155"/><path d="M18 20V310"/></g><g fill="#6c233d" stroke="none" font-size="11" font-family="Cairo"><text x="76" y="44">الكتف</text><text x="86" y="86">الصدر</text><text x="86" y="126">الخصر</text><text x="82" y="241">الورك</text><text x="22" y="170">الطول</text></g></svg>
@@ -73,7 +74,7 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
    <button class="send" id="sendM" style="margin-top:16px">إرسال الطلب عبر واتساب 📲</button></section>
  </div>
  <aside class="side">
-  <div class="pv"><button class="arr l" id="prev">←</button><img id="hero" alt=""><img class="inset" id="inset" alt="" style="display:none"><button class="arr r" id="next">→</button><button class="pz" id="zoomDress" style="display:none">🔍 تكبير القماش</button></div>
+  <div class="pv"><button class="arr l" id="prev">←</button><img id="hero" alt=""><button class="arr r" id="next">→</button><button class="pz" id="zoomDress" style="display:none">🔍 تكبير الصورة</button></div>
   <div class="sumside"><div id="rows"></div><div class="total"><span>الإجمالي</span><b id="total"></b></div><button class="send" id="send">أكملي المقاسات ↓</button></div>
  </aside>
 </div>
@@ -82,17 +83,19 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
 <script src="store.js"></script>
 <script>
+/* ID جدول designer_options الحقيقي بـ Appwrite (نفس اللي بالأدمن) */
+const TABLE_ID="6acba36b001e0aba51e4";
 let D;const M=[["a","الصدر"],["b","الطول"],["c","طول الأكمام"],["d","الكتف"],["e","عرض الكم"],["f","طرف الكم"],["g","الخصر"],["h","الورك"]];
-const S={m:0,color:null,lining:null,kaftan:null,parts:[],total:0};
+const S={d:0,dress:null,color:null,lining:null,kaftan:null,parts:[],total:0};
 const $=id=>document.getElementById(id),$$=SR.money;
 const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const by=(a,id)=>D[a].find(x=>x.id===id);
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
 async function loadAll(){
  const c=new Appwrite.Client().setEndpoint(SR.ENDPOINT).setProject(SR.PROJECT),db=new Appwrite.TablesDB(c),rows=[];let off=0;
- for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:SR.TABLE,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
+ for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:TABLE_ID,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
  const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||''}));
- return{models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
+ return{designs:g('design'),models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
 }
 function openLb(src){if(!src)return;$('lbImg').className='';$('lbImg').src=src;$('lb').classList.add('show')}
 function closeLb(){$('lb').classList.remove('show')}
@@ -102,30 +105,32 @@ $('mf').innerHTML=M.map(([k,n])=>`<div class="f"><label>${n} (${k})</label><inpu
 const im=x=>x.img?`<img class="im" src="${esc(x.img)}" alt="" loading="lazy">`:`<div class="im"></div>`;
 const info=x=>`<b>${esc(x.name)}</b>${x.fabric?`<small>${esc(x.fabric)}</small>`:''}<span class="pr">${$$(x.price)}</span>`;
 function draw(){
- const mo=D.models[S.m]||{},co=by('colors',S.color),li=by('linings',S.lining),ka=by('kaftans',S.kaftan);
- $('models').innerHTML=D.models.map((x,i)=>`<div class="ow"><button class="co ${i==S.m?'on':''}" data-m="${i}">${im(x)}${info(x)}</button></div>`).join('')||'<p class="empty">لا توجد فساتين بعد</p>';
- $('kaftans').innerHTML=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-k="">${'<div class="none">⛔</div>'}<b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`+D.kaftans.map(x=>`<div class="ow"><button class="co ${x.id==S.kaftan?'on':''}" data-k="${esc(x.id)}">${im(x)}${info(x)}</button>${x.img?`<button class="zb" data-z="${esc(x.img)}">🔍 تكبير</button>`:''}</div>`).join('');
+ const de=D.designs[S.d]||{},dr=by('models',S.dress),co=by('colors',S.color),li=by('linings',S.lining),ka=by('kaftans',S.kaftan);
+ const zb=x=>x.img?`<button class="zb" data-z="${esc(x.img)}">🔍 تكبير</button>`:'';
+ $('designs').innerHTML=D.designs.map((x,i)=>`<div class="ow"><button class="co ${i==S.d?'on':''}" data-g="${i}">${im(x)}<b>${esc(x.name)}</b><span class="pr">${$$(x.price)}</span></button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد موديلات بعد</p>';
+ $('models').innerHTML=D.models.map(x=>`<div class="ow"><button class="co ${x.id==S.dress?'on':''}" data-r="${esc(x.id)}">${im(x)}${info(x)}</button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد فساتين بعد</p>';
+ $('kaftans').innerHTML=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-k=""><div class="none">⛔</div><b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`+D.kaftans.map(x=>`<div class="ow"><button class="co ${x.id==S.kaftan?'on':''}" data-k="${esc(x.id)}">${im(x)}${info(x)}</button>${zb(x)}</div>`).join('');
  $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
  $('colName').textContent=co?co.name:'';
  $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price)}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
- $('hero').style.display=mo.img?'':'none';$('hero').src=mo.img||'';$('zoomDress').style.display=mo.img?'':'none';
- $('inset').style.display=ka&&ka.img?'':'none';if(ka&&ka.img)$('inset').src=ka.img;
- const parts=[["الفستان",mo.name,mo.price,mo.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li&&li.price]];
+ $('hero').style.display=de.img?'':'none';$('hero').src=de.img||'';$('zoomDress').style.display=de.img?'':'none';
+ const parts=[["الموديل",de.name,de.price],["الفستان",dr&&dr.name,dr&&dr.price,dr&&dr.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li&&li.price]];
  const h=parts.map(p=>`<div class="row"><span>${p[0]}: ${esc(p[1]||'-')}${p[3]?`<em>${esc(p[3])}</em>`:''}</span>${p[2]==null?'':`<b>${$$(p[2])}</b>`}</div>`).join('');
- $('rows').innerHTML=h;$('fsum').innerHTML=h+`<div class="total"><span>الإجمالي</span><b>${$$(parts.reduce((t,p)=>t+(+p[2]||0),0))}</b></div>`;
- S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;$('total').textContent=$$(S.total);$('total2').textContent=$$(S.total);
+ S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;
+ $('rows').innerHTML=h;$('fsum').innerHTML=h+`<div class="total"><span>الإجمالي</span><b>${$$(S.total)}</b></div>`;$('total').textContent=$$(S.total);$('total2').textContent=$$(S.total);
 }
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-m],[data-k],[data-c],[data-l],[data-z]');if(!t)return;
+ const t=e.target.closest('[data-g],[data-r],[data-k],[data-c],[data-l],[data-z]');if(!t)return;
  if(t.dataset.z)return openLb(t.dataset.z);
- if('m' in t.dataset)S.m=+t.dataset.m;
+ if('g' in t.dataset)S.d=+t.dataset.g;
+ if('r' in t.dataset)S.dress=t.dataset.r;
  if('k' in t.dataset)S.kaftan=t.dataset.k||null;
  if('c' in t.dataset)S.color=t.dataset.c;
  if('l' in t.dataset)S.lining=t.dataset.l;
  draw();
 });
-$('zoomDress').onclick=()=>openLb((D.models[S.m]||{}).img);$('inset').onclick=()=>openLb($('inset').src);
-const step=d=>{if(!D.models.length)return;S.m=(S.m+d+D.models.length)%D.models.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
+$('zoomDress').onclick=()=>openLb((D.designs[S.d]||{}).img);
+const step=d=>{if(!D.designs.length)return;S.d=(S.d+d+D.designs.length)%D.designs.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
 const goM=()=>$('measure').scrollIntoView();$('goM').onclick=goM;$('send').onclick=goM;
 function send(){
  const miss=M.find(([k])=>!$('m-'+k).value.trim());
@@ -137,6 +142,6 @@ function send(){
  window.open("https://wa.me/"+SR.WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");
 }
 $('sendM').onclick=send;
-loadAll().then(d=>{D=d;S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})
- .catch(e=>{console.error(e);document.querySelector('.sub').textContent='تعذر تحميل الخيارات، حاولي لاحقًا'});
+loadAll().then(d=>{D=d;S.dress=d.models[0]&&d.models[0].id;S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})
+ .catch(e=>{console.error(e);document.querySelector('.sub').textContent='تعذر تحميل الخيارات: '+(e.message||e)});
 </script></body></html>
