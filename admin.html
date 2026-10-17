@@ -3634,7 +3634,7 @@ let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout((
 #designerSection .dz-b.d{background:#fff0f0;color:#a33b50;border-color:#f6d5da}
 #designerSection .dz-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;background:#FFFAFC;border:1px solid #F3EAF0;border-radius:16px;padding:14px;margin-bottom:14px}
 #designerSection .dz-form label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
-#designerSection .dz-form input{width:100%;padding:9px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit;background:#fff}
+#designerSection .dz-form select,#designerSection .dz-form input{width:100%;padding:9px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit;background:#fff}
 #designerSection .dz-form input[type=color]{height:40px;padding:2px}
 #designerSection .dz-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F7EEF2}
 #designerSection .dz-item .th{width:56px;height:56px;border-radius:12px;object-fit:cover;background:#faecef;border:1px solid #F0EAF3;flex:none}
@@ -3672,13 +3672,14 @@ function render(){
   $("dzForm").innerHTML=`<div class="dz-form">
    <div><label>${NAMEL[kind]}</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
    ${hasF?`<div><label>نوع القماش (اكتبيه)</label><input id="dzFabric" placeholder="مثال: ساتان مطرز" value="${esc(e?e.fabric:"")}"></div>`:""}
+   ${kind==="design"?`<div><label>كمية القماش المطلوبة</label><select id="dzMult">${[1,2,3].map(n=>`<option value="${n}" ${(e&&+e.mult||1)===n?"selected":""}>x${n} — ${n} متر</option>`).join("")}</select></div>`:""}
    ${isC?"":`<div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>`}
    ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
    <div><label>${hasF||kind==="design"?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
    <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
   const list=all.filter(r=>r.kind===kind);
   $("dzList").innerHTML=list.map(x=>`<div class="dz-item">${x.img?`<img class="th" src="${esc(x.img)}" alt="">`:`<div class="th" style="background:${esc(x.hex||"#faecef")}"></div>`}
-   <div class="n">${esc(x.name)}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
+   <div class="n">${esc(x.name)}${kind==="design"?` <span style="background:#ffe3ec;color:#c9245a;border-radius:8px;padding:1px 8px;font-size:12px">x${x.mult||1}</span>`:""}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
    <button class="dz-b" data-e="${esc(x.$id)}">تعديل</button><button class="dz-b d" data-d="${esc(x.$id)}">حذف</button></div>`).join("")||'<div class="empty-state">لا يوجد عناصر بعد</div>';
 }
 async function save(){
@@ -3697,6 +3698,7 @@ async function save(){
     }
     if((hasF||kind==="design")&&!img){showToast("لازم تضيفي صورة");btn.disabled=false;return}
     const data={kind,name,price:isC?0:(parseFloat($("dzPrice").value)||0),hex:isC?$("dzHex").value:"",img,fabric:hasF?$("dzFabric").value.trim():""};
+    if(kind==="design")data.mult=parseInt($("dzMult").value)||1;
     if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);
