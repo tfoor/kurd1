@@ -56,6 +56,15 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
  .bar{display:flex;position:fixed;inset:auto 0 0;z-index:30;background:#fffffff5;border-top:1px solid var(--line);padding:10px 16px;align-items:center;justify-content:space-between;backdrop-filter:blur(10px)}
  .bar b{font-size:20px;color:var(--deep)}.bar button{border:0;border-radius:14px;padding:12px 20px;background:var(--pink);color:#fff;font-weight:800}
 }
+.hr{display:flex;align-items:center;gap:14px}
+.ub{border:1px solid var(--line);background:#fff;border-radius:20px;padding:7px 14px;font-weight:700;font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#am{position:fixed;inset:0;background:#0007;display:none;z-index:98;align-items:center;justify-content:center;padding:16px}#am.show{display:flex}
+.amb{position:relative;background:#fff;border-radius:22px;padding:22px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px}
+.amb h3{font-size:20px;margin-bottom:2px}.amb input{padding:12px;border:1.5px solid var(--line);border-radius:12px;font:inherit}.amb input:focus{outline:0;border-color:var(--pink)}
+.amx{position:absolute;top:12px;left:12px;border:0;background:none;font-size:18px}
+#amErr{color:#d11;font-size:13px;min-height:16px}#amGo{border:0;border-radius:14px;padding:13px;background:linear-gradient(145deg,#ff5a8c,#d92d62);color:#fff;font-weight:800}#amGo:disabled{opacity:.6}
+#amSw{text-align:center;font-size:13px}#amSw a{color:var(--deep);font-weight:700}
+.co.cm{border-style:dashed}
 </style><style>html.in-app,html.in-app body{touch-action:pan-x pan-y}</style>
 <script>
 try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.search)||/StyleRojApp|; wv\)/i.test(navigator.userAgent)){
@@ -64,7 +73,7 @@ try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.se
  document.addEventListener("gesturestart",function(e){e.preventDefault()});}}catch(e){}
 </script>
 </head><body>
-<header><img src="logo/style-rouge.webp" alt="ستايل روج"><a class="back" href="index.html">← رجوع</a></header>
+<header><img src="logo/style-rouge.webp" alt="ستايل روج"><div class="hr"><button class="ub" id="userBtn">👤 تسجيل الدخول</button><a class="back" href="index.html">← رجوع</a></div></header>
 <div class="intro"><h1>صمّمي فستانك بنفسك</h1><p class="sub">اختاري التفاصيل خطوة بخطوة، والسعر بيتحدّث معك</p></div>
 <div class="wrap">
  <div class="steps">
@@ -86,6 +95,10 @@ try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.se
  </aside>
 </div>
 <div class="bar"><div>الإجمالي <b id="total2"></b></div><button id="goM">أكملي المقاسات ↓</button></div>
+<input type="file" id="cmFile" accept="image/*" hidden>
+<div id="am"><div class="amb"><button class="amx" onclick="closeAuth()">✕</button><h3 id="amT"></h3>
+<input id="amName" placeholder="الاسم" autocomplete="name"><input id="amEmail" type="email" placeholder="الإيميل" dir="ltr" autocomplete="email"><input id="amPass" type="password" placeholder="كلمة السر" dir="ltr" autocomplete="current-password">
+<div id="amErr"></div><button id="amGo"></button><p id="amSw"></p></div></div>
 <div id="lb"><button onclick="closeLb()">✕</button><img id="lbImg" alt=""></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0"></script>
 <script>
@@ -96,14 +109,19 @@ const SR={ENDPOINT:"https://api.styleroj.com/v1",PROJECT:"6a9321f3002b6c1004a9",
 <script>
 /* ID جدول designer_options الحقيقي بـ Appwrite (نفس اللي بالأدمن) */
 const TABLE_ID="6acba36b001e0aba51e4";
+/* جدول الفواتير وباكيت صور الزبونات (لازم يتعملوا بـ Appwrite بنفس هالـ ID) */
+const INV_TABLE="6ad51224003232aa7106",UP_BUCKET="customer-uploads";
+/* نفس إعدادات الموقع الأساسي => نفس الجلسة: إذا سجلتي من الصفحة الرئيسية بتضلي مسجلة هون والعكس */
+const AW=new Appwrite.Client().setEndpoint(SR.ENDPOINT).setProject(SR.PROJECT),awAccount=new Appwrite.Account(AW),awDB=new Appwrite.TablesDB(AW),awStorage=new Appwrite.Storage(AW);
+let USER=null,pendingSend=false;
 let D;const M=[["a","الصدر"],["b","الطول"],["c","طول الأكمام"],["d","الكتف"],["e","عرض الكم"],["f","طرف الكم"],["g","الخصر"],["h","الورك"]];
-const S={d:0,dress:null,color:null,lining:null,kaftan:null,parts:[],total:0};
+const S={useCustom:false,custom:null,d:0,dress:null,color:null,lining:null,kaftan:null,parts:[],total:0};
 const $=id=>document.getElementById(id),$$=SR.money;
 const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const by=(a,id)=>D[a].find(x=>x.id===id);
-function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
+let toastT;function toast(t,ms){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),ms||2200)}
 async function loadAll(){
- const c=new Appwrite.Client().setEndpoint(SR.ENDPOINT).setProject(SR.PROJECT),db=new Appwrite.TablesDB(c),rows=[];let off=0;
+ const db=awDB,rows=[];let off=0;
  for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:TABLE_ID,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
  const cnt={};rows.forEach(x=>cnt[x.kind]=(cnt[x.kind]||0)+1);
  const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||'',mdress:parseFloat(x.mdress||x.mult)||1,mlining:parseFloat(x.mlining||x.mult)||1}));
@@ -116,13 +134,16 @@ document.addEventListener('keydown',e=>e.key==='Escape'&&closeLb());
 $('mf').innerHTML=M.map(([k,n])=>`<div class="f"><label>${n} (${k})</label><input id="m-${k}" type="number" min="1" inputmode="decimal" placeholder="سم"></div>`).join('');
 const im=x=>x.img?`<img class="im" src="${esc(x.img)}" alt="" loading="lazy">`:`<div class="im"></div>`;
 /* كمية القماش للموديل (x1/x2/x3) بتنحط من الأدمن وبتضرب أسعار الفستان والخفتان ونوع البطان بصمت، بدون ما تظهر للزبونة */
-const KD=()=>(D&&D.designs[S.d]&&D.designs[S.d].mdress)||1;   /* قياس الفستان والخفتان */
-const KL=()=>(D&&D.designs[S.d]&&D.designs[S.d].mlining)||1;  /* قياس البطان */
+/* الموديل الحالي: من القائمة أو موديل الزبونة اللي رفعته */
+const curD=()=>S.useCustom&&S.custom?{name:'موديلك الخاص',img:S.custom.url,price:0,mdress:1,mlining:1,custom:1}:((D&&D.designs[S.d])||{});
+const KD=()=>curD().mdress||1;   /* قياس الفستان والخفتان */
+const KL=()=>curD().mlining||1;  /* قياس البطان */
 const info=x=>`<b>${esc(x.name)}</b>${x.fabric?`<small>${esc(x.fabric)}</small>`:''}<span class="pr">${$$(x.price*KD())}</span>`;
 function draw(){
- const de=D.designs[S.d]||{},dr=by('models',S.dress),co=by('colors',S.color),li=by('linings',S.lining),ka=by('kaftans',S.kaftan);
+ const de=curD(),dr=by('models',S.dress),co=by('colors',S.color),li=by('linings',S.lining),ka=by('kaftans',S.kaftan);
  const zb=x=>x.img?`<button class="zb" data-z="${esc(x.img)}">🔍 تكبير</button>`:'';
- $('designs').innerHTML=D.designs.map((x,i)=>`<div class="ow"><button class="co ${i==S.d?'on':''}" data-g="${i}">${im(x)}<b>${esc(x.name)}</b><span class="pr">${$$(x.price)}</span></button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد موديلات بعد</p>';
+ const cmCard=`<div class="ow"><button class="co cm ${S.useCustom&&S.custom?'on':''}" data-cm="1">${S.custom?`<img class="im" src="${S.custom.url}" alt="">`:'<div class="none" style="font-size:38px">➕</div>'}<b>${S.custom?'موديلك الخاص':'أضيفي موديلك بنفسك'}</b><small>${S.custom?(S.useCustom?'اضغطي لتغيير الصورة':'اضغطي لاختياره'):'ارفعي صورة الموديل اللي بدك تفصّليه'}</small></button>${S.custom?`<button class="zb" data-z="${S.custom.url}">🔍 تكبير</button>`:''}</div>`;
+ $('designs').innerHTML=(D.designs.map((x,i)=>`<div class="ow"><button class="co ${!S.useCustom&&i==S.d?'on':''}" data-g="${i}">${im(x)}<b>${esc(x.name)}</b><span class="pr">${$$(x.price)}</span></button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد موديلات بعد</p>')+cmCard;
  $('models').innerHTML=D.models.map(x=>`<div class="ow"><button class="co ${x.id==S.dress?'on':''}" data-r="${esc(x.id)}">${im(x)}${info(x)}</button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد فساتين بعد</p>';
  $('kaftans').innerHTML=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-k=""><div class="none">⛔</div><b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`+D.kaftans.map(x=>`<div class="ow"><button class="co ${x.id==S.kaftan?'on':''}" data-k="${esc(x.id)}">${im(x)}${info(x)}</button>${zb(x)}</div>`).join('');
  $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
@@ -130,15 +151,16 @@ function draw(){
  $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price*KL())}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
  S.pv=de.img||(dr&&dr.img)||'';$('hero').style.display=S.pv?'':'none';$('hero').src=S.pv;$('zoomDress').style.display=S.pv?'':'none';
  const kd=KD(),kl=KL();
- const parts=[["الموديل",de.name,de.price],["الفستان",dr&&dr.name,dr?dr.price*kd:0,dr&&dr.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price*kd:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li?li.price*kl:0]];
+ const parts=[["الموديل",de.name,de.custom?null:de.price,de.custom?"السعر بيتحدد بعد مراجعة الصورة":""],["الفستان",dr&&dr.name,dr?dr.price*kd:0,dr&&dr.fabric],["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price*kd:0,ka&&ka.fabric],["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li?li.price*kl:0]];
  const h=parts.map(p=>`<div class="row"><span>${p[0]}: ${esc(p[1]||'-')}${p[3]?`<em>${esc(p[3])}</em>`:''}</span>${p[2]==null?'':`<b>${$$(p[2])}</b>`}</div>`).join('');
  S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;
  $('rows').innerHTML=h;$('fsum').innerHTML=h+`<div class="total"><span>الإجمالي</span><b>${$$(S.total)}</b></div>`;$('total').textContent=$$(S.total);$('total2').textContent=$$(S.total);
 }
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-g],[data-r],[data-k],[data-c],[data-l],[data-z]');if(!t)return;
+ const t=e.target.closest('[data-g],[data-r],[data-k],[data-c],[data-l],[data-z],[data-cm]');if(!t)return;
  if(t.dataset.z)return openLb(t.dataset.z);
- if('g' in t.dataset)S.d=+t.dataset.g;
+ if('cm' in t.dataset){if(S.custom&&!S.useCustom){S.useCustom=true;return draw()}return $('cmFile').click()}
+ if('g' in t.dataset){S.d=+t.dataset.g;S.useCustom=false}
  if('r' in t.dataset)S.dress=t.dataset.r;
  if('k' in t.dataset)S.kaftan=t.dataset.k||null;
  if('c' in t.dataset)S.color=t.dataset.c;
@@ -146,18 +168,74 @@ document.addEventListener('click',e=>{
  draw();
 });
 $('zoomDress').onclick=()=>openLb(S.pv);
-const step=d=>{if(!D.designs.length)return;S.d=(S.d+d+D.designs.length)%D.designs.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
+const step=d=>{if(!D.designs.length)return;S.useCustom=false;S.d=(S.d+d+D.designs.length)%D.designs.length;draw()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);
 const goM=()=>$('measure').scrollIntoView();$('goM').onclick=goM;$('send').onclick=goM;
-function send(){
+/* ===== موديل الزبونة (رفع صورة) ===== */
+function toWebp(file,max){return new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('تعذر معالجة الصورة')),'image/webp',.82)};im.onerror=()=>rej(new Error('ملف الصورة غير صالح'));im.src=u})}
+$('cmFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!/^image\//.test(f.type))return toast('اختاري ملف صورة');
+ try{const b=await toWebp(f,1400);if(S.custom)URL.revokeObjectURL(S.custom.url);S.custom={blob:b,url:URL.createObjectURL(b)};S.useCustom=true;draw();toast('✅ تمت إضافة موديلك')}catch(err){toast(err.message||'تعذر قراءة الصورة')}};
+
+/* ===== تسجيل الدخول (نفس جلسة الموقع الأساسي) ===== */
+const uname=u=>u.name||(u.email||'').split('@')[0];
+function renderUser(){$('userBtn').textContent=USER?'👤 '+uname(USER):'👤 تسجيل الدخول'}
+async function refreshUser(){try{USER=await awAccount.get()}catch(e){USER=null}renderUser()}
+$('userBtn').onclick=async()=>{if(!USER)return openAuth('login');
+ if(confirm('تسجيل الخروج من حساب '+uname(USER)+'؟')){try{await awAccount.deleteSession({sessionId:'current'})}catch(e){}USER=null;renderUser();toast('تم تسجيل الخروج')}};
+let amode='login';
+function openAuth(m){amode=m||'login';drawAuth();$('am').classList.add('show')}
+function closeAuth(){$('am').classList.remove('show');pendingSend=false}
+function drawAuth(){const r=amode==='register';$('amT').textContent=r?'حساب جديد':'تسجيل الدخول';$('amName').style.display=r?'':'none';$('amGo').textContent=r?'إنشاء الحساب':'دخول';
+ $('amSw').innerHTML=r?'عندك حساب؟ <a href="#" data-sw="login">سجّلي دخول</a>':'ما عندك حساب؟ <a href="#" data-sw="register">أنشئي حساب</a>';$('amErr').textContent=''}
+$('am').addEventListener('click',e=>{if(e.target.id==='am')return closeAuth();const a=e.target.closest('[data-sw]');if(a){e.preventDefault();amode=a.dataset.sw;drawAuth()}});
+$('amPass').addEventListener('keydown',e=>e.key==='Enter'&&$('amGo').click());
+$('amGo').onclick=async()=>{
+ const em=$('amEmail').value.trim(),pw=$('amPass').value,nm=$('amName').value.trim(),err=t=>$('amErr').textContent=t;
+ if(!em||!pw)return err('اكتبي الإيميل وكلمة السر');
+ if(amode==='register'){if(!nm)return err('اكتبي اسمك');if(pw.length<8)return err('كلمة السر لازم 8 أحرف على الأقل')}
+ $('amGo').disabled=true;
+ try{
+  if(amode==='register')await awAccount.create({userId:Appwrite.ID.unique(),email:em,password:pw,name:nm});
+  await awAccount.createEmailPasswordSession({email:em,password:pw});
+  await refreshUser();const again=pendingSend;closeAuth();$('amPass').value='';toast('أهلًا '+(USER?uname(USER):''));
+  if(again)send();
+ }catch(e){err(e.code===401?'الإيميل أو كلمة السر غلط':e.code===409?'هذا الإيميل مسجل من قبل، سجّلي دخول':e.code===429?'محاولات كتير، جربي بعد شوي':(e.message||'صار خطأ'))}
+ $('amGo').disabled=false;
+};
+
+/* ===== إرسال الطلب: حفظ الفاتورة بالأدمن + واتساب ===== */
+async function send(){
  const miss=M.find(([k])=>!$('m-'+k).value.trim());
  M.forEach(([k])=>$('m-'+k).classList.toggle('err',!$('m-'+k).value.trim()));
  if(miss){$('m-'+miss[0]).focus();return toast('أكملي كل المقاسات أول')}
- const msg=["🧾 *فاتورة طلب تفصيل — ستايل روج*","رقم الفاتورة: SR-"+Date.now().toString().slice(-6),"",
-  ...S.parts.map(p=>`${p[0]}: ${p[1]||'-'}${p[3]?' ('+p[3]+')':''}${p[2]==null?'':' — '+$$(p[2])}`),"","📏 *المقاسات*",
+ if(!USER){pendingSend=true;toast('سجّلي دخول أول حتى نحفظ فاتورتك');return openAuth('login')}
+ const btn=$('sendM');btn.disabled=true;btn.textContent='جاري حفظ الفاتورة...';
+ let no='SR-'+Date.now().toString().slice(-6),custom=null,upErr='';
+ try{
+  const de=curD(),dr=by('models',S.dress),ka=by('kaftans',S.kaftan),co=by('colors',S.color),li=by('linings',S.lining),P=S.parts;
+  if(S.useCustom&&S.custom){
+   try{
+    const fid=Appwrite.ID.unique();
+    await awStorage.createFile({bucketId:UP_BUCKET,fileId:fid,file:new File([S.custom.blob],'custom-model.webp',{type:S.custom.blob.type||'image/webp'})});
+    custom={id:fid,url:SR.ENDPOINT+'/storage/buckets/'+UP_BUCKET+'/files/'+fid+'/view?project='+SR.PROJECT};
+   }catch(e){console.error(e);upErr=e.message||String(e);toast('تعذر رفع صورة الموديل: '+upErr,9000)}
+  }
+  const inv={model:{n:custom?'موديلك الخاص':de.name,i:custom?custom.url:de.img,p:custom?null:de.price},
+   dress:dr?{n:dr.name,i:dr.img,f:dr.fabric,p:P[1][2]}:null,kaftan:ka?{n:ka.name,i:ka.img,f:ka.fabric,p:P[2][2]}:null,
+   color:co?{n:co.name,h:co.hex,i:co.img}:null,lining:li?{n:li.name,i:li.img,p:P[4][2]}:null,
+   measures:Object.fromEntries(M.map(([k,n])=>[n+' ('+k+')',$('m-'+k).value])),custom,total:S.total};
+  const row=await awDB.createRow({databaseId:SR.DATABASE,tableId:INV_TABLE,rowId:Appwrite.ID.unique(),
+   data:{userId:USER.$id,name:uname(USER),email:USER.email,total:S.total,status:'new',data:JSON.stringify(inv)}});
+  no='SR-'+String(row.$id).slice(-6).toUpperCase();if(!upErr)toast('✅ انحفظت فاتورتك');
+ }catch(e){console.error(e);toast('تعذر حفظ الفاتورة: '+(e.message||e),9000)}
+ btn.disabled=false;btn.textContent='إرسال الطلب عبر واتساب 📲';
+ const msg=["🧾 *فاتورة طلب تفصيل — ستايل روج*","رقم الفاتورة: "+no,"👤 الاسم: "+uname(USER),"",
+  ...S.parts.map(p=>`${p[0]}: ${p[1]||'-'}${p[3]?' ('+p[3]+')':''}${p[2]==null?'':' — '+$$(p[2])}`),
+  ...(custom?["🖼️ صورة موديل الزبونة: "+custom.url]:(S.useCustom&&S.custom?["⚠️ الزبونة اختارت موديلها الخاص بس الصورة ما انرفعت، رح ترسلها بالواتساب"]:[])),"","📏 *المقاسات*",
   ...M.map(([k,n])=>`${n} (${k}): ${$('m-'+k).value} سم`),"",`💰 *الإجمالي: ${$$(S.total)}*`,"✅ أريد تأكيد الطلب."].join("\n");
- window.open("https://wa.me/"+SR.WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");
+ const url="https://wa.me/"+SR.WHATSAPP+"?text="+encodeURIComponent(msg),w=window.open(url,"_blank");if(!w)location.href=url;
 }
 $('sendM').onclick=send;
+refreshUser();
 loadAll().then(d=>{D=d;S.dress=d.models[0]&&d.models[0].id;
   if(!d.designs.length||!d.models.length){const c=d.cnt;document.querySelector('.sub').textContent='الموجود بالجدول: موديلات '+(c.design||0)+' • فساتين '+(c.model||0)+' • خفاتين '+(c.kaftan||0)+' • ألوان '+(c.color||0)+' • أنواع بطان '+(c.fabric||0)}
   S.color=d.colors[0]&&d.colors[0].id;S.lining=d.linings[0]&&d.linings[0].id;draw()})

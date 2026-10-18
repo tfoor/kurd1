@@ -1325,6 +1325,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 <button class="nav-item" id="mainTabVisitors" onclick="switchMainTab('visitors')"><svg class="i" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg> الزوار والإحصائيات<span class="count" id="navVisitsCount">—</span></button>
 <button class="nav-item" id="mainTabLogs" onclick="switchMainTab('logs')"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"/></svg> سجلات العمليات</button>
 <button class="nav-item" id="mainTabDesigner" onclick="switchMainTab('designer')"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a2 2 0 0 1 2 2c0 1-1 1.5-2 2v1l9 6a1 1 0 0 1-.6 1.8H3.6A1 1 0 0 1 3 14l9-6"/></svg> تصميم الفستان</button>
+<button class="nav-item" id="mainTabInvoices" onclick="switchMainTab('invoices')"><svg class="i" viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg> فواتير التفصيل</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg> الأقسام</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2.2.7 3.5 2.6 3.5 5.7"/></svg> العملاء</button>
 <button class="nav-item soon" title="قريباً" tabindex="-1"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg> الرسائل</button>
@@ -1356,6 +1357,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
           <button class="nav-item" id="mainTabVisitorsMobile" onclick="switchMainTab('visitors')">👥 الزوار</button>
           <button class="nav-item" id="mainTabLogsMobile" onclick="switchMainTab('logs')">📋 السجلات</button>
           <button class="nav-item" id="mainTabDesignerMobile" onclick="switchMainTab('designer')">👗 تصميم الفستان</button>
+          <button class="nav-item" id="mainTabInvoicesMobile" onclick="switchMainTab('invoices')">🧾 الفواتير</button>
         </div>
 
         <div class="htop" id="homeTop">
@@ -1409,6 +1411,11 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
               <div class="loading-state">جاري تحميل الزوار...</div>
             </div>
           </div>
+        </div>
+
+        <div class="panel" id="invoicesSection" style="display:none;">
+          <div class="panel-head"><h3>🧾 فواتير التفصيل</h3><span class="hint">الطلبات اللي أرسلتها الزبونات من صفحة الفساتين</span></div>
+          <div class="panel-body"><div id="invBody"></div></div>
         </div>
 
         <div class="panel" id="designerSection" style="display:none;">
@@ -3625,6 +3632,114 @@ window.switchMainTab=function(tab){
 window.refreshHome=()=>load(true);
 let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(()=>{if(CUR&&$('homeSection').style.display!=='none')drawLine(CUR)},200)});
 }catch(err){console.error("home dashboard failed:",err)}
+})();
+</script>
+<style id="invoices-css">
+#invoicesSection .dz-b{border:1px solid #F0EAF3;background:#fff;color:inherit;border-radius:12px;padding:8px 14px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+#invoicesSection .dz-b.on,#invoicesSection .dz-b.p{background:#FF5C8A;border-color:#FF5C8A;color:#fff}
+#invoicesSection .dz-b.d{background:#fff0f0;color:#a33b50;border-color:#f6d5da}
+#invoicesSection .iv-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#invoicesSection .iv-tools input{flex:1;min-width:180px;padding:10px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit}
+#invoicesSection .iv-f{display:flex;gap:6px}
+#invoicesSection .iv-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #F3EAF0;border-radius:16px;margin-bottom:8px;cursor:pointer;background:#fff}
+#invoicesSection .iv-row:hover{background:#FFFAFC;border-color:#f7b3c8}
+#invoicesSection .iv-av{width:42px;height:42px;border-radius:50%;background:#ffe3ec;color:#c9245a;display:grid;place-items:center;font-weight:800;flex:none}
+#invoicesSection .iv-m{flex:1;min-width:0}#invoicesSection .iv-m b{display:block}#invoicesSection .iv-m small{color:#8a727d;font-size:12px}
+#invoicesSection .iv-t{font-weight:800;color:#c9245a}
+#invoicesSection .iv-s{font-size:11.5px;font-weight:700;border-radius:10px;padding:3px 10px}
+#invoicesSection .iv-s.new{background:#fff3d6;color:#9a6a00}#invoicesSection .iv-s.done{background:#dff6e5;color:#1b7a3a}
+#invoicesSection .iv-h{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+#invoicesSection .iv-h h3{font-size:18px}#invoicesSection .iv-h small{display:block;color:#8a727d;font-size:12.5px}
+#invoicesSection .iv-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+#invoicesSection .iv-c{border:1px solid #F3EAF0;border-radius:16px;padding:8px;text-align:center;background:#fff;display:flex;flex-direction:column;gap:3px}
+#invoicesSection .iv-c img,#invoicesSection .iv-ph{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:12px;background:#faecef;cursor:zoom-in}
+#invoicesSection .iv-ct{font-size:11.5px;color:#8a727d;font-weight:700}#invoicesSection .iv-c small{color:#8a727d;font-size:12px}#invoicesSection .iv-c .pr{color:#c9245a;font-weight:800}
+#invoicesSection .iv-cu{border:2px dashed #f7b3c8;border-radius:16px;padding:12px;margin-bottom:16px;text-align:center}
+#invoicesSection .iv-cu img{max-width:100%;max-height:420px;border-radius:12px;cursor:zoom-in}
+#invoicesSection .iv-ms{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px}
+#invoicesSection .iv-ms div{background:#FFFAFC;border:1px solid #F3EAF0;border-radius:12px;padding:8px 10px;font-size:13px}#invoicesSection .iv-ms b{display:block;color:#c9245a;font-size:16px}
+#invoicesSection .iv-tot{display:flex;justify-content:space-between;font-size:20px;font-weight:800;padding:12px 0;border-top:2px dashed #f0d8e1;margin-top:6px}
+#invoicesSection .iv-ac{display:flex;gap:8px;flex-wrap:wrap}
+#invoicesSection h4{margin:14px 0 8px;font-size:14px}
+</style>
+<script id="invoices-js">
+(function(){
+const INV_TABLE="6ad51224003232aa7106",UP_BUCKET="customer-uploads";
+let rows=[],cur=null,flt="all",qs="";
+const $=id=>document.getElementById(id);
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=v=>"$"+Number(v||0).toFixed(2);
+const parse=r=>{try{return JSON.parse(r.data||"{}")}catch(e){return{}}};
+const fdate=r=>{try{return new Date(r.$createdAt).toLocaleString("ar",{dateStyle:"medium",timeStyle:"short"})}catch(e){return""}};
+const no=r=>"SR-"+String(r.$id).slice(-6).toUpperCase();
+function zoom(u){const o=document.createElement("div");o.style.cssText="position:fixed;inset:0;background:#000d;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out";o.innerHTML='<img src="'+esc(u)+'" style="max-width:100%;max-height:100%;border-radius:12px;background:#fff">';o.onclick=()=>o.remove();document.body.appendChild(o)}
+
+async function load(){
+  $("invBody").innerHTML='<div class="loading-state">جاري التحميل...</div>';
+  try{
+    rows=[];let off=0;
+    while(true){
+      const r=await awTablesDB.listRows({databaseId:APPWRITE_DATABASE_ID,tableId:INV_TABLE,queries:[AppwriteQuery.orderDesc("$createdAt"),AppwriteQuery.limit(100),AppwriteQuery.offset(off)]});
+      const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100;
+    }
+    render();
+  }catch(e){
+    $("invBody").innerHTML='<div class="dz-note" style="background:#fff6dd;border-radius:12px;padding:12px;line-height:1.8">❌ تعذر تحميل الفواتير: '+esc(e.message||e)+'<br>تأكدي إنك أنشأتي جدول <b>'+INV_TABLE+'</b> بـ Appwrite بنفس الـ ID.</div>';
+  }
+}
+function render(){cur?detail():list()}
+function listRows(){
+  const l=rows.filter(r=>(flt==="all"||(flt==="done"?r.status==="done":r.status!=="done"))&&(!qs||((r.name||"")+" "+(r.email||"")).toLowerCase().includes(qs)));
+  $("ivList").innerHTML=l.map(r=>`<div class="iv-row" data-o="${esc(r.$id)}"><div class="iv-av">${esc((r.name||"?").trim().charAt(0))}</div><div class="iv-m"><b>${esc(r.name)}</b><small>${esc(fdate(r))} • ${no(r)}</small></div><div class="iv-t">${money(r.total)}</div><span class="iv-s ${r.status==="done"?"done":"new"}">${r.status==="done"?"منجزة":"جديدة"}</span></div>`).join("")||'<div class="empty-state">لا توجد فواتير</div>';
+}
+function list(){
+  $("invBody").innerHTML=`<div class="iv-tools"><input id="ivQ" placeholder="ابحثي باسم الزبونة أو الإيميل" value="${esc(qs)}"><div class="iv-f">${[["all","الكل"],["new","جديدة"],["done","منجزة"]].map(([k,v])=>`<button class="dz-b ${flt===k?"on":""}" data-f="${k}">${v}</button>`).join("")}</div></div><div id="ivList"></div>`;
+  listRows();
+}
+function detail(){
+  const r=rows.find(x=>x.$id===cur);if(!r){cur=null;return list()}
+  const d=parse(r);
+  const card=(t,x)=>x?`<div class="iv-c"><div class="iv-ct">${t}</div>${x.i?`<img src="${esc(x.i)}" data-z="${esc(x.i)}" alt="">`:`<div class="iv-ph" style="background:${esc(x.h||"#faecef")}"></div>`}<b>${esc(x.n)}</b>${x.f?`<small>${esc(x.f)}</small>`:""}${x.p==null?"":`<span class="pr">${money(x.p)}</span>`}</div>`:"";
+  const ms=Object.entries(d.measures||{}).map(([k,v])=>`<div>${esc(k)}<b>${esc(v)} سم</b></div>`).join("");
+  $("invBody").innerHTML=`<div class="iv-h"><button class="dz-b" data-back="1">← رجوع</button><div style="flex:1"><h3>${esc(r.name)}</h3><small>${esc(r.email)} • ${esc(fdate(r))} • ${no(r)}</small></div><span class="iv-s ${r.status==="done"?"done":"new"}">${r.status==="done"?"منجزة":"جديدة"}</span></div>
+  <div class="iv-g">${card("الموديل",d.model)}${card("الفستان",d.dress)}${card("الخفتان",d.kaftan)}${card("لون البطان",d.color)}${card("نوع البطان",d.lining)}</div>
+  ${d.custom?`<h4>🖼️ موديل رفعته الزبونة</h4><div class="iv-cu"><img src="${esc(d.custom.url)}" data-z="${esc(d.custom.url)}" alt=""><div style="margin-top:8px"><a class="dz-b" href="${esc(d.custom.url)}" target="_blank" rel="noopener">فتح الصورة بحجمها الكامل</a></div></div>`:""}
+  <h4>📏 المقاسات</h4><div class="iv-ms">${ms||"-"}</div>
+  <div class="iv-tot"><span>الإجمالي</span><b style="color:#c9245a">${money(r.total)}</b></div>
+  <div class="iv-ac"><button class="dz-b p" data-st="${r.status==="done"?"new":"done"}">${r.status==="done"?"إرجاعها لجديدة":"✅ تعليم كمنجزة"}</button><button class="dz-b d" data-del="1">🗑️ حذف الفاتورة</button></div>`;
+}
+async function setStatus(st){
+  const r=rows.find(x=>x.$id===cur);if(!r)return;
+  try{await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:INV_TABLE,rowId:r.$id,data:{status:st}});r.status=st;logAdminAction("تعديل","dress_invoice",r.$id,r.name+" → "+st);render()}
+  catch(e){showToast("❌ فشل التحديث: "+(e.message||e))}
+}
+async function delInv(){
+  const r=rows.find(x=>x.$id===cur);if(!r||!confirm("حذف فاتورة "+r.name+"؟"))return;
+  try{
+    const d=parse(r);
+    await awTablesDB.deleteRow({databaseId:APPWRITE_DATABASE_ID,tableId:INV_TABLE,rowId:r.$id});
+    if(d.custom&&d.custom.id){try{await awStorage.deleteFile({bucketId:UP_BUCKET,fileId:d.custom.id})}catch(_){}}
+    logAdminAction("حذف","dress_invoice",r.$id,r.name);rows=rows.filter(x=>x.$id!==r.$id);cur=null;showToast("🗑️ تم الحذف");render()
+  }catch(e){showToast("❌ فشل الحذف: "+(e.message||e))}
+}
+$("invoicesSection").addEventListener("click",e=>{
+  const t=e.target.closest("[data-o],[data-f],[data-back],[data-z],[data-st],[data-del]");if(!t)return;
+  if(t.dataset.z)return zoom(t.dataset.z);
+  if(t.dataset.o){cur=t.dataset.o;render();$("invoicesSection").scrollIntoView({behavior:"smooth"})}
+  else if(t.dataset.f){flt=t.dataset.f;list()}
+  else if(t.dataset.back){cur=null;list()}
+  else if(t.dataset.st)setStatus(t.dataset.st);
+  else if(t.dataset.del)delInv();
+});
+$("invoicesSection").addEventListener("input",e=>{if(e.target.id==="ivQ"){qs=e.target.value.trim().toLowerCase();listRows()}});
+const _prev=window.switchMainTab;
+window.switchMainTab=function(tab){
+  _prev(tab);
+  const on=tab==="invoices";
+  ["mainTabInvoices","mainTabInvoicesMobile"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("active",on)});
+  $("invoicesSection").style.display=on?"block":"none";
+  if(on){cur=null;load()}
+};
 })();
 </script>
 <style id="designer-css">
