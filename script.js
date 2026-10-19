@@ -2252,9 +2252,11 @@ async function handleForgotPassword() {
   }
 
   try {
-    const recoveryUrl =
-      window.location.origin +
-      window.location.pathname;
+    const recoveryTarget = new URL(window.location.href);
+      recoveryTarget.search = "";
+      recoveryTarget.hash = "";
+      recoveryTarget.searchParams.set("recovery", "1");
+      const recoveryUrl = recoveryTarget.toString();
 
     const response = await appwriteAuthFetch("/account/recovery", {
       method: "POST",
@@ -2785,9 +2787,225 @@ async function proceedWithOrder(customerName) {
 window.addEventListener("scroll", () => {
   document.querySelector("header").style.boxShadow = window.scrollY > 10 ? "0 6px 20px rgba(0,0,0,.06)" : "none";
 });
+/* ============ استعادة كلمة المرور ============ */
 
+let passwordRecoveryUserId = null;
+let passwordRecoverySecret = null;
+
+function cleanPasswordRecoveryUrl(removeFlag = true) {
+  try {
+    const url = new URL(window.location.href);
+
+    url.searchParams.delete("userId");
+    url.searchParams.delete("secret");
+
+    if (removeFlag) {
+      url.searchParams.delete("recovery");
+    }
+
+    window.history.replaceState(
+      {},
+      document.title,
+      url.pathname + url.search + url.hash
+    );
+  } catch (error) {
+    console.warn("تعذر تنظيف رابط الاستعادة:", error);
+  }
+}
+
+function initializePasswordRecovery() {
+  const params = new URLSearchParams(window.location.search);
+
+  const hasRecoveryLink =
+    params.has("userId") ||
+    params.has("secret") ||
+    params.get("recovery") === "1";
+
+  if (!hasRecoveryLink) {
+    return false;
+  }
+
+  const screen = document.getElementById(
+    "passwordRecoveryScreen"
+  );
+
+  if (!screen) {
+    console.error("شاشة استعادة كلمة المرور غير موجودة في index.html");
+    return false;
+  }
+
+  passwordRecoveryUserId = params.get("userId");
+  passwordRecoverySecret = params.get("secret");
+
+  screen.classList.add("show");
+  document.body.style.overflow = "hidden";
+
+  // إزالة بيانات الرابط السرية من شريط العنوان.
+  // تبقى بياناتها في الذاكرة حتى إتمام العملية.
+  cleanPasswordRecoveryUrl(false);
+
+  if (!passwordRecoveryUserId || !passwordRecoverySecret) {
+    document.getElementById("passwordRecoveryForm").style.display =
+      "none";
+
+    document.getElementById("passwordRecoveryInvalid").style.display =
+      "block";
+
+    cleanPasswordRecoveryUrl(true);
+  } else {
+    setTimeout(() => {
+      document.getElementById("recoveryPassword")?.focus();
+    }, 100);
+  }
+
+  return true;
+}
+
+function setRecoveryMessage(message, type = "error") {
+  const element = document.getElementById("recoveryMessage");
+
+  if (!element) return;
+
+  element.textContent = message;
+  element.classList.toggle("success", type === "success");
+  element.classList.toggle("error", type === "error" && !!message);
+}
+
+async function submitPasswordRecovery() {
+  const passwordEl = document.getElementById("recoveryPassword");
+  const confirmEl = document.getElementById(
+    "recoveryPasswordConfirm"
+  );
+  const submitBtn = document.getElementById("recoverySubmitBtn");
+
+  const password = passwordEl.value;
+  const passwordAgain = confirmEl.value;
+
+  setRecoveryMessage("");
+
+  if (!passwordRecoveryUserId || !passwordRecoverySecret) {
+    document.getElementById("passwordRecoveryForm").style.display =
+      "none";
+
+    document.getElementById("passwordRecoveryInvalid").style.display =
+      "block";
+
+    return;
+  }
+
+  if (password.length < 8 || password.length > 256) {
+    setRecoveryMessage(
+      "كلمة السر لازم تكون بين 8 و256 حرفاً."
+    );
+    passwordEl.focus();
+    return;
+  }
+
+  if (password !== passwordAgain) {
+    setRecoveryMessage(
+      "كلمتا السر غير متطابقتين، تأكد منهما."
+    );
+    confirmEl.focus();
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "جارٍ حفظ كلمة السر...";
+
+  try {
+    const response = await appwriteAuthFetch(
+      "/account/recovery",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userId: passwordRecoveryUserId,
+          secret: passwordRecoverySecret,
+          password: password
+        })
+      }
+    );
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        result.message ||
+        "تعذر تغيير كلمة السر. قد يكون الرابط منتهي الصلاحية."
+      );
+    }
+
+    passwordRecoveryUserId = null;
+    passwordRecoverySecret = null;
+
+    cleanPasswordRecoveryUrl(true);
+
+    document.getElementById("passwordRecoveryForm").style.display =
+      "none";
+
+    document.getElementById("passwordRecoverySuccess").style.display =
+      "block";
+
+  } catch (error) {
+    console.error("PASSWORD RECOVERY ERROR:", error);
+
+    const message = error?.message || "";
+
+    if (/expired|invalid|userId|secret/i.test(message)) {
+      document.getElementById("passwordRecoveryForm").style.display =
+        "none";
+
+      document.getElementById("passwordRecoveryInvalid").style.display =
+        "block";
+    } else {
+      setRecoveryMessage(
+        "تعذر تغيير كلمة السر. " +
+        message +
+        " يرجى المحاولة مرة ثانية."
+      );
+    }
+
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "حفظ كلمة السر الجديدة";
+  }
+}
+
+function returnToStore(event) {
+  if (event) {
+    event.preventDefault();
+  }
+
+  cleanPasswordRecoveryUrl(true);
+
+  window.location.replace(window.location.pathname);
+
+  return false;
+}
+
+// السماح بالحفظ عند الضغط على Enter داخل حقول كلمة السر.
+document.addEventListener("DOMContentLoaded", () => {
+  [
+    "recoveryPassword",
+    "recoveryPasswordConfirm"
+  ].forEach((id) => {
+    const input = document.getElementById(id);
+
+    if (input) {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          submitPasswordRecovery();
+        }
+      });
+    }
+  });
+});
 /* ============ تهيئة أولية ============ */
 async function initApp() {
+  if (initializePasswordRecovery()) return;
   logVisit();
   await loadProducts();
   buildShuffleRank();

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
- <link rel="stylesheet" href="style.css?v=20260913variants">
+ <link rel="stylesheet" href="style.css?v=20261019recovery">
 
   <!-- إخفاء شريط "تنزيل التطبيق" إذا الموقع مفتوح من داخل التطبيق نفسه -->
   <style>
@@ -644,8 +644,124 @@
 
     
   </script>
+  <!-- شاشة استعادة كلمة المرور -->
+<section id="passwordRecoveryScreen"
+         aria-modal="true"
+         role="dialog"
+         aria-labelledby="passwordRecoveryTitle">
+
+  <div class="pr-card">
+
+    <img class="pr-logo"
+         src="logo/style-rouge.webp"
+         alt="Style Roj">
+
+    <div id="passwordRecoveryForm">
+
+      <div class="pr-symbol">🔐</div>
+
+      <h1 id="passwordRecoveryTitle">
+        إنشاء كلمة سر جديدة
+      </h1>
+
+      <p class="pr-desc">
+        أدخل كلمة السر الجديدة لحسابك، ثم أكّدها.
+      </p>
+
+      <label for="recoveryPassword">
+        كلمة السر الجديدة
+      </label>
+
+      <input
+        id="recoveryPassword"
+        type="password"
+        minlength="8"
+        maxlength="256"
+        autocomplete="new-password"
+        placeholder="٨ أحرف على الأقل"
+        required>
+
+      <label for="recoveryPasswordConfirm">
+        تأكيد كلمة السر الجديدة
+      </label>
+
+      <input
+        id="recoveryPasswordConfirm"
+        type="password"
+        minlength="8"
+        maxlength="256"
+        autocomplete="new-password"
+        placeholder="أعد كتابة كلمة المرور"
+        required>
+
+      <button
+        id="recoverySubmitBtn"
+        class="pr-submit"
+        type="button"
+        onclick="submitPasswordRecovery()">
+        حفظ كلمة السر الجديدة
+      </button>
+
+      <div
+        id="recoveryMessage"
+        class="pr-message"
+        role="status"
+        aria-live="polite">
+      </div>
+
+      <a class="pr-back"
+         href="index.html"
+         onclick="returnToStore(event)">
+        العودة إلى المتجر
+      </a>
+
+    </div>
+
+    <div id="passwordRecoverySuccess"
+         class="pr-state"
+         style="display:none">
+
+      <div class="pr-symbol">✓</div>
+
+      <h1>تم تغيير كلمة السر بنجاح</h1>
+
+      <p class="pr-desc">
+        يمكنك الآن تسجيل الدخول باستخدام كلمة السر الجديدة.
+      </p>
+
+      <button class="pr-submit"
+              type="button"
+              onclick="returnToStore()">
+        العودة إلى تسجيل الدخول
+      </button>
+
+    </div>
+
+    <div id="passwordRecoveryInvalid"
+         class="pr-state"
+         style="display:none">
+
+      <div class="pr-symbol">⚠️</div>
+
+      <h1>الرابط غير صالح</h1>
+
+      <p class="pr-desc">
+        قد يكون الرابط ناقصاً أو انتهت صلاحيته.
+        ارجع إلى المتجر واطلب رسالة جديدة.
+      </p>
+
+      <button class="pr-submit"
+              type="button"
+              onclick="returnToStore()">
+        العودة إلى المتجر
+      </button>
+
+    </div>
+
+  </div>
+</section>
 <script src="https://cdn.jsdelivr.net/npm/appwrite@26.2.0/dist/iife/sdk.min.js"></script>
-  <script src="script.js?v=20260913debug1"></script>
+  <script src="script.js?v=20261019recovery"></script>
 
 <!-- Unavailable box -->
 <div id="unavailableBox" onclick="closeUnavailableBox()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;">

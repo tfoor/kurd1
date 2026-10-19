@@ -3788,15 +3788,21 @@ function render(){
   $("dzForm").innerHTML=`<div class="dz-form">
    <div><label>${NAMEL[kind]}</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
    ${hasF?`<div><label>نوع القماش (اكتبيه)</label><input id="dzFabric" placeholder="مثال: ساتان مطرز" value="${esc(e?e.fabric:"")}"></div>`:""}
-   ${kind==="design"?`<div><label>قياس الفستان (والخفتان)</label><select id="dzMD">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
-   <div><label>قياس البطان</label><select id="dzML">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mlining||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>`:""}
+   ${kind==="design"?`<div><label>قياس الفستان</label><select id="dzMD">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+   <div><label>قياس الخفتان</label><select id="dzMK">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mkaftan||+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+   <div><label>قياس البطان</label><select id="dzML">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mlining||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+   <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;background:#fff9fb;border:1px solid #f6d5da;border-radius:12px;padding:10px 12px">
+    <label style="display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px"><input type="checkbox" id="dzNeedDress" ${(!e||e.needDress!==false)?"checked":""}> هاد الموديل يحتاج قسم «الفستان» مستقل</label>
+    <label style="display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px"><input type="checkbox" id="dzAllowSwap" ${(!e||e.allowSwap!==false)?"checked":""}> فعّلي زر تبديل مصدر القماش بين قسمي الفستان والخفتان</label>
+    <small style="color:#8a727d;font-size:11.5px;line-height:1.7">إذا بطّلتي «يحتاج قسم فستان مستقل»، ما يظهر قسم الفستان نهائياً للزبونة بهالموديل (مثلاً موديل خفتان وبطان بس). قسم الخفتان والبطان يضلوا ظاهرين دايماً.</small>
+   </div>`:""}
    ${isC?"":`<div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>`}
    ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
    <div><label>${hasF||kind==="design"?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
    <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
   const list=all.filter(r=>r.kind===kind);
   $("dzList").innerHTML=list.map(x=>`<div class="dz-item">${x.img?`<img class="th" src="${esc(x.img)}" alt="">`:`<div class="th" style="background:${esc(x.hex||"#faecef")}"></div>`}
-   <div class="n">${esc(x.name)}${kind==="design"?` <span style="background:#ffe3ec;color:#c9245a;border-radius:8px;padding:1px 8px;font-size:12px">فستان x${+x.mdress||+x.mult||1} • بطان x${+x.mlining||+x.mult||1}</span>`:""}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
+   <div class="n">${esc(x.name)}${kind==="design"?` <span style="background:#ffe3ec;color:#c9245a;border-radius:8px;padding:1px 8px;font-size:12px">فستان x${+x.mdress||+x.mult||1} • خفتان x${+x.mkaftan||+x.mdress||+x.mult||1} • بطان x${+x.mlining||+x.mult||1}${x.needDress===false?" • بدون قسم فستان":""}${x.allowSwap===false?" • بدون تبديل قماش":""}</span>`:""}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
    <button class="dz-b" data-e="${esc(x.$id)}">تعديل</button><button class="dz-b d" data-d="${esc(x.$id)}">حذف</button></div>`).join("")||'<div class="empty-state">لا يوجد عناصر بعد</div>';
 }
 async function save(){
@@ -3815,7 +3821,7 @@ async function save(){
     }
     if((hasF||kind==="design")&&!img){showToast("لازم تضيفي صورة");btn.disabled=false;return}
     const data={kind,name,price:isC?0:(parseFloat($("dzPrice").value)||0),hex:isC?$("dzHex").value:"",img,fabric:hasF?$("dzFabric").value.trim():""};
-    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mlining=parseFloat($("dzML").value)||1}
+    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mkaftan=parseFloat($("dzMK").value)||1;data.mlining=parseFloat($("dzML").value)||1;data.needDress=$("dzNeedDress").checked;data.allowSwap=$("dzAllowSwap").checked}
     if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);
