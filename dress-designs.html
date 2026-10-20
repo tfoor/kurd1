@@ -139,7 +139,7 @@ async function loadAll(){
  const db=awDB,rows=[];let off=0;
  for(;;){const r=await db.listRows({databaseId:SR.DATABASE,tableId:TABLE_ID,queries:[Appwrite.Query.orderAsc('$createdAt'),Appwrite.Query.limit(100),Appwrite.Query.offset(off)]});const b=r.rows||r.documents||[];rows.push(...b);if(b.length<100)break;off+=100}
  const cnt={};rows.forEach(x=>cnt[x.kind]=(cnt[x.kind]||0)+1);
- const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||'',mdress:parseFloat(x.mdress||x.mult)||1,mlining:parseFloat(x.mlining||x.mult)||1}));
+ const g=k=>rows.filter(x=>x.kind===k).map(x=>({id:x.$id,name:x.name,price:+x.price||0,hex:x.hex||'#f3b5c7',img:x.img||'',fabric:x.fabric||'',mdress:parseFloat(x.mdress||x.mult)||1,mkaftan:parseFloat(x.mkaftan||x.mdress||x.mult)||1,mlining:parseFloat(x.mlining||x.mult)||1,showDress:x.showDress!==false,showKaftan:x.showKaftan!==false,showLining:x.showLining!==false,allowSwap:x.allowSwap!==false}));
  return{cnt,designs:g('design'),models:g('model'),kaftans:g('kaftan'),colors:g('color'),linings:g('fabric')};
 }
 function openLb(src){if(!src)return;$('lbImg').className='';$('lbImg').src=src;$('lb').classList.add('show')}
@@ -163,8 +163,7 @@ function cardsHTML(sectionNum){
  const attr=sectionNum===2?'data-s2':'data-s3';
  const itemsHTML=src.map(x=>`<div class="ow"><button class="co ${x.id===selId?'on':''}" ${attr}="${esc(x.id)}">${im(x)}${info(x,mult)}</button>${zb(x)}</div>`).join('');
  if(sectionNum===3){
-  const noneOpt=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-s3=""><div class="none">⛔</div><b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`;
-  return noneOpt+itemsHTML;
+
  }
  return itemsHTML||'<p class="empty">لا توجد خيارات بعد</p>';
 }
