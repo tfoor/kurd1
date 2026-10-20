@@ -3755,6 +3755,53 @@ window.switchMainTab=function(tab){
 #designerSection .dz-item .th{width:56px;height:56px;border-radius:12px;object-fit:cover;background:#faecef;border:1px solid #F0EAF3;flex:none}
 #designerSection .dz-item .n{flex:1;font-weight:700}#designerSection .dz-item .pr{color:#e0346a;font-weight:800}
 #designerSection .dz-note{font-size:12.5px;line-height:1.8;background:#fff6dd;color:#8a641a;border-radius:12px;padding:10px 12px;margin-bottom:12px}
+/* ===== بطاقة "إعدادات الموديل" (نموذج تصميم الفستان) ===== */
+.dz-model-card{background:#fff;border:1px solid #f6d5da;border-radius:20px;padding:20px;margin-bottom:14px}
+.dz-model-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.dz-model-head-ic{width:50px;height:50px;border-radius:16px;background:linear-gradient(145deg,#ff5a8c,#d92d62);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:0 8px 18px rgba(217,45,98,.28)}
+.dz-model-head h3{font-size:19px;font-weight:800;color:#3f1424}
+.dz-model-head p{font-size:12.5px;color:#8a727d;margin-top:2px}
+.dz-top-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.dz-top-row label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+.dz-top-row input,.dz-top-row select{width:100%;padding:10px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit;background:#fff}
+.dz-panel{background:#fff9fb;border:1px solid #f6d5da;border-radius:16px;padding:14px;margin-bottom:14px}
+.dz-panel-title{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:#6c233d;margin-bottom:12px}
+.dz-panel-title .ic{width:26px;height:26px;border-radius:8px;background:#ffe3ec;display:flex;align-items:center;justify-content:center;font-size:13px}
+.dz-trow{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#fff;border:1px solid #f0dde3;border-radius:14px;padding:12px 14px}
+.dz-trow+.dz-trow{margin-top:8px}
+.dz-trow-info{display:flex;align-items:center;gap:12px;min-width:0}
+.dz-trow-ic{width:40px;height:40px;border-radius:12px;background:#ffe3ec;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.dz-trow-text b{display:block;font-size:13.5px;font-weight:800;color:#3f1424}
+.dz-trow-text span{display:block;font-size:11.5px;color:#8a727d;margin-top:2px;line-height:1.5}
+.dz-switch{position:relative;display:inline-block;width:46px;height:26px;flex:none}
+.dz-switch input{opacity:0;width:0;height:0;position:absolute}
+.dz-slider{position:absolute;inset:0;background:#e3d3da;border-radius:26px;transition:.2s;cursor:pointer}
+.dz-slider::before{content:"";position:absolute;height:20px;width:20px;right:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.dz-switch input:checked+.dz-slider{background:#FF5C8A}
+.dz-switch input:checked+.dz-slider::before{transform:translateX(-20px)}
+.dz-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.dz-bottom-row label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+.dz-bottom-row input{width:100%;padding:10px;border:1px solid #F0EAF3;border-radius:12px;font-family:inherit;background:#fff}
+.dz-model-actions{display:flex;gap:8px}
+@media(max-width:720px){.dz-top-row{grid-template-columns:1fr 1fr}.dz-bottom-row{grid-template-columns:1fr}}
+/* ===== لوحة إعدادات الموديل (أقسام ظاهرة + خيارات إضافية) ===== */
+#designerSection .dz-cfg{grid-column:1/-1;background:#fff;border:1px solid #F0EAF3;border-radius:18px;overflow:hidden;margin-top:4px}
+#designerSection .dz-cfg-h{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#FFF5F8;border-bottom:1px solid #F6E3EA}
+#designerSection .dz-cfg-h b{font-size:14px}
+#designerSection .dz-cfg-h small{display:block;color:#8a727d;font-size:11.5px;font-weight:400;margin-top:1px}
+#designerSection .dz-cfg-h .ic{width:34px;height:34px;flex:none;border-radius:10px;background:#FF5C8A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+#designerSection .dz-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #F7EEF2}
+#designerSection .dz-row:last-child{border-bottom:0}
+#designerSection .dz-row .ic2{width:38px;height:38px;flex:none;border-radius:11px;background:#FFF0F5;color:#e0346a;display:flex;align-items:center;justify-content:center;font-size:17px}
+#designerSection .dz-row .t{flex:1;min-width:0}
+#designerSection .dz-row .t b{display:block;font-size:13.5px}
+#designerSection .dz-row .t small{display:block;color:#8a727d;font-size:11.5px;margin-top:2px;line-height:1.6}
+#designerSection .tgl{position:relative;width:46px;height:26px;flex:none;display:block}
+#designerSection .tgl input{opacity:0;width:0;height:0;position:absolute}
+#designerSection .tgl span{position:absolute;inset:0;background:#e3d9de;border-radius:20px;cursor:pointer;transition:.2s}
+#designerSection .tgl span::before{content:'';position:absolute;width:20px;height:20px;right:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+#designerSection .tgl input:checked+span{background:#FF5C8A}
+#designerSection .tgl input:checked+span::before{transform:translateX(-20px)}
 </style>
 <script id="designer-js">
 (function(){
@@ -3782,27 +3829,53 @@ async function load(){
     $("dzList").innerHTML='<div class="dz-note">❌ تعذر تحميل البيانات: '+esc(e.message||e)+'</div>';
   }
 }
+function toggleRow(id,icon,title,desc,checked){
+ return `<div class="dz-trow"><div class="dz-trow-info"><div class="dz-trow-ic">${icon}</div><div class="dz-trow-text"><b>${title}</b><span>${desc}</span></div></div><label class="dz-switch"><input type="checkbox" id="${id}" ${checked?"checked":""}><span class="dz-slider"></span></label></div>`;
+}
+function designFormHTML(e){
+ const g=(f,d)=>e?((e[f]!==undefined&&e[f]!==null)?e[f]:d):d;
+ return `<div class="dz-model-card">
+  <div class="dz-model-head"><div class="dz-model-head-ic">👗</div><div><h3>إعدادات الموديل</h3><p>تحكم بالأقسام وكميات القماش لكل موديل</p></div></div>
+  <div class="dz-top-row">
+   <div><label>اسم الموديل *</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
+   <div><label>قياس الفستان (X) *</label><select id="dzMD">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+   <div><label>قياس الخفتان (X) *</label><select id="dzMK">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mkaftan||+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+   <div><label>قياس البطان (X) *</label><select id="dzML">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mlining||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
+  </div>
+  <div class="dz-panel">
+   <div class="dz-panel-title"><span class="ic">👁</span> الأقسام الظاهرة للزبونة</div>
+   ${toggleRow("dzShowDress","👗","إظهار قسم الفستان","عرض قسم اختيار قماش الفستان",g("showDress",true)!==false)}
+   ${toggleRow("dzShowKaftan","🥻","إظهار قسم الخفتان","عرض قسم اختيار قماش الخفتان",g("showKaftan",true)!==false)}
+   ${toggleRow("dzShowLining","🧵","إظهار قسم البطان","عرض قسم لون ونوع البطان",g("showLining",true)!==false)}
+  </div>
+  <div class="dz-panel">
+   <div class="dz-panel-title"><span class="ic">⚙️</span> خيارات إضافية</div>
+   ${toggleRow("dzAllowSwap","⇄","السماح بتبديل نوع القماش بين الفستان والخفتان","يُبدّل القماش المعروض داخل نفس القسم، مع بقاء حساب الأمتار تابعاً للقسم الأصلي",g("allowSwap",true)!==false)}
+  </div>
+  <div class="dz-bottom-row">
+   <div><label>الصورة *</label><input id="dzFile" type="file" accept="image/*"></div>
+   <div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>
+  </div>
+  <div class="dz-model-actions"><button class="dz-b p" id="dzSave">${e?"حفظ التعديلات":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div>
+ </div>`;
+}
 function render(){
   $("dzTabs").innerHTML=Object.entries(KINDS).map(([k,v])=>`<button class="dz-b ${k===kind?"on":""}" data-k="${k}">${v}</button>`).join("");
   const e=edit?all.find(r=>r.$id===edit):null,isC=kind==="color",hasF=kind==="model"||kind==="kaftan";
-  $("dzForm").innerHTML=`<div class="dz-form">
-   <div><label>${NAMEL[kind]}</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
-   ${hasF?`<div><label>نوع القماش (اكتبيه)</label><input id="dzFabric" placeholder="مثال: ساتان مطرز" value="${esc(e?e.fabric:"")}"></div>`:""}
-   ${kind==="design"?`<div><label>قياس الفستان</label><select id="dzMD">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
-   <div><label>قياس الخفتان</label><select id="dzMK">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mkaftan||+e.mdress||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
-   <div><label>قياس البطان</label><select id="dzML">${MULTS.map(n=>`<option value="${n}" ${((e&&(+e.mlining||+e.mult))||1)===n?"selected":""}>x${n}</option>`).join("")}</select></div>
-   <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;background:#fff9fb;border:1px solid #f6d5da;border-radius:12px;padding:10px 12px">
-    <label style="display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px"><input type="checkbox" id="dzNeedDress" ${(!e||e.needDress!==false)?"checked":""}> هاد الموديل يحتاج قسم «الفستان» مستقل</label>
-    <label style="display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px"><input type="checkbox" id="dzAllowSwap" ${(!e||e.allowSwap!==false)?"checked":""}> فعّلي زر تبديل مصدر القماش بين قسمي الفستان والخفتان</label>
-    <small style="color:#8a727d;font-size:11.5px;line-height:1.7">إذا بطّلتي «يحتاج قسم فستان مستقل»، ما يظهر قسم الفستان نهائياً للزبونة بهالموديل (مثلاً موديل خفتان وبطان بس). قسم الخفتان والبطان يضلوا ظاهرين دايماً.</small>
-   </div>`:""}
-   ${isC?"":`<div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>`}
-   ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
-   <div><label>${hasF||kind==="design"?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
-   <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
+  if(kind==="design"){
+    $("dzForm").innerHTML=designFormHTML(e);
+  }else{
+    $("dzForm").innerHTML=`<div class="dz-form">
+     <div><label>${NAMEL[kind]}</label><input id="dzName" value="${esc(e?e.name:"")}"></div>
+     ${hasF?`<div><label>نوع القماش (اكتبيه)</label><input id="dzFabric" placeholder="مثال: ساتان مطرز" value="${esc(e?e.fabric:"")}"></div>`:""}
+     ${isC?"":`<div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>`}
+     ${isC?`<div><label>اللون</label><input id="dzHex" type="color" value="${esc(e&&e.hex?e.hex:"#f3b5c7")}"></div>`:""}
+     <div><label>${hasF?"الصورة *":"الصورة (اختياري)"}</label><input id="dzFile" type="file" accept="image/*"></div>
+     <div style="display:flex;gap:6px"><button class="dz-b p" id="dzSave">${e?"حفظ التعديل":"إضافة"}</button>${e?'<button class="dz-b" id="dzCancel">إلغاء</button>':""}</div></div>`;
+  }
   const list=all.filter(r=>r.kind===kind);
   $("dzList").innerHTML=list.map(x=>`<div class="dz-item">${x.img?`<img class="th" src="${esc(x.img)}" alt="">`:`<div class="th" style="background:${esc(x.hex||"#faecef")}"></div>`}
-   <div class="n">${esc(x.name)}${kind==="design"?` <span style="background:#ffe3ec;color:#c9245a;border-radius:8px;padding:1px 8px;font-size:12px">فستان x${+x.mdress||+x.mult||1} • خفتان x${+x.mkaftan||+x.mdress||+x.mult||1} • بطان x${+x.mlining||+x.mult||1}${x.needDress===false?" • بدون قسم فستان":""}${x.allowSwap===false?" • بدون تبديل قماش":""}</span>`:""}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
+   <div class="n">${esc(x.name)}${kind==="design"?` <span style="background:#ffe3ec;color:#c9245a;border-radius:8px;padding:1px 8px;font-size:12px">فستان x${+x.mdress||+x.mult||1} • خفتان x${+x.mkaftan||+x.mdress||+x.mult||1} • بطان x${+x.mlining||+x.mult||1}${x.showDress===false?" • بدون قسم فستان":""}${x.showKaftan===false?" • بدون قسم خفتان":""}${x.showLining===false?" • بدون قسم بطان":""}${x.allowSwap===false?" • بدون تبديل قماش":""}</span>`:""}${x.fabric?`<div style="font-size:12px;font-weight:400;color:#8a727d">القماش: ${esc(x.fabric)}</div>`:""}</div>${isC?"":`<div class="pr">${money(x.price)}</div>`}
    <button class="dz-b" data-e="${esc(x.$id)}">تعديل</button><button class="dz-b d" data-d="${esc(x.$id)}">حذف</button></div>`).join("")||'<div class="empty-state">لا يوجد عناصر بعد</div>';
 }
 async function save(){
@@ -3821,7 +3894,7 @@ async function save(){
     }
     if((hasF||kind==="design")&&!img){showToast("لازم تضيفي صورة");btn.disabled=false;return}
     const data={kind,name,price:isC?0:(parseFloat($("dzPrice").value)||0),hex:isC?$("dzHex").value:"",img,fabric:hasF?$("dzFabric").value.trim():""};
-    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mkaftan=parseFloat($("dzMK").value)||1;data.mlining=parseFloat($("dzML").value)||1;data.needDress=$("dzNeedDress").checked;data.allowSwap=$("dzAllowSwap").checked}
+    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mkaftan=parseFloat($("dzMK").value)||1;data.mlining=parseFloat($("dzML").value)||1;data.showDress=$("dzShowDress").checked;data.showKaftan=$("dzShowKaftan").checked;data.showLining=$("dzShowLining").checked;data.allowSwap=$("dzAllowSwap").checked}
     if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);

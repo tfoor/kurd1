@@ -85,18 +85,18 @@ try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.se
   <section class="step"><div class="sh"><i>1</i><h2>اختاري الموديل</h2></div><div class="cards" id="designs"></div></section>
   <section class="step" id="stepDress"><div class="sh"><i>2</i><h2>الفستان</h2>
     <div class="kindtg">
-     <button class="ktb" data-tg="2" data-kind="kaftan" onclick="setSecView(2,'kaftan')">قماش1</button>
-     <button class="ktb on" data-tg="2" data-kind="model" onclick="setSecView(2,'model')">قماش2</button>
+     <button class="ktb" data-tg="2" data-kind="kaftan" onclick="setSecView(2,'kaftan')">خفتان</button>
+     <button class="ktb on" data-tg="2" data-kind="model" onclick="setSecView(2,'model')">الفستان</button>
     </div>
     <small id="n2">نوع القماش</small></div><div class="cards" id="models"></div></section>
-  <section class="step"><div class="sh"><i>3</i><h2>الخفتان</h2>
+  <section class="step" id="stepKaftan"><div class="sh"><i>3</i><h2>الخفتان</h2>
     <div class="kindtg">
-     <button class="ktb on" data-tg="3" data-kind="kaftan" onclick="setSecView(3,'kaftan')">قماش1</button>
-     <button class="ktb" data-tg="3" data-kind="model" onclick="setSecView(3,'model')">قماش2</button>
+     <button class="ktb on" data-tg="3" data-kind="kaftan" onclick="setSecView(3,'kaftan')">الخفتان</button>
+     <button class="ktb" data-tg="3" data-kind="model" onclick="setSecView(3,'model')">فستان</button>
     </div>
     <small id="n3">اختياري</small></div><div class="cards" id="kaftans"></div></section>
-  <section class="step"><div class="sh"><i>4</i><h2>لون البطان</h2><small id="colName"></small></div><div class="sw" id="colors"></div></section>
-  <section class="step"><div class="sh"><i>5</i><h2>نوع البطان</h2><small id="n5"></small></div><div class="types" id="linings"></div></section>
+  <section class="step" id="stepLiningColor"><div class="sh"><i>4</i><h2>لون البطان</h2><small id="colName"></small></div><div class="sw" id="colors"></div></section>
+  <section class="step" id="stepLiningType"><div class="sh"><i>5</i><h2>نوع البطان</h2><small id="n5"></small></div><div class="types" id="linings"></div></section>
   <section class="step" id="measure"><div class="sh"><i>6</i><h2>المقاسات</h2><small>بالسنتيمتر</small></div>
    <div class="fsum" id="fsum"></div>
    <div class="meas">
@@ -163,7 +163,8 @@ function cardsHTML(sectionNum){
  const attr=sectionNum===2?'data-s2':'data-s3';
  const itemsHTML=src.map(x=>`<div class="ow"><button class="co ${x.id===selId?'on':''}" ${attr}="${esc(x.id)}">${im(x)}${info(x,mult)}</button>${zb(x)}</div>`).join('');
  if(sectionNum===3){
-
+  const noneOpt=`<div class="ow"><button class="co ${!S.kaftan?'on':''}" data-s3=""><div class="none">⛔</div><b>بدون خفتان</b><span class="pr">${$$(0)}</span></button></div>`;
+  return noneOpt+itemsHTML;
  }
  return itemsHTML||'<p class="empty">لا توجد خيارات بعد</p>';
 }
@@ -177,37 +178,45 @@ function renderToggles(){
 }
 /* كمية القماش للموديل (x1/x2/x3) بتنحط من الأدمن وبتضرب أسعار الفستان والخفتان ونوع البطان بصمت، بدون ما تظهر للزبونة */
 /* الموديل الحالي: من القائمة أو موديل الزبونة اللي رفعته */
-const curD=()=>S.useCustom&&S.custom?{name:'موديلك الخاص',img:S.custom.url,price:0,mdress:1,mkaftan:1,mlining:1,custom:1,needDress:true,allowSwap:true}:((D&&D.designs[S.d])||{});
+const curD=()=>S.useCustom&&S.custom?{name:'موديلك الخاص',img:S.custom.url,price:0,mdress:1,mkaftan:1,mlining:1,custom:1,showDress:true,showKaftan:true,showLining:true,allowSwap:true}:((D&&D.designs[S.d])||{});
 const KD=()=>curD().mdress||1;    /* قياس الفستان */
 const KK=()=>curD().mkaftan||curD().mdress||1;  /* قياس الخفتان لحاله (إذا ما محدد بالأدمن، بيرجع لقياس الفستان للتوافق مع تصاميم قديمة) */
 const KL=()=>curD().mlining||1;   /* قياس البطان */
-const needDress=()=>curD().needDress!==false;   /* إذا false، هاد الموديل ما إله قسم فستان مستقل */
-const allowSwap=()=>curD().allowSwap!==false;   /* إذا false، ما يظهر زر تبديل مصدر القماش */
+const showDress=()=>curD().showDress!==false;    /* إذا false، هاد الموديل ما إله قسم فستان مستقل */
+const showKaftan=()=>curD().showKaftan!==false;   /* إذا false، ما يظهر قسم الخفتان إطلاقاً */
+const showLining=()=>curD().showLining!==false;   /* إذا false، ما يظهر قسم لون/نوع البطان */
+const allowSwap=()=>curD().allowSwap!==false&&showDress()&&showKaftan(); /* التبديل بس إذا فعّال وبوجود القسمين الاتنين */
 const info=(x,mult)=>`<b>${esc(x.name)}</b>${x.fabric?`<small>${esc(x.fabric)}</small>`:''}<span class="pr">${$$(x.price*mult)}</span>`;
-/* تطبّق إعدادات الموديل الحالي: تظهر/تخفي قسم الفستان، وتظهر/تخفي أزرار التبديل */
+/* تطبّق إعدادات الموديل الحالي: تظهر/تخفي الأقسام، وتظهر/تخفي أزرار التبديل */
 function applyModelConfig(){
- const nd=needDress(),as=allowSwap();
- const sd=$('stepDress');if(sd)sd.style.display=nd?'':'none';
+ const sd=showDress(),sk=showKaftan(),sl=showLining(),as=allowSwap();
+ const elD=$('stepDress');if(elD)elD.style.display=sd?'':'none';
+ const elK=$('stepKaftan');if(elK)elK.style.display=sk?'':'none';
+ const elC=$('stepLiningColor');if(elC)elC.style.display=sl?'':'none';
+ const elT=$('stepLiningType');if(elT)elT.style.display=sl?'':'none';
  document.querySelectorAll('.kindtg').forEach(el=>el.style.display=as?'':'none');
  if(!as){S.secView[2]='model';S.secView[3]='kaftan'}
 }
 function draw(){
  applyModelConfig();
- const de=curD(),nd=needDress(),dr=nd?anyBy(S.dress):null,co=by('colors',S.color),li=by('linings',S.lining),ka=anyBy(S.kaftan);
+ const de=curD(),sd=showDress(),sk=showKaftan(),sl=showLining();
+ const dr=sd?anyBy(S.dress):null,ka=sk?anyBy(S.kaftan):null,co=sl?by('colors',S.color):null,li=sl?by('linings',S.lining):null;
  const cmCard=`<div class="ow"><button class="co cm ${S.useCustom&&S.custom?'on':''}" data-cm="1">${S.custom?`<img class="im" src="${S.custom.url}" alt="">`:'<div class="none" style="font-size:38px">➕</div>'}<b>${S.custom?'موديلك الخاص':'أضيفي موديلك بنفسك'}</b><small>${S.custom?(S.useCustom?'اضغطي لتغيير الصورة':'اضغطي لاختياره'):'ارفعي صورة الموديل اللي بدك تفصّليه'}</small></button>${S.custom?`<button class="zb" data-z="${S.custom.url}">🔍 تكبير</button>`:''}</div>`;
  $('designs').innerHTML=(D.designs.map((x,i)=>`<div class="ow"><button class="co ${!S.useCustom&&i==S.d?'on':''}" data-g="${i}">${im(x)}<b>${esc(x.name)}</b><span class="pr">${$$(x.price)}</span></button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد موديلات بعد</p>')+cmCard;
- if(nd)$('models').innerHTML=cardsHTML(2);
- $('kaftans').innerHTML=cardsHTML(3);
+ if(sd)$('models').innerHTML=cardsHTML(2);
+ if(sk)$('kaftans').innerHTML=cardsHTML(3);
  renderToggles();
- $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
- $('colName').textContent=co?co.name:'';
- $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price*KL())}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
+ if(sl){
+  $('colors').innerHTML=D.colors.map(x=>`<button class="${x.id==S.color?'on':''}" data-c="${esc(x.id)}">${x.img?`<img class="dot" src="${esc(x.img)}" alt="">`:`<span class="dot" style="background:${esc(x.hex)}"></span>`}<span>${esc(x.name)}</span></button>`).join('')||'<p class="empty">لا توجد ألوان بعد</p>';
+  $('colName').textContent=co?co.name:'';
+  $('linings').innerHTML=D.linings.map(x=>`<button class="ty ${x.id==S.lining?'on':''}" data-l="${esc(x.id)}">${x.img?`<img class="im" src="${esc(x.img)}" alt="">`:''}<div>${esc(x.name)}</div><span class="pr">${$$(x.price*KL())}</span></button>`).join('')||'<p class="empty">لا توجد أنواع بطان بعد</p>';
+ }
  S.pv=de.img||(dr&&dr.img)||(ka&&ka.img)||'';$('hero').style.display=S.pv?'':'none';$('hero').src=S.pv;$('zoomDress').style.display=S.pv?'':'none';
  const kd=KD(),kk=KK(),kl=KL();
  const parts=[["الموديل",de.name,de.custom?null:de.price,de.custom?"السعر بيتحدد بعد مراجعة الصورة":""],
-  ...(nd?[["الفستان",dr&&dr.name,dr?dr.price*kd:0,dr&&dr.fabric]]:[]),
-  ["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price*kk:0,ka&&ka.fabric],
-  ["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li?li.price*kl:0]];
+  ...(sd?[["الفستان",dr&&dr.name,dr?dr.price*kd:0,dr&&dr.fabric]]:[]),
+  ...(sk?[["الخفتان",ka?ka.name:"بدون خفتان",ka?ka.price*kk:0,ka&&ka.fabric]]:[]),
+  ...(sl?[["لون البطان",co&&co.name,null],["نوع البطان",li&&li.name,li?li.price*kl:0]]:[])];
  const h=parts.map(p=>`<div class="row"><span>${p[0]}: ${esc(p[1]||'-')}${p[3]?`<em>${esc(p[3])}</em>`:''}</span>${p[2]==null?'':`<b>${$$(p[2])}</b>`}</div>`).join('');
  S.total=parts.reduce((t,p)=>t+(+p[2]||0),0);S.parts=parts;
  $('rows').innerHTML=h;$('fsum').innerHTML=h+`<div class="total"><span>الإجمالي</span><b>${$$(S.total)}</b></div>`;$('total').textContent=$$(S.total);$('total2').textContent=$$(S.total);
@@ -267,7 +276,8 @@ async function send(){
  const btn=$('sendM');btn.disabled=true;btn.textContent='جاري حفظ الفاتورة...';
  let no='SR-'+Date.now().toString().slice(-6),custom=null,upErr='';
  try{
-  const de=curD(),nd=needDress(),dr=nd?anyBy(S.dress):null,ka=anyBy(S.kaftan),co=by('colors',S.color),li=by('linings',S.lining);
+  const de=curD(),sd=showDress(),sk=showKaftan(),sl=showLining();
+  const dr=sd?anyBy(S.dress):null,ka=sk?anyBy(S.kaftan):null,co=sl?by('colors',S.color):null,li=sl?by('linings',S.lining):null;
   const kd=KD(),kk=KK(),kl=KL();
   if(S.useCustom&&S.custom){
    try{
