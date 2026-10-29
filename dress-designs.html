@@ -70,7 +70,12 @@ header img{height:38px}.back{color:var(--deep);font-weight:700;text-decoration:n
 .kindtg{display:flex;background:var(--soft);border-radius:12px;padding:3px;gap:3px}
 .ktb{border:0;background:none;padding:6px 12px;border-radius:9px;font-size:11.5px;font-weight:800;color:var(--muted)}
 .ktb.on{background:var(--pink);color:#fff}
-</style><style>html.in-app,html.in-app body{touch-action:pan-x pan-y}</style>
+</style><style>
+html.in-app,html.in-app body{touch-action:pan-x pan-y}
+html.in-app body{padding-top:0!important}
+html.in-app body>header{display:none!important;visibility:hidden!important}
+html.in-app .bar{display:none!important}
+</style>
 <script>
 try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.search)||/StyleRojApp|; wv\)/i.test(navigator.userAgent)){
  sessionStorage.setItem("in_app","1");document.documentElement.classList.add("in-app");
@@ -105,7 +110,7 @@ try{if(sessionStorage.getItem("in_app")==="1"||/[?&]app=1(&|$)/.test(location.se
    <button class="send" id="sendM" style="margin-top:16px">إرسال الطلب عبر واتساب 📲</button></section>
  </div>
  <aside class="side">
-  <div class="pv"><button class="arr l" id="prev">←</button><img id="hero" alt=""><button class="arr r" id="next">→</button><button class="pz" id="zoomDress" style="display:none">🔍 تكبير الصورة</button></div>
+  <div class="pv"><button class="arr l" id="prev">←</button><img id="hero" alt=""><button class="arr r" id="next">→</button><button class="pz" id="zoomDress" style="display:none">⌕ تكبير الصورة</button></div>
   <div class="sumside"><div id="rows"></div><div class="total"><span>الإجمالي</span><b id="total"></b></div><button class="send" id="send">أكملي المقاسات ↓</button></div>
  </aside>
 </div>
@@ -148,7 +153,7 @@ $('lbImg').onclick=e=>{e.stopPropagation();e.target.classList.toggle('z')};$('lb
 document.addEventListener('keydown',e=>e.key==='Escape'&&closeLb());
 $('mf').innerHTML=M.map(([k,n])=>`<div class="f"><label>${n} (${k})</label><input id="m-${k}" type="number" min="1" inputmode="decimal" placeholder="سم"></div>`).join('');
 const im=x=>x.img?`<img class="im" src="${esc(x.img)}" alt="" loading="lazy">`:`<div class="im"></div>`;
-const zb=x=>x.img?`<button class="zb" data-z="${esc(x.img)}">🔍 تكبير</button>`:'';
+const zb=x=>x.img?`<button class="zb" data-z="${esc(x.img)}">⌕</button>`:'';
 /* أي قماش (فستان أو خفتان) ممكن يترجموه لنفس الـ id-space، فنلاقيه بغض النظر من أي كتالوج */
 const anyBy=id=>id?(D.models.find(x=>x.id===id)||D.kaftans.find(x=>x.id===id)):null;
 /* بطاقات نوع القماش — كل قسم (2=الفستان، 3=الخفتان) إله سلوت ثابت خاص فيه (data-s2/data-s3)
@@ -184,7 +189,7 @@ const KL=()=>curD().mlining||1;   /* قياس البطان */
 const showDress=()=>curD().showDress!==false;    /* إذا false، هاد الموديل ما إله قسم فستان مستقل */
 const showKaftan=()=>curD().showKaftan!==false;   /* إذا false، ما يظهر قسم الخفتان إطلاقاً */
 const showLining=()=>curD().showLining!==false;   /* إذا false، ما يظهر قسم لون/نوع البطان */
-const allowSwap=()=>curD().allowSwap!==false&&showDress()&&showKaftan(); /* التبديل بس إذا فعّال وبوجود القسمين الاتنين */
+const allowSwap=()=>true; /* تبديل القماش (فستان/خفتان) ظاهر دايماً بغض النظر عن إخفاء أي قسم */
 const info=(x,mult)=>`<b>${esc(x.name)}</b>${x.fabric?`<small>${esc(x.fabric)}</small>`:''}<span class="pr">${$$(x.price*mult)}</span>`;
 /* تطبّق إعدادات الموديل الحالي: تظهر/تخفي الأقسام، وتظهر/تخفي أزرار التبديل */
 function applyModelConfig(){
@@ -193,14 +198,13 @@ function applyModelConfig(){
  const elK=$('stepKaftan');if(elK)elK.style.display=sk?'':'none';
  const elC=$('stepLiningColor');if(elC)elC.style.display=sl?'':'none';
  const elT=$('stepLiningType');if(elT)elT.style.display=sl?'':'none';
- document.querySelectorAll('.kindtg').forEach(el=>el.style.display=as?'':'none');
- if(!as){S.secView[2]='model';S.secView[3]='kaftan'}
+ document.querySelectorAll('.kindtg').forEach(el=>el.style.display='');
 }
 function draw(){
  applyModelConfig();
  const de=curD(),sd=showDress(),sk=showKaftan(),sl=showLining();
  const dr=sd?anyBy(S.dress):null,ka=sk?anyBy(S.kaftan):null,co=sl?by('colors',S.color):null,li=sl?by('linings',S.lining):null;
- const cmCard=`<div class="ow"><button class="co cm ${S.useCustom&&S.custom?'on':''}" data-cm="1">${S.custom?`<img class="im" src="${S.custom.url}" alt="">`:'<div class="none" style="font-size:38px">➕</div>'}<b>${S.custom?'موديلك الخاص':'أضيفي موديلك بنفسك'}</b><small>${S.custom?(S.useCustom?'اضغطي لتغيير الصورة':'اضغطي لاختياره'):'ارفعي صورة الموديل اللي بدك تفصّليه'}</small></button>${S.custom?`<button class="zb" data-z="${S.custom.url}">🔍 تكبير</button>`:''}</div>`;
+ const cmCard=`<div class="ow"><button class="co cm ${S.useCustom&&S.custom?'on':''}" data-cm="1">${S.custom?`<img class="im" src="${S.custom.url}" alt="">`:'<div class="none" style="font-size:38px">➕</div>'}<b>${S.custom?'موديلك الخاص':'أضيفي موديلك بنفسك'}</b><small>${S.custom?(S.useCustom?'اضغطي لتغيير الصورة':'اضغطي لاختياره'):'ارفعي صورة الموديل اللي بدك تفصّليه'}</small></button>${S.custom?`<button class="zb" data-z="${S.custom.url}">⌕</button>`:''}</div>`;
  $('designs').innerHTML=(D.designs.map((x,i)=>`<div class="ow"><button class="co ${!S.useCustom&&i==S.d?'on':''}" data-g="${i}">${im(x)}<b>${esc(x.name)}</b><span class="pr">${$$(x.price)}</span></button>${zb(x)}</div>`).join('')||'<p class="empty">لا توجد موديلات بعد</p>')+cmCard;
  if(sd)$('models').innerHTML=cardsHTML(2);
  if(sk)$('kaftans').innerHTML=cardsHTML(3);

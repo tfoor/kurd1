@@ -3848,10 +3848,6 @@ function designFormHTML(e){
    ${toggleRow("dzShowKaftan","🥻","إظهار قسم الخفتان","عرض قسم اختيار قماش الخفتان",g("showKaftan",true)!==false)}
    ${toggleRow("dzShowLining","🧵","إظهار قسم البطان","عرض قسم لون ونوع البطان",g("showLining",true)!==false)}
   </div>
-  <div class="dz-panel">
-   <div class="dz-panel-title"><span class="ic">⚙️</span> خيارات إضافية</div>
-   ${toggleRow("dzAllowSwap","⇄","السماح بتبديل نوع القماش بين الفستان والخفتان","يُبدّل القماش المعروض داخل نفس القسم، مع بقاء حساب الأمتار تابعاً للقسم الأصلي",g("allowSwap",true)!==false)}
-  </div>
   <div class="dz-bottom-row">
    <div><label>الصورة *</label><input id="dzFile" type="file" accept="image/*"></div>
    <div><label>السعر ($)</label><input id="dzPrice" type="number" step="0.01" min="0" value="${e?e.price:""}"></div>
@@ -3894,7 +3890,7 @@ async function save(){
     }
     if((hasF||kind==="design")&&!img){showToast("لازم تضيفي صورة");btn.disabled=false;return}
     const data={kind,name,price:isC?0:(parseFloat($("dzPrice").value)||0),hex:isC?$("dzHex").value:"",img,fabric:hasF?$("dzFabric").value.trim():""};
-    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mkaftan=parseFloat($("dzMK").value)||1;data.mlining=parseFloat($("dzML").value)||1;data.showDress=$("dzShowDress").checked;data.showKaftan=$("dzShowKaftan").checked;data.showLining=$("dzShowLining").checked;data.allowSwap=$("dzAllowSwap").checked}
+    if(kind==="design"){data.mdress=parseFloat($("dzMD").value)||1;data.mkaftan=parseFloat($("dzMK").value)||1;data.mlining=parseFloat($("dzML").value)||1;data.showDress=$("dzShowDress").checked;data.showKaftan=$("dzShowKaftan").checked;data.showLining=$("dzShowLining").checked;data.allowSwap=true}
     if(e)await awTablesDB.updateRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     else await awTablesDB.createRow({databaseId:APPWRITE_DATABASE_ID,tableId:TABLE_ID,rowId:id,data});
     logAdminAction(e?"تعديل":"إضافة","designer_"+kind,id,name);
